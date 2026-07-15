@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stánek S4244 — 3D prohlížeč</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0E1014;
+    --panel:#161A21;
+    --panel-2:#1E242D;
+    --edge:#2A313C;
+    --txt:#E8EAED;
+    --txt-dim:#8A93A0;
+    --txt-faint:#5A6270;
+    --led:#4B3FE4;
+    --led-2:#22B8CF;
+    --ok:#3DD68C;
+    --warn:#F0A138;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;overflow:hidden;}
+  body{
+    background:var(--bg);color:var(--txt);
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    display:flex;
+  }
+  /* ---------- VIEWPORT ---------- */
+  #view{flex:1;position:relative;min-width:0;}
+  #cv{display:block;width:100%;height:100%;cursor:grab;}
+  #cv:active{cursor:grabbing;}
+  .hud{
+    position:absolute;pointer-events:none;
+    font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);
+  }
+  .hud.tl{top:18px;left:20px;}
+  .hud.tl b{
+    display:block;font-family:"Space Grotesk",sans-serif;font-size:19px;
+    letter-spacing:-.01em;text-transform:none;color:var(--txt);font-weight:600;margin-bottom:3px;
+  }
+  .hud.bl{bottom:18px;left:20px;line-height:1.9;}
+  .hud.bl span{color:var(--led-2);}
+  .hud.br{bottom:18px;right:20px;text-align:right;line-height:1.9;}
+
+  /* ---------- SIDEBAR ---------- */
+  aside{
+    width:330px;flex:none;background:var(--panel);
+    border-left:1px solid var(--edge);
+    overflow-y:auto;padding:22px 20px 40px;
+  }
+  aside::-webkit-scrollbar{width:8px;}
+  aside::-webkit-scrollbar-thumb{background:var(--edge);border-radius:4px;}
+  .grp{margin-bottom:26px;}
+  .grp > h2{
+    font-family:"Space Grotesk",sans-serif;font-size:11px;font-weight:600;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--txt-faint);
+    padding-bottom:9px;margin-bottom:13px;border-bottom:1px solid var(--edge);
+  }
+  .fld{margin-bottom:14px;}
+  .fld label{
+    display:flex;justify-content:space-between;align-items:baseline;
+    font-size:12px;color:var(--txt-dim);margin-bottom:7px;
+  }
+  .fld label b{color:var(--led-2);font-weight:600;font-size:12.5px;}
+  input[type=range]{
+    width:100%;height:3px;-webkit-appearance:none;appearance:none;
+    background:var(--edge);border-radius:2px;outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:15px;height:15px;border-radius:50%;
+    background:var(--led-2);cursor:pointer;border:2px solid var(--panel);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:13px;height:13px;border-radius:50%;background:var(--led-2);
+    cursor:pointer;border:2px solid var(--panel);
+  }
+  .btn{
+    display:block;width:100%;padding:10px 12px;margin-bottom:8px;
+    background:var(--panel-2);color:var(--txt);border:1px solid var(--edge);
+    border-radius:3px;font-family:inherit;font-size:12px;cursor:pointer;
+    text-align:left;transition:border-color .15s,background .15s;
+  }
+  .btn:hover{border-color:var(--led-2);background:#232A34;}
+  .btn.on{border-color:var(--led-2);color:var(--led-2);}
+  .btn.act{background:var(--led);border-color:var(--led);color:#fff;text-align:center;font-weight:600;}
+  .btn.act:hover{background:#5A4FF0;}
+  .up{
+    display:block;padding:16px 12px;margin-bottom:8px;text-align:center;
+    border:1px dashed var(--edge);border-radius:3px;cursor:pointer;
+    font-size:12px;color:var(--txt-dim);transition:.15s;
+  }
+  .up:hover{border-color:var(--led-2);color:var(--led-2);}
+  .up.has{border-style:solid;border-color:var(--ok);color:var(--ok);}
+  .up input{display:none;}
+  .note{
+    font-size:11px;line-height:1.6;color:var(--txt-faint);
+    padding:11px 13px;background:var(--panel-2);border-left:2px solid var(--warn);
+    border-radius:2px;margin-top:12px;
+  }
+  .note b{color:var(--warn);}
+  .rd{display:flex;justify-content:space-between;font-size:11.5px;padding:6px 0;border-bottom:1px dashed var(--edge);}
+  .rd:last-child{border:none;}
+  .rd span{color:var(--txt-faint);}
+  .rd b{color:var(--txt);font-weight:500;}
+  .rd b.hl{color:var(--ok);}
+  .seg{display:flex;gap:6px;margin-bottom:8px;}
+  .seg .btn{margin:0;text-align:center;}
+
+  @media(max-width:860px){
+    body{flex-direction:column;}
+    aside{width:100%;height:46%;border-left:none;border-top:1px solid var(--edge);}
+    #view{height:54%;}
+  }
+</style>
+</head>
+<body>
+
+<div id="view">
+  <canvas id="cv"></canvas>
+  <div class="hud tl">
+    <b>Stánek S4244 · Pixel Floors</b>
+    IAAPA Expo Europe 2026 · GES AMP shell
+  </div>
+  <div class="hud bl">
+    Táhni myší — otáčení<br>
+    Kolečko — přiblížení<br>
+    Pravé tlačítko — posun
+  </div>
+  <div class="hud br" id="hudDim"></div>
+</div>
+
+<aside>
+  <div class="grp">
+    <h2>Rozměry stánku</h2>
+    <div class="fld">
+      <label>Delší stěna (B) <b id="lB">5940 mm</b></label>
+      <input type="range" id="sB" min="1972" max="9860" step="10" value="5940">
+    </div>
+    <div class="fld">
+      <label>Kratší stěna (A) <b id="lA">2970 mm</b></label>
+      <input type="range" id="sA" min="1972" max="6000" step="10" value="2970">
+    </div>
+    <div class="fld">
+      <label>Tloušťka panelu <b id="lT">40 mm</b></label>
+      <input type="range" id="sT" min="20" max="80" step="1" value="40">
+    </div>
+    <div class="note">
+      <b>Potvrzeno GES:</b> výška 2500 mm, panel 986 mm, grafika 2474 mm. Délku delší stěny si ověř — zde je předpoklad 6 m.
+    </div>
+  </div>
+
+  <div class="grp">
+    <h2>Grafika na stěny</h2>
+    <label class="up" id="upB">
+      <input type="file" id="fB" accept="image/*">
+      <span id="tB">＋ Nahrát grafiku — stěna B</span>
+    </label>
+    <label class="up" id="upA">
+      <input type="file" id="fA" accept="image/*">
+      <span id="tA">＋ Nahrát grafiku — stěna A</span>
+    </label>
+    <label class="up" id="upBan">
+      <input type="file" id="fBan" accept="image/*">
+      <span id="tBan">＋ Nahrát grafiku — poutač (360°)</span>
+    </label>
+    <button class="btn" id="bClr">Odebrat všechny grafiky</button>
+    <div class="note">
+      Grafika se rozpočítá přes všechny panely stěny — uvidíš, kde ji spáry rozdělí. Poměr stran drž dle stěny.
+    </div>
+  </div>
+
+  <div class="grp">
+    <h2>Scéna</h2>
+    <button class="btn on" id="bMini">Produkt mini — zobrazen</button>
+    <button class="btn on" id="bArc">Produkt arcade — zobrazen</button>
+    <button class="btn on" id="bKiosk">Kiosky u uličky — zobrazeny</button>
+    <button class="btn on" id="bTv">TV 2×55″ na stěně B — zobrazeny</button>
+    <button class="btn on" id="bMon">Krabice 3×27″ na stěně A — zobrazena</button>
+    <button class="btn on" id="bBan">Poutač (baner) nad stánkem — zobrazen</button>
+    <button class="btn on" id="bSpot">Spoty GES — zapnuté</button>
+    <button class="btn on" id="bJoint">Spáry panelů — zvýrazněné</button>
+  </div>
+
+  <div class="grp">
+    <h2>Pohled</h2>
+    <div class="seg">
+      <button class="btn" data-v="iso">Izo</button>
+      <button class="btn" data-v="front">Zepředu</button>
+      <button class="btn" data-v="top">Shora</button>
+    </div>
+    <button class="btn act" id="bShot">Uložit snímek (PNG)</button>
+  </div>
+
+  <div class="grp">
+    <h2>Odečet</h2>
+    <div class="rd"><span>Panely stěna B</span><b id="rB">6 ×</b></div>
+    <div class="rd"><span>Panely stěna A</span><b id="rA">3 ×</b></div>
+    <div class="rd"><span>Panelů celkem</span><b id="rTot">9 ×</b></div>
+    <div class="rd"><span>Půdorys</span><b id="rArea">17.6 m²</b></div>
+    <div class="rd"><span>Spoty GES (1 / 3 m²)</span><b id="rSpot">6 ×</b></div>
+    <div class="rd"><span>Výška panelů</span><b class="hl">2500 mm</b></div>
+    <div class="rd"><span>Grafická plocha</span><b class="hl">2474 mm</b></div>
+    <div class="rd"><span>Produkt mini (D×Š×V)</span><b id="rMini">—</b></div>
+    <div class="rd"><span>Produkt v rohu</span><b id="rFit">—</b></div>
+    <div class="rd"><span>Arcade (Š×H×V)</span><b id="rArc">—</b></div>
+    <div class="rd"><span>Arcade u stěny B</span><b id="rArcFit">—</b></div>
+    <div class="rd"><span>Kiosky (Š×H×V)</span><b id="rKiosk">—</b></div>
+    <div class="rd"><span>Kiosky u uličky</span><b id="rKioskFit">—</b></div>
+    <div class="rd"><span>TV stěna B (á 55″)</span><b id="rTv">—</b></div>
+    <div class="rd"><span>Výhled na TV</span><b id="rTvFit">—</b></div>
+    <div class="rd"><span>Krabice 3×27″ (Š×V×H)</span><b id="rMon">—</b></div>
+    <div class="rd"><span>Krabice na stěně A</span><b id="rMonFit">—</b></div>
+    <div class="rd"><span>Poutač (Ø×v)</span><b id="rBan">—</b></div>
+    <div class="rd"><span>Poutač nad stánkem</span><b id="rBanFit">—</b></div>
+  </div>
+</aside>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- meshe produktu; generuje model/export_mini.py, export_arcade.py a export_kiosk.py (funguje i na file://) -->
+<script src="mini-mesh.js"></script>
+<script src="arcade-mesh.js"></script>
+<script src="kiosk-mesh.js"></script>
+<script>
+// ============ KONSTANTY (mm, dle GES AMP spec) ============
+// Výchozí hodnoty odpovídají data/stand-spec.json.
+// Pokud běžíš přes http (ne file://), načtou se z něj automaticky.
+const PANEL_W = 986;    // graficky modul
+const GFX_H   = 2474;   // graficka vyska
+const WALL_H  = 2500;   // vyska panelu
+const S = 0.001;        // mm -> m
+
+let cfg = { B: 5940, A: 2970, T: 40, CL: 50 }; // CL = vůle produktů od stěn
+const ARC_GAP = 0; // mezera arcade od mini (mm), dle spec product_arcade.placement
+// 2× 55" TV na stěně B, dle spec wall_tvs (rozměry TV = odhad běžného modelu)
+let tvc = { n:2, W:1230, H:710, D:60, OFF:35, CY:1850, MIN_GAP:300 };
+// bílá krabice se 3× 27" monitorem na stěně A u uličky, dle spec wall_monitor_box
+// (rozměry zadané uživatelem 15.7.2026; výška středu 1500 mm = ODHAD, nezadáno)
+let mbc = { n:3, W:600, H:1040, D:80, SW:600, SH:337.5, CY:1500 };
+// kruhový závěsný poutač Zip-up Round nad stánkem, dle spec hanging_banner
+// (vybrán Ø1520 — větší Ø3050 se dle IAAPA nad stánek nevejde; BOT = ODHAD výšky)
+let ban = { D:1520, H:610, BOT:3300, CL:1000, CABLE:257 };
+let opt = { spot:true, joint:true, mini:true, arc:true, kiosk:true, tv:true, mon:true, ban:true };
+let tex = { B:null, A:null, ban:null };
+
+// Sync se zdrojem pravdy (selže tiše u file:// – výchozí hodnoty výše jsou stejné)
+fetch('../data/stand-spec.json')
+  .then(r => r.json())
+  .then(d => {
+    cfg.A = d.confirmed.wall_a_length;
+    cfg.B = d.assumed.wall_b_length.value;
+    cfg.T = d.assumed.panel_thickness.value;
+    cfg.CL = d.product?.placement?.clearance_mm ?? cfg.CL;
+    if(d.wall_tvs){
+      const t = d.wall_tvs.dims_mm, p = d.wall_tvs.placement;
+      tvc = { n:d.wall_tvs.count, W:t.width, H:t.height, D:t.depth,
+              OFF:t.mount_standoff, CY:p.center_height_mm, MIN_GAP:p.min_gap_between_mm };
+    }
+    if(d.wall_monitor_box){
+      const m = d.wall_monitor_box.dims_mm, p = d.wall_monitor_box.placement;
+      mbc = { n:d.wall_monitor_box.count_screens, W:m.box.width, H:m.box.height, D:m.box.depth,
+              SW:m.screen.width, SH:m.screen.height, CY:p.center_height_mm };
+    }
+    if(d.hanging_banner){
+      const h = d.hanging_banner;
+      ban = { D:h.dims_mm.diameter, H:h.dims_mm.height, BOT:h.placement.bottom_mm,
+              CL:h.placement.clearance_from_walls_mm, CABLE:h.suspension_cable_mm };
+    }
+    ['sB','sA','sT'].forEach((id,i) => {
+      const v = [cfg.B, cfg.A, cfg.T][i];
+      const l = ['lB','lA','lT'][i];
+      document.getElementById(id).value = v;
+      document.getElementById(l).textContent = v + ' mm';
+    });
+    build(); views('iso');
+  })
+  .catch(() => {});
+
+// ============ SCENA ============
+const cv = document.getElementById('cv');
+const renderer = new THREE.WebGLRenderer({canvas:cv, antialias:true, preserveDrawingBuffer:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0E1014);
+scene.fog = new THREE.Fog(0x0E1014, 14, 34);
+
+const cam = new THREE.PerspectiveCamera(42, 1, 0.1, 200);
+
+// hala
+const hall = new THREE.Mesh(
+  new THREE.PlaneGeometry(60,60),
+  new THREE.MeshStandardMaterial({color:0x1A1E25, roughness:.95})
+);
+hall.rotation.x = -Math.PI/2; hall.receiveShadow = true; scene.add(hall);
+
+const grid = new THREE.GridHelper(40, 40, 0x2A313C, 0x1E242D);
+grid.position.y = .002; scene.add(grid);
+
+scene.add(new THREE.AmbientLight(0xffffff, .28));
+const key = new THREE.DirectionalLight(0xffffff, .5);
+key.position.set(8,12,6); key.castShadow = true;
+key.shadow.mapSize.set(2048,2048);
+key.shadow.camera.left=-12; key.shadow.camera.right=12;
+key.shadow.camera.top=12;  key.shadow.camera.bottom=-12;
+scene.add(key);
+scene.add(new THREE.DirectionalLight(0x6688ff, .18).translateX(-8));
+
+const root = new THREE.Group(); scene.add(root);
+
+// ============ MATERIALY ============
+const matPanel = new THREE.MeshStandardMaterial({color:0xF2F2F0, roughness:.82, metalness:.02});
+const matFrame = new THREE.MeshStandardMaterial({color:0xB9BDC4, roughness:.45, metalness:.6});
+const matLamp  = new THREE.MeshStandardMaterial({color:0xE3E6EA, roughness:.4, metalness:.55});
+const matAisle = new THREE.MeshStandardMaterial({color:0x3468CE, roughness:.92});
+
+// ---- produkt "mini" (exponat) — mesh z mini-mesh.js, generuje model/export_mini.py ----
+const matMini = {
+  ocel:    new THREE.MeshStandardMaterial({color:0xF2F3F1, roughness:.55, metalness:.15}), // bíle lakovaná ocel (požadavek 13.7.2026)
+  kostky:  new THREE.MeshStandardMaterial({color:0x17191D, roughness:.5}), // černé rámy dlaždic
+  plexi:   new THREE.MeshStandardMaterial({color:0xBFD9E2, roughness:.15, transparent:true, opacity:.25, depthWrite:false}),
+  monitor: new THREE.MeshStandardMaterial({color:0x0B0D12, roughness:.35, metalness:.2}),
+  dibond:  new THREE.MeshStandardMaterial({color:0xE8EAEC, roughness:.6}),
+  koberec: new THREE.MeshStandardMaterial({color:0x161616, roughness:.97}) // černý koberec podesty u vstupu
+};
+// svítící LED segmenty dlaždic — statické barvy dle fotek produktů (blikat nesmí, regulace).
+// MeshBasicMaterial = neosvětlovaný, drží plnou sytost barvy jako rozsvícený panel
+[['led0',0x3ED973],['led1',0x5B8CFF],['led2',0xFF8177],['led3',0xF2E97C],['led4',0xF4F6F1],
+ ['led_a0',0xFF8A3C],['led_a1',0xB05CF5],['led_a2',0x63E6A4]]  // arcade: oranžová/fialová/mint
+  .forEach(([k,c]) => {
+    matMini[k] = new THREE.MeshBasicMaterial({color:c});
+    matMini[k].color.convertSRGBToLinear(); // jinak sRGB výstup barvy vybledne do pastelu
+  });
+matMini.body = matMini.ocel;       // bílá konstrukce arcade
+matMini.screen = matMini.monitor;  // obrazovka + terminál arcade
+
+function meshGroup(data){
+  const grp = new THREE.Group();
+  data.groups.forEach(g=>{
+    let geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(g.pos, 3));
+    geo.setIndex(g.idx);
+    // FreeCAD svaruje vrcholy pres hrany -> rozbalit, jinak by normaly zaoblily hrany
+    geo = geo.toNonIndexed();
+    geo.computeVertexNormals();
+    const m = new THREE.Mesh(geo, matMini[g.name] || matMini.ocel);
+    // plexi a svítící segmenty stíny nevrhají ani nepřijímají (segmenty by stín ztmavil)
+    if(g.name !== 'plexi' && !g.name.startsWith('led')) m.castShadow = m.receiveShadow = true;
+    grp.add(m);
+  });
+  return grp;
+}
+let _mini = null, _arc = null, _kiosk = null;
+function miniGroup(){
+  if(!_mini && typeof MINI_MESH !== 'undefined') _mini = meshGroup(MINI_MESH);
+  return _mini;
+}
+function arcGroup(){
+  if(!_arc && typeof ARCADE_MESH !== 'undefined') _arc = meshGroup(ARCADE_MESH);
+  return _arc;
+}
+function kioskGroup(){
+  // mesh JEDNOHO kiosku — do scény se přidávají klony (sdílejí geometrii)
+  if(!_kiosk && typeof KIOSK_MESH !== 'undefined') _kiosk = meshGroup(KIOSK_MESH);
+  return _kiosk;
+}
+
+// Rozsah geometrie produktu zasahující nad danou výšku (lokální rámec meshe → mm),
+// podél osy X (výchozí, stěna B) nebo Z (axis='z', stěna A).
+// Používá se pro TV na stěně B a krabici s monitory na stěně A: říká, kam až
+// sahají vysoké konstrukce produktů (věž mini, bedna arcade), které cloní stěnu.
+const _tallCache = {};
+function tallSpan(data, key, yMinMm, axis){
+  const off = axis === 'z' ? 1 : -1; // pos = [x,y,z,...], i ukazuje na y
+  const ck = key + ':' + yMinMm + ':' + (axis || 'x');
+  if(ck in _tallCache) return _tallCache[ck];
+  const yMin = yMinMm * S; // mesh je v metrech
+  let lo = Infinity, hi = -Infinity;
+  data.groups.forEach(g=>{
+    for(let i=1; i<g.pos.length; i+=3){
+      if(g.pos[i] > yMin){
+        const v = g.pos[i+off];
+        if(v < lo) lo = v;
+        if(v > hi) hi = v;
+      }
+    }
+  });
+  return _tallCache[ck] = lo <= hi ? [lo*1000, hi*1000] : null;
+}
+
+// ---- TV na stene B: c = stred TV podel X (mm); VESA drzak + telo + tmave sklo ----
+const matTvBody = new THREE.MeshStandardMaterial({color:0x14161B, roughness:.5, metalness:.3});
+const matTvScr  = new THREE.MeshStandardMaterial({color:0x0B0D12, roughness:.12, metalness:.3});
+function addTv(c){
+  const y = tvc.CY*S, z0 = cfg.T + 2; // grafika je 2 mm pred licem panelu, drzak az za ni
+  const mnt = new THREE.Mesh(new THREE.BoxGeometry(.4, .4, tvc.OFF*S), matTvBody);
+  mnt.position.set(c*S, y, (z0 + tvc.OFF/2)*S);
+  root.add(mnt);
+  const body = new THREE.Mesh(new THREE.BoxGeometry(tvc.W*S, tvc.H*S, tvc.D*S), matTvBody);
+  body.position.set(c*S, y, (z0 + tvc.OFF + tvc.D/2)*S);
+  body.castShadow = true;
+  root.add(body);
+  const scr = new THREE.Mesh(new THREE.PlaneGeometry((tvc.W-36)*S, (tvc.H-36)*S), matTvScr);
+  scr.position.set(c*S, y, (z0 + tvc.OFF + tvc.D)*S + .001);
+  root.add(scr);
+}
+
+// ---- bila krabice se 3x 27" monitory pod sebou na stene A (spec wall_monitor_box) ----
+// cz = stred krabice podel Z (mm); visi na panelu, obrazovky smerem do stanku (+X)
+const matMonBox = new THREE.MeshStandardMaterial({color:0xF4F5F3, roughness:.55, metalness:.05});
+function addMonitorBox(cz){
+  const x0 = cfg.T + 2; // 2 mm pred licem panelu (jako grafika)
+  const box = new THREE.Mesh(new THREE.BoxGeometry(mbc.D*S, mbc.H*S, mbc.W*S), matMonBox);
+  box.position.set((x0 + mbc.D/2)*S, mbc.CY*S, cz*S);
+  box.castShadow = box.receiveShadow = true;
+  root.add(box);
+  // 3 obrazovky pod sebou; zbytek vysky = stejne mezery nahore, mezi a dole
+  const vgap = (mbc.H - mbc.n*mbc.SH) / (mbc.n + 1);
+  for(let i=0; i<mbc.n; i++){
+    const scy = mbc.CY - mbc.H/2 + vgap*(i+1) + mbc.SH*(i+.5);
+    const scr = new THREE.Mesh(new THREE.PlaneGeometry(mbc.SW*S, mbc.SH*S), matTvScr);
+    scr.rotation.y = Math.PI/2;
+    scr.position.set((x0 + mbc.D)*S + .001, scy*S, cz*S);
+    root.add(scr);
+  }
+}
+
+// ---- kruhovy zavesny poutac "Zip-up Round" nad stankem (spec hanging_banner) ----
+// Vypinaci latka potistena po CELEM obvodu (360°). Grafika se obtoci kolem valce:
+// THREE.CylinderGeometry ma UV (u = obvod, v = vyska), takze staci nahranou texturu
+// dat jako map — narozdil od sten se nepocita pres panely, je to jeden souvisly obraz.
+// Vnitrek i zavreny vrch bile (videt zespodu otevrenym dnem, jako u realneho produktu).
+const matBanner   = new THREE.MeshStandardMaterial({color:0xF4F4F2, roughness:.72, metalness:.02, side:THREE.FrontSide});
+const matBannerIn = new THREE.MeshStandardMaterial({color:0xEBEBE8, roughness:.85, side:THREE.BackSide});
+const matBannerCap= new THREE.MeshStandardMaterial({color:0xF4F4F2, roughness:.75, side:THREE.DoubleSide});
+const matCable    = new THREE.MeshStandardMaterial({color:0xC9CDD3, roughness:.4, metalness:.7});
+function cableMesh(p0, p1){
+  const dir = new THREE.Vector3().subVectors(p1, p0);
+  const len = dir.length();
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(.004,.004,len,6), matCable);
+  m.position.copy(p0).addScaledVector(dir, .5);
+  m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir.normalize());
+  return m;
+}
+// cx, cz = stred poutace v three.js (m); grafika (tex.ban) se obtoci kolem obvodu
+function addBanner(cx, cz){
+  const R = ban.D/2*S, H = ban.H*S, SEG = 64;
+  const g = new THREE.Group();
+  const outMat = tex.ban
+    ? new THREE.MeshStandardMaterial({map:tex.ban, roughness:.72, side:THREE.FrontSide})
+    : matBanner;
+  const out = new THREE.Mesh(new THREE.CylinderGeometry(R,R,H,SEG,1,true), outMat);
+  out.castShadow = true; g.add(out);
+  const inn = new THREE.Mesh(new THREE.CylinderGeometry(R-.005,R-.005,H,SEG,1,true), matBannerIn);
+  g.add(inn);
+  const cap = new THREE.Mesh(new THREE.CircleGeometry(R,SEG), matBannerCap);
+  cap.rotation.x = -Math.PI/2; cap.position.y = H/2 + .001; g.add(cap);
+  // zavesna lanka: z horniho okraje do vrcholu nad stredem + svisly tah k trusu
+  const apex = new THREE.Vector3(0, H/2 + ban.CABLE*S, 0);
+  for(let i=0;i<3;i++){
+    const a = i/3*2*Math.PI;
+    g.add(cableMesh(new THREE.Vector3(R*Math.cos(a), H/2, R*Math.sin(a)), apex));
+  }
+  g.add(cableMesh(apex, new THREE.Vector3(0, apex.y + .5, 0)));
+  g.position.set(cx, (ban.BOT + ban.H/2)*S, cz);
+  root.add(g);
+}
+
+// ---- cedule poradatele (dle vizualizace IAAPA "EXHIBITOR NAME") ----
+let _signTex = null;
+function signTex(){
+  if(_signTex) return _signTex;
+  const c = document.createElement('canvas');
+  c.width = 1024; c.height = 300;
+  const x = c.getContext('2d');
+  x.fillStyle = '#1C3E93'; x.fillRect(0,0,1024,300);
+  x.fillStyle = '#FFFFFF';
+  x.font = '600 36px "Space Grotesk",sans-serif';
+  x.fillText('IAAPA EXPO EUROPE 2026', 46, 74);
+  x.font = '700 116px "Space Grotesk",sans-serif';
+  x.fillText('HTDM', 42, 208);
+  x.font = '500 48px "IBM Plex Mono",monospace';
+  x.textAlign = 'right'; x.fillText('S4244', 978, 262);
+  _signTex = new THREE.CanvasTexture(c);
+  _signTex.encoding = THREE.sRGBEncoding;
+  return _signTex;
+}
+// dvoustranna tabulka 1000 x 300 mm, horni hrana v urovni horni hrany steny
+function addSign(cx, cz, rotY){
+  const m = new THREE.MeshStandardMaterial({map:signTex(), roughness:.6});
+  const g = new THREE.Group();
+  const f = new THREE.Mesh(new THREE.PlaneGeometry(1, .3), m);
+  f.position.z = .002; g.add(f);
+  const b = f.clone(); b.rotation.y = Math.PI; b.position.z = -.002; g.add(b);
+  g.position.set(cx, WALL_H*S - .15, cz); g.rotation.y = rotY;
+  root.add(g);
+}
+
+// ---- helper: textura rozpocitana pres panely ----
+function panelTex(src, i, count, wallLen, gap){
+  const t = src.clone(); t.needsUpdate = true;
+  t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
+  const x0 = i * (PANEL_W + gap);
+  t.repeat.set(PANEL_W / wallLen, 1);
+  t.offset.set(x0 / wallLen, 0);
+  return t;
+}
+
+// ============ STAVBA ============
+function build(){
+  while(root.children.length) root.remove(root.children[0]);
+
+  const {A,B,T,CL} = cfg;
+  const nB = Math.max(1, Math.round(B / PANEL_W));
+  const nA = Math.max(1, Math.round(A / PANEL_W));
+  const gB = nB>1 ? (B - nB*PANEL_W)/(nB-1) : 0;
+  const gA = nA>1 ? (A - nA*PANEL_W)/(nA-1) : 0;
+
+  // ---- sedy koberec (z balicku GES) ----
+  const floor = new THREE.Mesh(
+    new THREE.BoxGeometry(B*S, 10*S, A*S),
+    new THREE.MeshStandardMaterial({color:0x8C8F94, roughness:.95})
+  );
+  floor.position.set(B*S/2, 5*S, A*S/2);
+  floor.receiveShadow = true; root.add(floor);
+
+  // ---- modry koberec ulicek podel otevrenych stran (sirka odhad) ----
+  const AISLE = 1500;
+  const a1 = new THREE.Mesh(new THREE.BoxGeometry((B+AISLE)*S, 8*S, AISLE*S), matAisle);
+  a1.position.set((B+AISLE)/2*S, 4*S, (A+AISLE/2)*S);
+  a1.receiveShadow = true; root.add(a1);
+  const a2 = new THREE.Mesh(new THREE.BoxGeometry(AISLE*S, 8*S, A*S), matAisle);
+  a2.position.set((B+AISLE/2)*S, 4*S, A/2*S);
+  a2.receiveShadow = true; root.add(a2);
+
+  // ---- STENA B (podel X, y=0) ----
+  for(let i=0;i<nB;i++){
+    const x = i*(PANEL_W+gB);
+    const p = new THREE.Mesh(new THREE.BoxGeometry(PANEL_W*S, WALL_H*S, T*S), matPanel);
+    p.position.set((x+PANEL_W/2)*S, WALL_H*S/2, T*S/2);
+    p.castShadow = p.receiveShadow = true; root.add(p);
+
+    if(tex.B){
+      const g = new THREE.Mesh(
+        new THREE.PlaneGeometry(PANEL_W*S, GFX_H*S),
+        new THREE.MeshStandardMaterial({map:panelTex(tex.B,i,nB,B,gB), roughness:.7})
+      );
+      g.position.set((x+PANEL_W/2)*S, WALL_H*S/2, (T+2)*S);
+      root.add(g);
+    }
+    if(opt.joint && i<nB-1){
+      const j = new THREE.Mesh(new THREE.BoxGeometry(Math.max(gB,8)*S, WALL_H*S, (T+6)*S), matFrame);
+      j.position.set((x+PANEL_W+gB/2)*S, WALL_H*S/2, T*S/2);
+      root.add(j);
+    }
+  }
+
+  // ---- STENA A (podel Z, x=0) ----
+  for(let i=0;i<nA;i++){
+    const z = i*(PANEL_W+gA);
+    const p = new THREE.Mesh(new THREE.BoxGeometry(T*S, WALL_H*S, PANEL_W*S), matPanel);
+    p.position.set(T*S/2, WALL_H*S/2, (z+PANEL_W/2)*S);
+    p.castShadow = p.receiveShadow = true; root.add(p);
+
+    if(tex.A){
+      const g = new THREE.Mesh(
+        new THREE.PlaneGeometry(PANEL_W*S, GFX_H*S),
+        new THREE.MeshStandardMaterial({map:panelTex(tex.A,i,nA,A,gA), roughness:.7})
+      );
+      g.rotation.y = Math.PI/2;
+      g.position.set((T+2)*S, WALL_H*S/2, (z+PANEL_W/2)*S);
+      root.add(g);
+    }
+    if(opt.joint && i<nA-1){
+      const j = new THREE.Mesh(new THREE.BoxGeometry((T+6)*S, WALL_H*S, Math.max(gA,8)*S), matFrame);
+      j.position.set(T*S/2, WALL_H*S/2, (z+PANEL_W+gA/2)*S);
+      root.add(j);
+    }
+  }
+
+  // rohovy sloupek
+  const c = new THREE.Mesh(new THREE.BoxGeometry(T*S, WALL_H*S, T*S), matFrame);
+  c.position.set(T*S/2, WALL_H*S/2, T*S/2); c.castShadow = true; root.add(c);
+
+  // ---- produkt mini v rohu (delsi strana podel B, vez s monitorem u steny A) ----
+  const mg = miniGroup();
+  let miniFit = null; // null = mesh chybi
+  if(mg){
+    const d = MINI_MESH.dims_mm;
+    miniFit = (T + CL + d.delka <= B) && (T + CL + d.sirka <= A);
+    if(opt.mini){
+      mg.position.set((T+CL)*S, 0, (T+CL)*S);
+      root.add(mg);
+    }
+  }
+
+  // ---- produkt arcade vedle mini (bedna s obrazovkou u steny B) ----
+  const ag = arcGroup();
+  let arcFit = null, arcOver = 0; // null = mesh chybi
+  if(ag){
+    const ad = ARCADE_MESH.dims_mm;
+    const ax0 = T + CL + (typeof MINI_MESH !== 'undefined' ? MINI_MESH.dims_mm.delka : 4677) + ARC_GAP;
+    arcOver = Math.max(0, Math.round(ax0 + ad.sirka - B));
+    arcFit = arcOver === 0 && (T + CL + ad.hloubka <= A);
+    if(opt.arc){
+      ag.position.set(ax0*S, 0, (T+CL)*S);
+      root.add(ag);
+    }
+  }
+
+  // ---- kiosky (pult + sikmy monitor) podel hrany do ulicky ----
+  // Predni lic v hrane stanku (y = A), sikmina s monitorem klesa do ulicky —
+  // lide pristupuji primo z ulicky. Rovnomerne ve volnem useku hrany mezi
+  // licem steny A a zacatkem arcade (spec product_kiosk).
+  const kg = kioskGroup();
+  let kioskFit = null, kioskGap = 0; // null = mesh chybi
+  if(kg){
+    const kd = KIOSK_MESH.dims_mm, kn = KIOSK_MESH.count;
+    const kLo = T;
+    const kHi = T + CL + (typeof MINI_MESH !== 'undefined' ? MINI_MESH.dims_mm.delka : 4677) + ARC_GAP;
+    kioskGap = (kHi - kLo - kn*kd.sirka) / (kn+1);
+    const kz = A - kd.hloubka; // zadni hrana kiosku (predni lic na y = A)
+    kioskFit = kioskGap >= 0
+      && kz >= T + CL + (typeof MINI_MESH !== 'undefined' ? MINI_MESH.dims_mm.sirka : 1901);
+    if(opt.kiosk){
+      for(let i=0;i<kn;i++){
+        const inst = kg.clone();
+        inst.position.set((kLo + kioskGap*(i+1) + kd.sirka*i)*S, 0, kz*S);
+        root.add(inst);
+      }
+    }
+  }
+
+  // ---- 2x 55" TV na stene B, nad konstrukci produktu ----
+  // Vyhled na TV nesmi nic blokovat: kazda TV se centruje na stred panelu (VESA
+  // drzak musi drzet v jedinem modulu, ne pres sparu) a vybiraji se jen panely
+  // mimo zakryt vysokych konstrukci (vez mini ~1803 mm, bedna arcade 1800 mm).
+  // Prekazky se merI primo z meshu, takze zmena produktu se propise automaticky.
+  const tvBot = tvc.CY - tvc.H/2;
+  let tvPick = [];
+  {
+    let lo = 0, hi = B;
+    const mSpan = (typeof MINI_MESH !== 'undefined') ? tallSpan(MINI_MESH, 'mini', tvBot) : null;
+    if(mSpan) lo = Math.max(lo, T + CL + mSpan[1]);
+    const aSpan = (typeof ARCADE_MESH !== 'undefined') ? tallSpan(ARCADE_MESH, 'arc', tvBot) : null;
+    if(aSpan){
+      const ax = T + CL + (typeof MINI_MESH !== 'undefined' ? MINI_MESH.dims_mm.delka : 4677) + ARC_GAP;
+      hi = Math.min(hi, ax + aSpan[0]);
+    }
+    for(let i=0; i<nB && tvPick.length<tvc.n; i++){
+      const c = i*(PANEL_W+gB) + PANEL_W/2;
+      if(c - tvc.W/2 < lo || c + tvc.W/2 > hi) continue; // v zakrytu nebo mimo stenu
+      if(tvPick.length && c - tvPick[tvPick.length-1] < tvc.W + tvc.MIN_GAP) continue;
+      tvPick.push(c);
+    }
+  }
+  const tvFit = tvPick.length === tvc.n && tvc.CY + tvc.H/2 <= WALL_H;
+  if(opt.tv && tvFit) tvPick.forEach(addTv);
+
+  // ---- krabice se 3x 27" monitory na stene A, krajni panel u ulicky ----
+  // Centruje se na stred krajniho panelu (zaves drzi v jedinem modulu, ne pres
+  // sparu — nosnost panelu je open_question, stejne jako u TV). Kontroluje se,
+  // ze krabice nekoliduje s produktem mini, ktery se siri podel steny A od rohu.
+  const mbBot = mbc.CY - mbc.H/2;
+  const mbCz = (nA-1)*(PANEL_W+gA) + PANEL_W/2; // stred krajniho panelu u ulicky
+  let mbLo = 0;
+  const mzSpan = (typeof MINI_MESH !== 'undefined') ? tallSpan(MINI_MESH, 'mini', mbBot, 'z') : null;
+  if(mzSpan) mbLo = T + CL + mzSpan[1];
+  const mbFit = mbc.W <= PANEL_W && mbCz - mbc.W/2 >= mbLo && mbCz + mbc.W/2 <= A
+             && mbc.CY + mbc.H/2 <= WALL_H;
+  if(opt.mon && mbFit) addMonitorBox(mbCz);
+
+  // ---- kruhovy zavesny poutac nad stankem (spec hanging_banner) ----
+  // Stred podel B = B/2; v uzsim smeru (od steny B) stred = (A+CL)/2, aby zustal
+  // odstup >=1000 mm od steny B (baner je potisteny 360°, branding smeruje k obema
+  // delicim stenam) a poutac nepresahl predni hranu pudorysu.
+  const banR = ban.D/2;
+  const banCX = B/2, banCZ = (A + ban.CL)/2;
+  const banClB = banCZ - banR;      // odstup od steny B (z=0)
+  const banClA = banCX - banR;      // odstup od steny A (x=0)
+  const banFront = A - (banCZ + banR);
+  const banTop = ban.BOT + ban.H;   // horni hrana textilu
+  const GFX_MAX = 6000;             // regulations.hanging_sign.max_graphic_height_to_top
+  const banFit = banClB >= ban.CL && banClA >= ban.CL && banFront >= 0 && banTop <= GFX_MAX;
+  if(opt.ban) addBanner(banCX*S, banCZ*S);
+
+  // ---- cedule poradatele na koncich sten (do ulicek) ----
+  addSign((B+540)*S, T*S/2, 0);
+  addSign(T*S/2, (A+540)*S, Math.PI/2);
+
+  // ---- ramenova svitidla GES (1 / 3 m2, zavesena pres horni hranu steny) ----
+  const area = (A*B)/1e6;
+  const nSpot = Math.max(1, Math.round(area/3));
+  if(opt.spot){
+    const nSB = Math.max(1, Math.round(nSpot * B/(A+B))); // rozdeleni mezi steny dle delky
+    const nSA = Math.max(0, nSpot - nSB);
+    const lamp = (px, pz, rotY)=>{
+      const g = new THREE.Group();
+      const post = new THREE.Mesh(new THREE.CylinderGeometry(.013,.013,.34,10), matLamp);
+      post.position.y = .17; g.add(post);
+      const boom = new THREE.Mesh(new THREE.CylinderGeometry(.011,.011,.44,10), matLamp);
+      boom.rotation.x = Math.PI/2; boom.position.set(0,.34,.22); g.add(boom);
+      const head = new THREE.Mesh(new THREE.CylinderGeometry(.05,.036,.14,14), matLamp);
+      head.rotation.x = .45; head.position.set(0,.27,.42); g.add(head);
+      g.traverse(o=>{if(o.isMesh) o.castShadow=true;});
+      g.position.set(px, WALL_H*S, pz); g.rotation.y = rotY; root.add(g);
+    };
+    const spot = (pos, tgt)=>{
+      const sp = new THREE.SpotLight(0xF4F8FF, 1.15, 8, Math.PI/5, .55, 1.3);
+      sp.position.copy(pos); sp.target.position.copy(tgt);
+      sp.castShadow = true; root.add(sp); root.add(sp.target);
+    };
+    for(let i=0;i<nSB;i++){
+      const px = B*S*(i+.5)/nSB;
+      lamp(px, T*S/2, 0);
+      spot(new THREE.Vector3(px, WALL_H*S+.26, T*S/2+.44), new THREE.Vector3(px, 1.05, 0));
+    }
+    for(let i=0;i<nSA;i++){
+      const pz = A*S*(i+.5)/nSA;
+      lamp(T*S/2, pz, Math.PI/2);
+      spot(new THREE.Vector3(T*S/2+.44, WALL_H*S+.26, pz), new THREE.Vector3(0, 1.05, pz));
+    }
+  }
+
+  // odecet
+  document.getElementById('rB').textContent = nB+' ×';
+  document.getElementById('rA').textContent = nA+' ×';
+  document.getElementById('rTot').textContent = (nA+nB)+' ×';
+  document.getElementById('rArea').textContent = area.toFixed(1)+' m²';
+  document.getElementById('rSpot').textContent = nSpot+' ×';
+  const rM = document.getElementById('rMini'), rF = document.getElementById('rFit');
+  if(miniFit === null){
+    rM.textContent = 'chybí mini-mesh.js'; rM.className = '';
+    rF.textContent = '—'; rF.className = '';
+  } else {
+    const d = MINI_MESH.dims_mm;
+    rM.textContent = (d.delka/1000).toFixed(2)+' × '+(d.sirka/1000).toFixed(2)+' × '+(d.vyska/1000).toFixed(2)+' m';
+    rM.className = 'hl';
+    rF.textContent = miniFit ? '✓ nevyčnívá (vůle '+CL+' mm)' : '✗ PŘESAHUJE PŮDORYS!';
+    rF.className = miniFit ? 'hl' : '';
+    rF.style.color = miniFit ? '' : 'var(--warn)';
+  }
+  const rA2 = document.getElementById('rArc'), rAF = document.getElementById('rArcFit');
+  if(arcFit === null){
+    rA2.textContent = 'chybí arcade-mesh.js'; rA2.className = '';
+    rAF.textContent = '—'; rAF.className = ''; rAF.style.color = '';
+  } else {
+    const ad = ARCADE_MESH.dims_mm;
+    rA2.textContent = (ad.sirka/1000).toFixed(2)+' × '+(ad.hloubka/1000).toFixed(2)+' × '+(ad.vyska/1000).toFixed(2)+' m';
+    rA2.className = 'hl';
+    rAF.textContent = arcFit ? '✓ nevyčnívá' : '✗ PŘESAH '+arcOver+' mm DO ULIČKY!';
+    rAF.className = arcFit ? 'hl' : '';
+    rAF.style.color = arcFit ? '' : 'var(--warn)';
+  }
+  const rK = document.getElementById('rKiosk'), rKF = document.getElementById('rKioskFit');
+  if(kioskFit === null){
+    rK.textContent = 'chybí kiosk-mesh.js'; rK.className = '';
+    rKF.textContent = '—'; rKF.className = ''; rKF.style.color = '';
+  } else {
+    const kd = KIOSK_MESH.dims_mm;
+    rK.textContent = KIOSK_MESH.count+'× '+(kd.sirka/1000).toFixed(2)+' × '+(kd.hloubka/1000).toFixed(2)+' × '+(kd.vyska/1000).toFixed(2)+' m';
+    rK.className = 'hl';
+    rKF.textContent = kioskFit
+      ? '✓ líc v hraně, mezery '+Math.round(kioskGap)+' mm'
+      : '✗ NEVEJDOU SE do volného úseku!';
+    rKF.className = kioskFit ? 'hl' : '';
+    rKF.style.color = kioskFit ? '' : 'var(--warn)';
+  }
+  const rTv = document.getElementById('rTv'), rTvF = document.getElementById('rTvFit');
+  rTv.textContent = tvc.n+' × '+tvc.W+'×'+tvc.H+' mm';
+  rTv.className = 'hl';
+  rTvF.textContent = tvFit
+    ? '✓ volný (spodní hrana '+tvBot+' mm)'
+    : '✗ NEVEJDOU SE mimo zákryt konstrukcí!';
+  rTvF.className = tvFit ? 'hl' : '';
+  rTvF.style.color = tvFit ? '' : 'var(--warn)';
+  const rMon = document.getElementById('rMon'), rMonF = document.getElementById('rMonFit');
+  rMon.textContent = mbc.W+' × '+mbc.H+' × '+mbc.D+' mm';
+  rMon.className = 'hl';
+  rMonF.textContent = mbFit
+    ? '✓ krajní panel u uličky ('+Math.round(mbBot)+'–'+Math.round(mbc.CY+mbc.H/2)+' mm)'
+    : '✗ NEVEJDE SE na krajní panel!';
+  rMonF.className = mbFit ? 'hl' : '';
+  rMonF.style.color = mbFit ? '' : 'var(--warn)';
+  const rBan = document.getElementById('rBan'), rBanF = document.getElementById('rBanFit');
+  rBan.textContent = 'Ø'+ban.D+' × v'+ban.H+' mm';
+  rBan.className = 'hl';
+  rBanF.textContent = banFit
+    ? '✓ odstup '+Math.round(banClB)+' mm od stěny, textil '+ban.BOT+'–'+banTop+' mm'
+    : '✗ NEVEJDE SE (odstup/limit IAAPA)!';
+  rBanF.className = banFit ? 'hl' : '';
+  rBanF.style.color = banFit ? '' : 'var(--warn)';
+  document.getElementById('hudDim').innerHTML =
+    (B/1000).toFixed(2)+' × '+(A/1000).toFixed(2)+' m &nbsp;·&nbsp; v 2,50 m<br>'+
+    'spára po '+PANEL_W+' mm';
+}
+
+// ============ ORBIT (vlastni, bez zavislosti) ============
+let tgt = new THREE.Vector3(3,1.1,1.5);
+let sph = {r:11, th:-0.72, ph:1.06};
+function place(){
+  cam.position.set(
+    tgt.x + sph.r*Math.sin(sph.ph)*Math.sin(sph.th),
+    tgt.y + sph.r*Math.cos(sph.ph),
+    tgt.z + sph.r*Math.sin(sph.ph)*Math.cos(sph.th)
+  );
+  cam.lookAt(tgt);
+}
+let drag=null, px=0, py=0;
+cv.addEventListener('mousedown', e=>{ drag = e.button===2?'pan':'rot'; px=e.clientX; py=e.clientY; });
+cv.addEventListener('contextmenu', e=>e.preventDefault());
+addEventListener('mouseup', ()=>drag=null);
+addEventListener('mousemove', e=>{
+  if(!drag) return;
+  const dx=e.clientX-px, dy=e.clientY-py; px=e.clientX; py=e.clientY;
+  if(drag==='rot'){
+    sph.th -= dx*.006;
+    sph.ph = Math.max(.12, Math.min(1.53, sph.ph - dy*.006));
+  } else {
+    const s = sph.r*.0013;
+    tgt.x -= (dx*Math.cos(sph.th) + dy*.5*Math.sin(sph.th))*s;
+    tgt.z += (dx*Math.sin(sph.th) - dy*.5*Math.cos(sph.th))*s;
+  }
+  place();
+});
+cv.addEventListener('wheel', e=>{
+  e.preventDefault();
+  sph.r = Math.max(2.2, Math.min(30, sph.r * (1 + Math.sign(e.deltaY)*.09)));
+  place();
+}, {passive:false});
+// dotyk
+let tp=null;
+cv.addEventListener('touchstart', e=>{ if(e.touches.length===1) tp={x:e.touches[0].clientX,y:e.touches[0].clientY}; },{passive:true});
+cv.addEventListener('touchmove', e=>{
+  if(!tp||e.touches.length!==1) return;
+  const t=e.touches[0], dx=t.clientX-tp.x, dy=t.clientY-tp.y;
+  tp={x:t.clientX,y:t.clientY};
+  sph.th -= dx*.007;
+  sph.ph = Math.max(.12, Math.min(1.53, sph.ph - dy*.007));
+  place();
+},{passive:true});
+
+function views(v){
+  const {A,B} = cfg;
+  tgt.set(B*S/2, 1.1, A*S/2);
+  if(v==='iso'){  sph={r:Math.max(9,B*S*1.9), th:-0.72, ph:1.06}; }
+  if(v==='front'){sph={r:Math.max(8,B*S*1.7), th:0,     ph:1.42}; }
+  if(v==='top'){  sph={r:Math.max(9,B*S*1.6), th:0,     ph:0.16}; }
+  place();
+}
+
+// ============ UI ============
+const $ = id => document.getElementById(id);
+
+function slider(id, key, lab, unit='mm'){
+  $(id).addEventListener('input', e=>{
+    cfg[key] = +e.target.value;
+    $(lab).textContent = cfg[key]+' '+unit;
+    build();
+  });
+}
+slider('sB','B','lB'); slider('sA','A','lA'); slider('sT','T','lT');
+
+function upload(fid, tid, uid, key){
+  $(fid).addEventListener('change', e=>{
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = ev=>{
+      new THREE.TextureLoader().load(ev.target.result, t=>{
+        t.encoding = THREE.sRGBEncoding;
+        tex[key] = t;
+        $(tid).textContent = '✓ ' + (f.name.length>24 ? f.name.slice(0,22)+'…' : f.name);
+        $(uid).classList.add('has');
+        build();
+      });
+    };
+    r.readAsDataURL(f);
+  });
+}
+upload('fB','tB','upB','B');
+upload('fA','tA','upA','A');
+upload('fBan','tBan','upBan','ban');
+
+$('bClr').addEventListener('click', ()=>{
+  tex = {B:null,A:null,ban:null};
+  [['tB','upB','＋ Nahrát grafiku — stěna B'],
+   ['tA','upA','＋ Nahrát grafiku — stěna A'],
+   ['tBan','upBan','＋ Nahrát grafiku — poutač (360°)']].forEach(([t,u,l])=>{
+    $(t).textContent = l; $(u).classList.remove('has');
+  });
+  ['fB','fA','fBan'].forEach(i=>$(i).value='');
+  build();
+});
+
+function toggle(id, key, on, off){
+  $(id).addEventListener('click', ()=>{
+    opt[key] = !opt[key];
+    $(id).textContent = opt[key] ? on : off;
+    $(id).classList.toggle('on', opt[key]);
+    build();
+  });
+}
+toggle('bMini','mini','Produkt mini — zobrazen','Produkt mini — skrytý');
+toggle('bArc','arc','Produkt arcade — zobrazen','Produkt arcade — skrytý');
+toggle('bKiosk','kiosk','Kiosky u uličky — zobrazeny','Kiosky u uličky — skryté');
+toggle('bTv','tv','TV 2×55″ na stěně B — zobrazeny','TV 2×55″ na stěně B — skryté');
+toggle('bMon','mon','Krabice 3×27″ na stěně A — zobrazena','Krabice 3×27″ na stěně A — skrytá');
+toggle('bBan','ban','Poutač (baner) nad stánkem — zobrazen','Poutač (baner) nad stánkem — skrytý');
+toggle('bSpot','spot','Spoty GES — zapnuté','Spoty GES — odebrané');
+toggle('bJoint','joint','Spáry panelů — zvýrazněné','Spáry panelů — skryté');
+
+document.querySelectorAll('[data-v]').forEach(b=>
+  b.addEventListener('click', ()=>views(b.dataset.v))
+);
+
+$('bShot').addEventListener('click', ()=>{
+  renderer.render(scene,cam);
+  const a = document.createElement('a');
+  a.download = 'stanek_S4244.png';
+  a.href = cv.toDataURL('image/png');
+  a.click();
+});
+
+// ============ LOOP ============
+function resize(){
+  const w = $('view').clientWidth, h = $('view').clientHeight;
+  renderer.setSize(w,h,false);
+  cam.aspect = w/h; cam.updateProjectionMatrix();
+}
+addEventListener('resize', resize);
+
+build(); views('iso'); resize();
+(function loop(){ requestAnimationFrame(loop); renderer.render(scene,cam); })();
+</script>
+</body>
+</html>

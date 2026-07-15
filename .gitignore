@@ -1,0 +1,4 @@
+assets/export/*
+!assets/export/.gitkeep
+.DS_Store
+__pycache__/

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Podklad ke stánku — IAAPA Expo Europe 2026 · S4244 Pixel Floors</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F6F2; --paper-2:#FFFFFF;
+    --ink:#16171E; --ink-soft:#565761; --ink-faint:#8B8C94;
+    --line:#E3E0D7; --line-2:#D6D3C8;
+    --accent:#4B3FE4; --accent-soft:#EEECFD;
+    --cyan:#22B8CF; --magenta:#D6409F;
+    --ok:#1B7A4B; --ok-soft:#E3F2E9;
+    --pending:#A75E00; --pending-soft:#FBEEDA;
+    --past:#B23B2E; --past-soft:#F8E5E2;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px;}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;}
+
+  header.hero{padding:56px 0 40px;border-bottom:1px solid var(--line);}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin-bottom:22px;}
+  .eyebrow span.dot{color:var(--ink-faint);}
+  h1{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:clamp(30px,5vw,48px);line-height:1.05;letter-spacing:-.02em;margin:0 0 14px;}
+  .lede{font-size:17px;color:var(--ink-soft);max-width:62ch;margin:0 0 30px;}
+  .badges{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:36px;}
+  .badge{font-family:"IBM Plex Mono",monospace;font-size:12.5px;font-weight:500;padding:6px 12px;border:1px solid var(--line-2);border-radius:2px;background:var(--paper-2);color:var(--ink);}
+  .badge.accent{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+  .schematic{background:var(--paper-2);border:1px solid var(--line);border-radius:4px;padding:26px 26px 20px;display:grid;grid-template-columns:1.15fr .85fr;gap:28px;align-items:center;}
+  .schematic figure{margin:0;}
+  .schematic svg{width:100%;height:auto;display:block;}
+  .schem-caption{font-size:13px;color:var(--ink-faint);margin-top:10px;font-family:"IBM Plex Mono",monospace;}
+  .legend{list-style:none;margin:0;padding:0;font-size:13.5px;}
+  .legend li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px dashed var(--line);}
+  .legend li:last-child{border-bottom:none;}
+  .swatch{width:14px;height:14px;border-radius:3px;flex:none;margin-top:4px;border:1px solid rgba(0,0,0,.08);}
+  .legend b{font-weight:600;}
+  .legend .muted{color:var(--ink-soft);}
+
+  section{padding:44px 0;border-bottom:1px solid var(--line);}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:8px;}
+  .sec-num{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--accent);font-weight:600;padding-top:6px;}
+  h2{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:clamp(22px,3.2vw,29px);letter-spacing:-.015em;margin:0;}
+  .sec-intro{color:var(--ink-soft);max-width:66ch;margin:2px 0 26px 42px;}
+  @media(max-width:640px){.sec-intro{margin-left:0;}}
+
+  .spec{background:var(--paper-2);border:1px solid var(--line);border-radius:4px;overflow:hidden;}
+  .row{display:grid;grid-template-columns:210px 1fr auto;gap:18px;padding:16px 20px;border-bottom:1px solid var(--line);align-items:start;}
+  .row:last-child{border-bottom:none;}
+  .row .k{font-weight:600;font-size:14.5px;}
+  .row .v{color:var(--ink-soft);font-size:14.5px;}
+  .row .v strong{color:var(--ink);font-weight:600;}
+  @media(max-width:640px){.row{grid-template-columns:1fr;gap:6px;}.row .tag{justify-self:start;}}
+
+  .tag{font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:4px 9px;border-radius:2px;white-space:nowrap;align-self:start;}
+  .tag.ok{background:var(--ok-soft);color:var(--ok);}
+  .tag.pending{background:var(--pending-soft);color:var(--pending);}
+  .tag.order{background:var(--accent-soft);color:var(--accent);}
+  .tag.past{background:var(--past-soft);color:var(--past);}
+
+  .callout{border:1px solid var(--line-2);border-left:3px solid var(--accent);background:var(--paper-2);border-radius:4px;padding:18px 22px;margin:22px 0 0 42px;font-size:14.5px;}
+  @media(max-width:640px){.callout{margin-left:0;}}
+  .callout b{font-weight:600;}
+  .callout.warn{border-left-color:var(--pending);}
+
+  .pkg{background:var(--paper-2);border:1px solid var(--line);border-radius:4px;padding:8px 0;margin-left:42px;}
+  @media(max-width:640px){.pkg{margin-left:0;}}
+  .pkg-item{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:13px 22px;border-bottom:1px solid var(--line);align-items:start;}
+  .pkg-item:last-child{border-bottom:none;}
+  .pkg-item .ic{font-family:"IBM Plex Mono",monospace;font-weight:600;color:var(--accent);font-size:13px;padding-top:2px;}
+  .pkg-item .t{font-weight:600;font-size:14.5px;}
+  .pkg-item .d{color:var(--ink-soft);font-size:13.5px;margin-top:1px;}
+
+  .gfx{display:grid;grid-template-columns:.9fr 1.1fr;gap:26px;margin-left:42px;align-items:center;background:var(--paper-2);border:1px solid var(--line);border-radius:4px;padding:24px;}
+  @media(max-width:760px){.gfx{grid-template-columns:1fr;margin-left:0;}}
+  .gfx svg{width:100%;height:auto;}
+  .gfx .rows{font-size:14px;}
+  .gfx .gr{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line);}
+  .gfx .gr:last-child{border-bottom:none;}
+  .gfx .gr .lab{font-weight:600;}
+  .gfx .gr .val{font-family:"IBM Plex Mono",monospace;color:var(--accent);font-weight:600;text-align:right;white-space:nowrap;}
+  .gfx .gr .val small{display:block;color:var(--ink-faint);font-weight:400;font-size:11.5px;}
+
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-left:42px;}
+  @media(max-width:760px){.cards{grid-template-columns:1fr;margin-left:0;}}
+  .card{background:var(--paper-2);border:1px solid var(--line);border-radius:4px;padding:20px 22px;}
+  .card h3{font-family:"Space Grotesk",sans-serif;font-size:16.5px;font-weight:600;margin:0 0 8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .card p{margin:0;font-size:14px;color:var(--ink-soft);}
+  .card .mono-note{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--accent);margin-top:12px;}
+
+  .timeline{margin-left:42px;position:relative;}
+  @media(max-width:640px){.timeline{margin-left:0;}}
+  .timeline::before{content:"";position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:var(--line-2);}
+  .tl{position:relative;padding:0 0 22px 34px;}
+  .tl:last-child{padding-bottom:0;}
+  .tl::before{content:"";position:absolute;left:0;top:5px;width:16px;height:16px;border-radius:50%;background:var(--paper-2);border:3px solid var(--accent);}
+  .tl.past::before{border-color:var(--past);}
+  .tl.flag::before{border-color:var(--pending);}
+  .tl .date{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:14px;}
+  .tl .date.past-d{color:var(--past);}
+  .tl .date.flag-d{color:var(--pending);}
+  .tl .what{font-size:14.5px;color:var(--ink-soft);margin-top:2px;}
+  .tl .who{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink-faint);letter-spacing:.03em;text-transform:uppercase;margin-top:4px;}
+
+  .contacts{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-left:42px;}
+  @media(max-width:640px){.contacts{grid-template-columns:1fr;margin-left:0;}}
+  .contact{background:var(--paper-2);border:1px solid var(--line);border-radius:4px;padding:16px 20px;}
+  .contact .role{font-size:12px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.05em;font-family:"IBM Plex Mono",monospace;}
+  .contact .who{font-weight:600;margin:3px 0 4px;font-size:15px;}
+  .contact a{color:var(--accent);text-decoration:none;font-family:"IBM Plex Mono",monospace;font-size:13.5px;word-break:break-all;}
+  .contact a:hover{text-decoration:underline;}
+
+  ul.clean{margin:6px 0 0;padding-left:20px;}
+  ul.clean li{margin:5px 0;color:var(--ink-soft);font-size:14.5px;}
+  ul.clean li strong{color:var(--ink);}
+
+  footer{padding:40px 0 60px;color:var(--ink-faint);font-size:13px;}
+  footer .mono{color:var(--ink-soft);}
+  footer a{color:var(--accent);text-decoration:none;}
+  a.jump{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;}
+  a.jump:hover{border-bottom-color:var(--accent);}
+  @media(max-width:760px){.schematic{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">
+      <span>IAAPA Expo Europe 2026</span><span class="dot">/</span>
+      <span>Londýn · ExCeL</span><span class="dot">/</span>
+      <span>září 2026</span><span class="dot">/</span>
+      <span>Stánek S4244 · Pixel Floors</span>
+    </div>
+    <h1>Podklad ke stánku pro branding</h1>
+    <p class="lede">Kompletní přehled — technika, grafické rozměry pro tisk, jmenovka, poutač, regulace pro design, termíny a kontakty. Systém stánku je <b>GES AMP shell scheme</b>, panely bílé 2,5 m. Pozor: přidáním <b>LED podlahy</b> se z toho stává shell scheme „s konstrukcí", takže platí i řada Space-Only regulací.</p>
+
+    <div class="badges">
+      <span class="badge accent">Rohový stánek · 2 stěny</span>
+      <span class="badge">GES AMP · panely 2,5 m bílé</span>
+      <span class="badge">Grafika 986 × 2474 mm / panel</span>
+      <span class="badge">LED podlaha = zvýšená podlaha</span>
+      <span class="badge">Strana 3 m → max výška 2,5 m</span>
+    </div>
+
+    <div class="schematic">
+      <figure>
+        <svg viewBox="0 0 400 300" role="img" aria-label="Schéma rohového stánku S4244">
+          <defs>
+            <linearGradient id="led" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#4B3FE4"/><stop offset="55%" stop-color="#22B8CF"/><stop offset="100%" stop-color="#D6409F"/>
+            </linearGradient>
+            <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <text x="300" y="24" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="2" fill="#8B8C94" text-anchor="middle">ULIČKA · AQUA KOBEREC</text>
+          <text x="374" y="180" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1" fill="#8B8C94" text-anchor="middle" transform="rotate(90 374 180)">ULIČKA · AQUA</text>
+          <rect x="70" y="60" width="230" height="180" rx="4" fill="url(#led)" opacity="0.92" filter="url(#glow)"/>
+          <rect x="70" y="60" width="230" height="180" rx="4" fill="none" stroke="#fff" stroke-opacity="0.35" stroke-width="1"/>
+          <text x="185" y="150" font-family="Space Grotesk, sans-serif" font-size="15" font-weight="600" fill="#fff" text-anchor="middle">LED podlaha</text>
+          <text x="185" y="170" font-family="IBM Plex Mono, monospace" font-size="10" fill="#fff" fill-opacity="0.85" text-anchor="middle">(zvýšená · nájezd pro vozíčkáře)</text>
+          <rect x="66" y="52" width="238" height="10" rx="2" fill="#16171E"/>
+          <rect x="60" y="52" width="10" height="192" rx="2" fill="#16171E"/>
+          <line x1="70" y1="242" x2="300" y2="242" stroke="#22B8CF" stroke-width="2.5" stroke-dasharray="5 6"/>
+          <line x1="302" y1="60" x2="302" y2="242" stroke="#22B8CF" stroke-width="2.5" stroke-dasharray="5 6"/>
+          <rect x="26" y="96" width="28" height="70" rx="2" fill="#fff" stroke="#4B3FE4" stroke-width="2"/>
+          <text x="40" y="136" font-family="IBM Plex Mono, monospace" font-size="10" fill="#4B3FE4" text-anchor="middle" transform="rotate(-90 40 131)">JMENOVKA</text>
+          <text x="185" y="52" font-family="IBM Plex Mono, monospace" font-size="10" fill="#8B8C94" text-anchor="middle">stěna 3 m · panely bílé 2,5 m</text>
+        </svg>
+        <div class="schem-caption">Orientační schéma stánku S4244 — rozměry dle plánku a výměry.</div>
+      </figure>
+      <ul class="legend">
+        <li><span class="swatch" style="background:#16171E"></span><span><b>Panely</b> <span class="muted">— 2 stěny bez uličky, bílé, 2,5 m (AMP)</span></span></li>
+        <li><span class="swatch" style="background:linear-gradient(135deg,#4B3FE4,#22B8CF,#D6409F)"></span><span><b>LED podlaha</b> <span class="muted">— hlavní vizuál; zvýšená podlaha, platí Raised Floor regulace</span></span></li>
+        <li><span class="swatch" style="background:#fff;border-color:#4B3FE4"></span><span><b>Jmenovka</b> <span class="muted">— z boku, bílá / černé písmo, logo IAAPA + název + číslo</span></span></li>
+        <li><span class="swatch" style="background:#22B8CF"></span><span><b>Uličky</b> <span class="muted">— otevřené strany, uličkový koberec aqua modrý</span></span></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- 01 BALICEK -->
+  <section id="balicek">
+    <div class="sec-head"><span class="sec-num">01</span><h2>Co je v balíčku (GES AMP shell scheme)</h2></div>
+    <p class="sec-intro">Potvrzeno pořadatelem a GES spec listem.</p>
+    <div class="pkg">
+      <div class="pkg-item"><div class="ic">01</div><div><div class="t">Panely 2,5 m, bílé — systém GES AMP</div><div class="d">Bílé shell scheme panely, výška 2,5 m. Bílé pozadí máte nativně.</div></div></div>
+      <div class="pkg-item"><div class="ic">02</div><div><div class="t">Jmenovka</div><div class="d">Bílé pozadí, černé písmo. Plnobarevné logo IAAPA + název firmy + číslo stánku.</div></div></div>
+      <div class="pkg-item"><div class="ic">03</div><div><div class="t">Elektro balíček</div><div class="d">1× zásuvka · 1 LED spot na každé 3 m² · revize a připojení k síti.</div></div></div>
+      <div class="pkg-item"><div class="ic">04</div><div><div class="t">Stánkový koberec — šedý</div><div class="d">Rewind Recyclable Grey. LED podlahou bude překryt.</div></div></div>
+      <div class="pkg-item"><div class="ic">05</div><div><div class="t">Uličkový koberec — aqua modrý</div><div class="d">Rewind Recyclable Aqua Blue (gangway). Pozor při ladění barevnosti u otevřených hran.</div></div></div>
+    </div>
+    <div class="callout"><b>Osvětlení vs. LED podlaha:</b> pro shell scheme je jen jeden typ spotu. Pokud přesvítí, lze světla úplně odebrat — přesně pro váš tlumený efekt LED podlahy. (Viz ale pravidlo o bezpečnostním osvětlení v sekci 07.)</div>
+  </section>
+
+  <!-- 02 GRAFIKA -->
+  <section id="grafika">
+    <div class="sec-head"><span class="sec-num">02</span><h2>Grafické rozměry pro tisk</h2></div>
+    <p class="sec-intro">Nejdůležitější pro přípravu dat. GES AMP dodává grafiku ve dvou formátech — rigidní panely, nebo textil přes celou stěnu. Rozměry z GES spec listu (příklad stěny 3 m).</p>
+    <div class="gfx">
+      <svg viewBox="0 0 240 300" role="img" aria-label="Rozměry AMP panelu">
+        <rect x="60" y="20" width="120" height="250" rx="3" fill="#fff" stroke="#16171E" stroke-width="2"/>
+        <line x1="78" y1="20" x2="78" y2="270" stroke="#D6D3C8" stroke-width="1" stroke-dasharray="3 4"/>
+        <line x1="120" y1="20" x2="120" y2="270" stroke="#D6D3C8" stroke-width="1" stroke-dasharray="3 4"/>
+        <line x1="162" y1="20" x2="162" y2="270" stroke="#D6D3C8" stroke-width="1" stroke-dasharray="3 4"/>
+        <text x="99" y="150" font-family="IBM Plex Mono, monospace" font-size="9" fill="#8B8C94" text-anchor="middle" transform="rotate(-90 99 150)">panel 986</text>
+        <line x1="60" y1="286" x2="180" y2="286" stroke="#4B3FE4" stroke-width="1.5"/>
+        <text x="120" y="298" font-family="IBM Plex Mono, monospace" font-size="10" fill="#4B3FE4" text-anchor="middle">stěna ≈ 2970 mm</text>
+        <line x1="44" y1="20" x2="44" y2="270" stroke="#4B3FE4" stroke-width="1.5"/>
+        <text x="30" y="150" font-family="IBM Plex Mono, monospace" font-size="10" fill="#4B3FE4" text-anchor="middle" transform="rotate(-90 30 150)">2474 mm</text>
+      </svg>
+      <div class="rows">
+        <div class="gr"><span class="lab">AMP panely (rigidní)</span><span class="val">986 × 2474 mm<small>6 ks na příklad stěny 3 m</small></span></div>
+        <div class="gr"><span class="lab">AMP textil (fabric)</span><span class="val">2970 × 2474 mm<small>2 ks — celá stěna bez spár</small></span></div>
+        <div class="gr"><span class="lab">Výška grafiky</span><span class="val">2474 mm<small>panel konstrukčně 2,5 m</small></span></div>
+        <div class="gr"><span class="lab">Jmenovka</span><span class="val">bílá / černé písmo<small>logo IAAPA + název + číslo</small></span></div>
+      </div>
+    </div>
+    <div class="callout warn"><b>Velikost stánku:</b> rozměry jsou z <b>3 × 3 m příkladu</b>. Váš S4244 má jednu stěnu <b>3 m</b> a druhou delší → panelů přibude. Vyžádejte si u GES přesný <b>počet a rozpal panelů pro S4244</b> (rigidní mají spáry po 986 mm, textil je bez spár).</div>
+  </section>
+
+  <!-- 03 PANELY -->
+  <section id="panely">
+    <div class="sec-head"><span class="sec-num">03</span><h2>Panely &amp; konstrukce</h2></div>
+    <p class="sec-intro">Většina parametrů potvrzena. Otevřené: povrch panelů (pro vlastní polep) a přesná nosnost pro TV.</p>
+    <div class="spec">
+      <div class="row"><div class="k">Výška panelů</div><div class="v"><strong>2,5 m</strong>, grafická plocha 2474 mm.</div><span class="tag ok">Potvrzeno</span></div>
+      <div class="row"><div class="k">Barva panelů</div><div class="v"><strong>Bílé</strong> (AMP). Bílé pozadí značky sedí bez úprav.</div><span class="tag ok">Potvrzeno</span></div>
+      <div class="row"><div class="k">Rozvržení (roh)</div><div class="v"><strong>2 stěny</strong> (zadní + boční), <strong>2 otevřené strany do uliček</strong>.</div><span class="tag ok">Potvrzeno</span></div>
+      <div class="row"><div class="k">Max. výška prvků</div><div class="v">Strana 3 m → prvky na této straně <strong>max. 2,5 m</strong>. Max. stavba 4 m; nad 4 m = complex stand (statika + poplatek); absolutní strop 6 m.</div><span class="tag ok">Regulace</span></div>
+      <div class="row"><div class="k">Montáž TV</div><div class="v">TV lze namontovat. Přesnou nosnost vyžádat u GES.</div><span class="tag pending">Nosnost → GES</span></div>
+      <div class="row"><div class="k">Povrch panelů</div><div class="v">Pro vlastní polep/fólii znát povrch a materiál — vyžádat u GES. (Standard je objednat AMP grafiku.)</div><span class="tag pending">Čeká na GES</span></div>
+      <div class="row"><div class="k">Osvětlení</div><div class="v">1 LED spot / 3 m², jediný typ. Lze odebrat — pozor na bezpečnostní osvětlení (sekce 07).</div><span class="tag ok">Potvrzeno</span></div>
+    </div>
+  </section>
+
+  <!-- 04 JMENOVKA -->
+  <section id="jmenovka">
+    <div class="sec-head"><span class="sec-num">04</span><h2>Jmenovka (nameboard)</h2></div>
+    <p class="sec-intro">Standardizovaná — obsah i barevnost dané. Vlastní identitu řešte přes panely, LED podlahu a volně stojící prvky.</p>
+    <div class="spec">
+      <div class="row"><div class="k">Provedení</div><div class="v"><strong>Bílé pozadí, černé písmo.</strong></div><span class="tag ok">Potvrzeno</span></div>
+      <div class="row"><div class="k">Obsah</div><div class="v">Plnobarevné logo IAAPA + název firmy + číslo stánku. Vlastní logo firmy zde není standardem.</div><span class="tag ok">Potvrzeno</span></div>
+      <div class="row"><div class="k">Umístění</div><div class="v">Shell scheme bez čela → jmenovka <strong>z boku</strong>. Grafika nesmí přesahovat na sousední stánky (sekce 07).</div><span class="tag ok">Potvrzeno</span></div>
+      <div class="row"><div class="k">Výroba / rozměr</div><div class="v">Tiskne GES z formuláře; přesný rozměr vyžádat: <span class="mono">iaapaeu@ges.com</span>.</div><span class="tag order">K ověření</span></div>
+    </div>
+  </section>
+
+  <!-- 05 POUTAC -->
+  <section id="poutac">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Závěsný poutač (hanging sign)</h2></div>
+    <p class="sec-intro">Z regulací teď máme konkrétní limity. Rigging provádí jen oficiální kontraktor a je nutné dodat hmotnosti a kótované výkresy.</p>
+    <div class="spec">
+      <div class="row"><div class="k">Max. výška</div><div class="v"><strong>Banner/signage max. 7 m</strong> k horní hraně trusu; grafika připevněná na trus <strong>max. 6 m</strong> k horní hraně.</div><span class="tag ok">Regulace</span></div>
+      <div class="row"><div class="k">Odstup od dělicí stěny</div><div class="v">Bez brandingu směrem ke stěně: <strong>min. 0,5 m</strong>. S brandingem směrem ke stěně: <strong>min. 1 m</strong>.</div><span class="tag ok">Regulace</span></div>
+      <div class="row"><div class="k">Rigging</div><div class="v">Pouze oficiální rigging kontraktor. Nutno dodat hmotnostní a kótované výkresy rigging oddělení pro cenovou nabídku.</div><span class="tag order">K objednání</span></div>
+      <div class="row"><div class="k">Rozměry / hmotnost</div><div class="v">Přesné max. rozměry a hmotnost pro tento stánek vyžádat u pořadatele/venue.</div><span class="tag pending">Čeká na ověření</span></div>
+      <div class="row"><div class="k">De-rigging</div><div class="v">Demontáž riggingu <strong>není povolena 24. 9. 2026</strong> (breakdown).</div><span class="tag ok">Regulace</span></div>
+    </div>
+    <div class="callout warn"><b>Termíny riggingu:</b> zvýhodněná sazba do <b>5. srpna</b>, striktní uzávěrka <b>9. srpna 2026</b>.</div>
+  </section>
+
+  <!-- 06 BRANDING -->
+  <section id="branding">
+    <div class="sec-head"><span class="sec-num">06</span><h2>Poznámky k brandingu</h2></div>
+    <p class="sec-intro">Shrnutí do rozhodnutí pro vizuál.</p>
+    <div class="cards">
+      <div class="card"><h3><span class="tag ok">Vyřešeno</span> Grafika panelů</h3><p>Data na moduly <b>986 × 2474 mm</b> (rigidní, spáry) nebo <b>2970 × 2474 mm</b> (textil, bez spár). Textil je pro celoplošný vizuál čistší.</p><div class="mono-note">→ potvrdit počet panelů pro S4244</div></div>
+      <div class="card"><h3><span class="tag ok">Vyřešeno</span> Bílé pozadí</h3><p>Panely bílé nativně — brandová bílá sedí bez celoplošného přebarvení. Prostor pro logo, claim a plochy.</p><div class="mono-note">→ řezaná fólie i AMP grafika možné</div></div>
+      <div class="card"><h3><span class="tag pending">Pozor</span> LED podlaha = konstrukce</h3><p>Zvýšená podlaha spouští Raised Floor regulace, nájezd pro vozíčkáře, zakryté kabely a nejspíš Risk Assessment + Method Statement.</p><div class="mono-note">→ řešit se stavbou i pořadatelem</div></div>
+      <div class="card"><h3><span class="tag pending">Pozor</span> Ohled na sousedy</h3><p>Grafika nesmí přesahovat na sousední stánky přes dělicí stěnu, žádná blikající světla, světlo nesmí zasahovat vedle. Jmenovka pevná.</p><div class="mono-note">→ vizuál držet ve své ploše</div></div>
+    </div>
+  </section>
+
+  <!-- 07 REGULACE -->
+  <section id="regulace">
+    <div class="sec-head"><span class="sec-num">07</span><h2>Regulace, které řídí design</h2></div>
+    <p class="sec-intro">Vytaženo z oficiálních Space-Only regulací IAAPA. Máte shell scheme, ale s vlastní konstrukcí (LED podlaha) se řada pravidel týká i vás. Není to úplný výčet — finální soulad je na vás a vašem staviteli.</p>
+    <div class="spec">
+      <div class="row"><div class="k">Výška stavby</div><div class="v">Stánek do 3 m šířky → <strong>max. 2,5 m</strong> (kurtoazie k sousedům). Max. stavba <strong>4 m</strong>; nad 4 m = complex stand (statické výpočty, certifikát, poplatek). Absolutní strop <strong>6 m</strong> od podlahy haly.</div><span class="tag ok">Platí</span></div>
+      <div class="row"><div class="k">Zvýšená / LED podlaha</div><div class="v">Řídí se <strong>Raised Floor regulacemi</strong>. Nic nesmí být pevně kotveno do podlahy haly. Koberec jen schválenou páskou (jinak poplatek za zbytky). Nízký nájezd pro <strong>přístup vozíčkářů</strong>.</div><span class="tag pending">Týká se LED</span></div>
+      <div class="row"><div class="k">Kabely</div><div class="v">Kabely na/pod podlahou v místech pro návštěvníky musí být <strong>zakryté</strong> a viditelně označené. El. kabely a voda <strong>nesmí vést přes uličky</strong>. Pro kabeláž do plochy podlahy případně objednat platformu.</div><span class="tag pending">Týká se LED</span></div>
+      <div class="row"><div class="k">Tlumené osvětlení</div><div class="v">Pokud tlumíte/negujete obecné bezpečnostní osvětlení haly, musíte na vlastní náklady doplnit <strong>nouzové osvětlení</strong> (min. 1,5 lux „anti-panic", UPS/akumulátor) + piktogramy únikových cest.</div><span class="tag pending">Pozor u ambientu</span></div>
+      <div class="row"><div class="k">Materiály / požární</div><div class="v"><strong>Žádná dřevotříska / MDF / LDF</strong> na nosné konstrukce. Dekorace bez hořlavých materiálů (sláma, hobliny, suché listí). Certifikáty materiálů na vyžádání venue.</div><span class="tag ok">Platí</span></div>
+      <div class="row"><div class="k">Signage k sousedům</div><div class="v">Grafika nesmí <strong>přesahovat na sousední stánky</strong> tam, kde je dělicí stěna. <strong>Žádná blikající světla.</strong> Světlo nesmí zasahovat na sousedy.</div><span class="tag ok">Platí</span></div>
+      <div class="row"><div class="k">Stropy nad stánkem</div><div class="v">Jen z materiálu s <strong>požárním certifikátem a propustného pro vodu</strong>. Se stropem může být nutné podsvícené únikové značení.</div><span class="tag pending">Podmíněno</span></div>
+      <div class="row"><div class="k">Dělicí stěny</div><div class="v">Pokud stavíte: min. výška <strong>2,5 m</strong>; nad 2,5 m opláštit oboustranně, rub v <strong>neutrální barvě bez log/brandingu</strong>.</div><span class="tag ok">Platí</span></div>
+      <div class="row"><div class="k">Sloupy v hale</div><div class="v">V halách ExCeL <strong>nejsou sloupy</strong> — volné rozvržení bez omezení sloupy.</div><span class="tag ok">Dobrá zpráva</span></div>
+    </div>
+    <div class="callout warn"><b>Nejdůležitější k akci:</b> shell scheme <b>s konstrukcí</b> (LED podlaha) → dle regulací je nutné odevzdat <b>Risk Assessment i Method Statement do 24. 7. 2026</b>. Rozsah si potvrď u Operations, ať víš, co přesně dodat.</div>
+  </section>
+
+  <!-- 08 TERMINY -->
+  <section id="terminy">
+    <div class="sec-head"><span class="sec-num">08</span><h2>Klíčové termíny</h2></div>
+    <p class="sec-intro">Uzávěrky z bulletinu a regulací. K dnešnímu dni (6. 7. 2026) je platba za booth již po termínu.</p>
+    <div class="timeline">
+      <div class="tl past"><div class="date past-d">19. června 2026 · PO TERMÍNU</div><div class="what">Finální platba za booth. Guest passy jen pro plně uhrazené boothy.</div><div class="who">ExhibitSales@IAAPA.org</div></div>
+      <div class="tl flag"><div class="date flag-d">24. července 2026 · DŮLEŽITÉ</div><div class="what">Stand Layout Form · Rizikové posouzení (všichni). <strong>Risk Assessment + Method Statement</strong> pro shell scheme s konstrukcí (LED podlaha).</div><div class="who">Týká se vás kvůli LED podlaze</div></div>
+      <div class="tl"><div class="date">5. srpna 2026</div><div class="what">Zvýhodněná sazba pipe &amp; rigging (venue).</div><div class="who">Venue — ExCeL</div></div>
+      <div class="tl"><div class="date">9. srpna 2026</div><div class="what">Striktní uzávěrka pipe &amp; rigging.</div><div class="who">Venue — ExCeL</div></div>
+      <div class="tl"><div class="date">10. srpna 2026</div><div class="what">Nejlepší ceny služeb GES.</div><div class="who">GES</div></div>
+      <div class="tl"><div class="date">14. srpna 2026</div><div class="what">Striktní uzávěrka elektro objednávek GES.</div><div class="who">GES</div></div>
+      <div class="tl"><div class="date">24. září 2026</div><div class="what">Breakdown — de-rigging poutače NENÍ v tento den povolen.</div><div class="who">Venue — ExCeL</div></div>
+    </div>
+  </section>
+
+  <!-- 09 KONTAKTY -->
+  <section id="kontakty">
+    <div class="sec-head"><span class="sec-num">09</span><h2>Kontakty</h2></div>
+    <p class="sec-intro">Kam se obracet podle typu dotazu.</p>
+    <div class="contacts">
+      <div class="contact"><div class="role">Počet/rozpal panelů, povrch, nosnost TV, rozměr jmenovky, elektro</div><div class="who">GES</div><a href="mailto:iaapaeu@ges.com">iaapaeu@ges.com</a></div>
+      <div class="contact"><div class="role">Provoz, poutač, RA/Method Statement, komplexní konstrukce</div><div class="who">IAAPA EMEA Operations</div><a href="mailto:OperationsEMEA@IAAPA.org">OperationsEMEA@IAAPA.org</a></div>
+      <div class="contact"><div class="role">Platby, prostor, guest passy</div><div class="who">Exhibit Sales</div><a href="mailto:ExhibitSales@IAAPA.org">ExhibitSales@IAAPA.org</a></div>
+      <div class="contact"><div class="role">Rigging, piped services, zvýšená podlaha</div><div class="who">ExCeL London — přes ERC</div><a href="mailto:OperationsEMEA@IAAPA.org">viz Operations / ERC</a></div>
+    </div>
+  </section>
+
+  <!-- 10 CO DAL -->
+  <section id="dalsi">
+    <div class="sec-head"><span class="sec-num">10</span><h2>Co je ještě dobré vědět</h2></div>
+    <ul class="clean" style="margin-left:42px;">
+      <li><strong>Stánek S4244 „Pixel Floors"</strong> — rohový; sousedé dle plánku: House of Play (Europe), Blacklight Attractions ad.</li>
+      <li><strong>Přístupnost</strong> — servisní/prodejní pult nízký přístupový bod max. 760 mm; u zvýšené podlahy nájezd pro vozíčkáře.</li>
+      <li><strong>Space-Only regulace</strong> jsou orientační výčet — konečná odpovědnost za soulad je na vystavovateli a staviteli.</li>
+      <li><strong>Webinář</strong> — 9. 7. 2026, 15:00 CEST; kdo se nepřipojí, dostane záznam.</li>
+    </ul>
+    <div class="callout" style="margin-left:42px;"><b>Odkazy „here" z e-mailu a webu:</b> rozmístění spotů, regulace poutačů, Raised Floor Regulations, šablony Risk Assessment / Method Statement a objednávkové odkazy jsou v e-mailu / na webu IAAPA — otevři přímo odtud.</div>
+  </section>
+
+  <footer>
+    <p class="mono">Podklad sestaven z korespondence HTDM ↔ IAAPA / GES · odpověď pořadatele 3. 7. 2026 · GES AMP shell spec · Space-Only regulace IAAPA · Bulletin #2 · stav k 6. 7. 2026.</p>
+    <p>Rychlé skoky: <a class="jump" href="#balicek">Balíček</a> · <a class="jump" href="#grafika">Grafika</a> · <a class="jump" href="#panely">Panely</a> · <a class="jump" href="#jmenovka">Jmenovka</a> · <a class="jump" href="#poutac">Poutač</a> · <a class="jump" href="#branding">Branding</a> · <a class="jump" href="#regulace">Regulace</a> · <a class="jump" href="#terminy">Termíny</a> · <a class="jump" href="#kontakty">Kontakty</a></p>
+  </footer>
+</div>
+
+</body>
+</html>

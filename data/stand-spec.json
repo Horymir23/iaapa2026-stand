@@ -1,0 +1,300 @@
+{
+  "$comment": "JEDINÝ ZDROJ PRAVDY pro rozměry stánku. Nikdy needituj rozměry jinde – uprav zde a přegeneruj model.",
+  "meta": {
+    "projekt": "IAAPA Expo Europe 2026 — branding stánku",
+    "stanek": "S4244",
+    "nazev_na_plane": "Pixel Floors",
+    "vystavovatel": "HTDM",
+    "misto": "ExCeL London",
+    "termin_show": "2026-09",
+    "typ_stanku": "shell scheme (GES AMP), rohový",
+    "system": "GES AMP",
+    "stav_k": "2026-07-15"
+  },
+
+  "units": "mm",
+
+  "confirmed": {
+    "$comment": "Potvrzeno písemně pořadatelem (3.7.2026) nebo GES spec listem. NEMĚNIT bez nového podkladu.",
+    "wall_height": 2500,
+    "panel_module_width": 986,
+    "graphic_height": 2474,
+    "graphic_panel_rigid": { "w": 986, "h": 2474 },
+    "graphic_fabric": { "w": 2970, "h": 2474 },
+    "wall_a_length": 2970,
+    "panel_color": "bílá",
+    "walls_count": 2,
+    "open_sides": 2,
+    "corner_stand": true,
+    "floor_nominal": {
+      "$comment": "Z půdorysu haly (data/preview.webp): kóty 3 × 6 m, výměra 18 m² — dvě spojená místa 3×3 m. POZOR: nominální výměra plochy ≠ stavební délka stěn; stěny stojí uvnitř plochy (viz assumed.wall_b_length).",
+      "width_mm": 3000,
+      "depth_mm": 6000,
+      "area_m2": 18,
+      "joined_units": "2× místo 3×3 m",
+      "source": "půdorys haly, data/preview.webp (13.7.2026)"
+    },
+    "neighbors": {
+      "$comment": "Z půdorysu haly. Relevantní kvůli regulations.signage — grafika nesmí přesahovat k sousedům přes dělicí stěnu.",
+      "behind_wall_a_3m": "S4242 — Blacklight Attractions",
+      "behind_wall_b_6m": "S4345 — House of Play (Europe) Limited"
+    },
+    "nameboard": {
+      "background": "bílá",
+      "font_color": "černá",
+      "content": ["logo IAAPA Expo Europe (plnobarevné)", "název firmy", "číslo stánku"],
+      "custom_logo_allowed": false,
+      "placement": "z boku stánku (shell scheme nemá fascii)",
+      "printed_by": "GES"
+    },
+    "electrics": {
+      "sockets": 1,
+      "socket_power_kw": 3,
+      "spotlights_rule": "1 LED spot na každé 3 m² plochy stánku",
+      "spotlight_types_available": 1,
+      "spotlights_removable": true
+    },
+    "carpet_stand": "šedý (Rewind Recyclable Grey)",
+    "carpet_gangway": "aqua modrý (Rewind Recyclable Aqua Blue)",
+    "freestanding_max_height_on_3m_side": 2500
+  },
+
+  "assumed": {
+    "$comment": "ODHADY – nutno potvrdit u GES než půjde cokoli do výroby.",
+    "wall_b_length": {
+      "value": 5940,
+      "reason": "Nominální hloubka 6000 mm je POTVRZENÁ půdorysem (confirmed.floor_nominal) — odhad je jen STAVEBNÍ délka stěny. Analogie s potvrzenou stěnou A (2970 mm na nominální 3 m): 2 × 2970 = 5940 mm = 6 modulů 986 mm + 5 spár 4,8 mm. Přesný počet a rozpal panelů musí potvrdit GES.",
+      "verify_with": "iaapaeu@ges.com"
+    },
+    "panel_thickness": {
+      "value": 40,
+      "reason": "GES spec list tloušťku neuvádí",
+      "verify_with": "iaapaeu@ges.com"
+    }
+  },
+
+  "product": {
+    "$comment": "Exponát 'mini' — LED podlahová aréna (rastr 6×12 dlaždic 300×300 mm, zábradlí s plexi v 1200, věž s 50\" monitorem v 1800, vstupní branka). Rozměry ZMĚŘENY z model/mini.stp (FreeCAD, bbox sestavy) — fakt modelu, ne odhad. Umístění zvoleno 13.7.2026: roh stánku, vůle 50 mm od obou stěn (panely GES nesmí nést zátěž, neopírat).",
+    "name": "mini",
+    "source_file": "model/mini.stp",
+    "dims_mm": { "length": 4677, "width": 1901, "height": 1803 },
+    "placement": {
+      "where": "vnitřní roh stánku (styk stěn A a B)",
+      "long_side_along": "stěna B",
+      "monitor_tower": "u stěny A (v rohu); vstupní branka na opačném konci, směrem do uličky",
+      "clearance_mm": 50
+    },
+    "modifications": {
+      "$comment": "Požadavky z 13.7.2026: (1) NEZAHRNUJE se jen NADPODLAŽNÍ část předního zábradlí (strana do uličky: sloupky, horní rám, plexi, přední rám vstupní branky). ZŮSTÁVÁ kompletní rám podlahy i podesty a malý plůtek mezi věží s TV a přední hranou — do konstrukce podlahy se nezasahuje. Filtr is_front_fence v model/export_mini.py; mini.stp zůstává beze změny; rozměry v dims_mm jsou i nadále za celý výrobek vč. plotu. (2) Ocelová konstrukce se zobrazuje BÍLE lakovaná (materiál ve viewer.html).",
+      "front_fence_hidden": true,
+      "steel_color": "bílá",
+      "floor_frame_gaps_filled": "díry v rámu podlahy po odstraněných sloupcích branky jsou zaslepené (plné kvádry do výšky rámu 80 mm)",
+      "entrance_deck": "podesta u vstupu má podlahu s ČERNÝM kobercem (deska 1805×700 mm, povrch v úrovni rámu podlahy)",
+      "led_segments": "dlaždice arény mají svítící vnitřní LED segmenty (rám 25 mm černý, panel 249×249 mm; 5 statických barev dle fotek produktu z 13.7.2026 — BEZ blikání kvůli regulím)"
+    },
+    "fit_check": {
+      "$comment": "Při clearance 50: podél B potřeba 40+50+4677=4767 z 5940 mm (rezerva 1173 — ale délka B je ASSUMED); podél A 40+50+1901=1991 z 2970 mm (rezerva 979, potvrzeno); výška 1803 < 2500 vč. limitu na 3m straně. Přepočítává model/export_mini.py.",
+      "fits": true,
+      "depends_on_assumed": ["wall_b_length", "panel_thickness"]
+    },
+    "regenerate": "freecadcmd model/export_mini.py  →  web/mini-mesh.js + model/mini_v_stanku.stl/.dae"
+  },
+
+  "product_arcade": {
+    "$comment": "Druhý exponát 'Arcade' — herní LED podlaha s totemem (dle vizualizací dodaných 13.7.2026). Rozměry ZADANÉ uživatelem 13.7.2026: bedna (totem s obrazovkou) v1800 × š700 × h250, podlaha 1200×2400 (rastr 4×8 dlaždic 300 mm, výška 80 jako u mini), šikmina 80×80 po celém obvodu podlahy. Model je syntetický — žádný STEP, staví ho model/export_arcade.py.",
+    "name": "arcade",
+    "dims_mm": {
+      "bedna": { "height": 1800, "width": 700, "depth": 250 },
+      "podlaha": { "width": 1200, "length": 2400, "tile": 300, "height": 80 },
+      "sikmina": 80,
+      "footprint": { "width": 1360, "depth": 2810, "height": 1800 }
+    },
+    "placement": {
+      "where": "vedle produktu mini (na volné části u stěny B), bedna s obrazovkou u stěny B, podlaha směrem do stánku",
+      "gap_from_mini_mm": 0,
+      "clearance_from_wall_b_mm": 50
+    },
+    "fit_check": {
+      "$comment": "NEVEJDE SE podél stěny B: potřeba 40+50+4677+0+1360 = 6127 z 5940 mm → PŘESAH 187 mm přes hranu stánku do uličky (délka B je navíc ASSUMED). Hloubka OK: 40+50+2810 = 2900 z 2970 mm. Možnosti řešení: potvrdit skutečnou délku B u GES, zmenšit vůle, vynechat boční šikminy (−160 mm, pořád −27 chybí), otočit/přemístit. ROZHODNUTÍ ČEKÁ NA UŽIVATELE.",
+      "fits": false,
+      "overhang_along_b_mm": 187
+    },
+    "regenerate": "python3 model/export_arcade.py  →  web/arcade-mesh.js + model/arcade_v_stanku.stl/.dae"
+  },
+
+  "product_kiosk": {
+    "$comment": "Dva kiosky 'pult + monitor' podél delší otevřené strany (zadání 15.7.2026). Odvozeno z pultu se šikmým displejem u vstupní branky produktu mini (díly PLECH MONITOR VRCH/SPODEK + DISPLEJ/DISPLEJ001 v mini.stp) — rozměry ZMĚŘENY z modelu (fakt modelu, ne odhad): šikmá deska 30° od vodorovné, skříň displeje 517,6 × 313,5 mm, aktivní plocha 417,6 × 214,1 mm. Původní pult je 700 mm široký a displej na něm sedí asymetricky (rámečky 151,2 / 31,2 mm) — šířka kiosku dle zadání = skříň + 2× menší rámeček 31,2 = přesně 580 mm. Tělo plné, bílé, až na zem (původní konzole visela mezi sloupky branky).",
+    "name": "kiosk",
+    "count": 2,
+    "derived_from": "model/mini.stp — pult s displejem u vstupní branky",
+    "dims_mm": {
+      "body": { "width": 580, "depth": 340, "height_back": 1196, "height_front": 1000 },
+      "top_slope_deg": 30,
+      "monitor": {
+        "housing": { "width": 517.6, "length_on_slope": 313.5 },
+        "screen": { "width": 417.6, "length_on_slope": 214.1 },
+        "margin_side": 31.2
+      }
+    },
+    "placement": {
+      "where": "podél delší otevřené strany (hrana do uličky naproti stěně B)",
+      "orientation": "šikmina s monitorem klesá do uličky — lidé přistupují přímo z uličky",
+      "front_flush_with_edge": true,
+      "distribution": "rovnoměrně ve volném úseku hrany mezi stěnou A a podlahou arcade (3 stejné mezery)"
+    },
+    "fit_check": {
+      "$comment": "Volný úsek podél hrany: od líce stěny A (x=40) po začátek arcade (40+50+4677=4767) → 4727 mm; 2× 580 + 3 mezery po 1189 mm. Hloubkově: zadní hrana kiosku na y=2630 > jižní hrana mini 1991 (vůle 639 mm). Výška 1196 < 2500 (limit na 3m straně). ZÁVISÍ na assumed (tloušťka panelu) a na pozici arcade, jejíž přesah 187 mm je stále nevyřešený. Přepočítává model/export_kiosk.py a web/viewer.html (build()).",
+      "fits": true,
+      "gap_between_mm": 1189,
+      "depends_on_assumed": ["panel_thickness", "wall_b_length"]
+    },
+    "regenerate": "python3 model/export_kiosk.py  →  web/kiosk-mesh.js + model/kiosk_v_stanku.stl/.dae"
+  },
+
+  "wall_tvs": {
+    "$comment": "Dvě 55\" TV na stěně B nad konstrukcí produktů (zadání 13.7.2026). Rozměry TV = ODHAD běžného 55\" modelu — potvrdit dle konkrétního typu. Umístění: každá TV centrovaná na STŘED PANELU (VESA držák se nesmí rozkročit přes spáru; nosnost panelu = open_question!). Viewer volí panely automaticky mimo zákryt vysokých konstrukcí: věž mini s monitorem (x 90–351 mm, v. 1803) a bedna arcade (x 5097–5797 mm, v. 1800) → volná zóna x 351–5097 mm. S výchozími rozměry vychází panely č. 2 a 4: TV1 x 869–2099, TV2 x 2850–4080 mm. Výška: spodní hrana 1495 mm = nad zábradlím arény mini (1200 mm), horní hrana 2205 mm < grafická plocha 2474. Celé TV nad 1800 mm (výška věže/bedny) se nevejde — zbývá jen 697 mm do horní hrany stěny 2500.",
+    "count": 2,
+    "diagonal_inch": 55,
+    "dims_mm": { "width": 1230, "height": 710, "depth": 60, "mount_standoff": 35 },
+    "placement": {
+      "wall": "B",
+      "center_height_mm": 1850,
+      "align": "střed TV = střed panelu (držák v jediném modulu)",
+      "min_gap_between_mm": 300,
+      "keep_clear_of": ["věž mini s monitorem", "bedna arcade"]
+    }
+  },
+
+  "wall_monitor_box": {
+    "$comment": "Bílá krabice se 3× 27\" monitorem pod sebou, zavěšená na stěně A u uličky (zadání + nákres 15.7.2026). Rozměry ZADANÉ uživatelem: krabice š600 × v1040 × h80 mm, obrazovka 600 × 337,5 mm (= přesně 16:9, odpovídá 27\"). 3 obrazovky pod sebou: 3 × 337,5 = 1012,5 z 1040 mm → zbývá 27,5 mm = 4 mezery po ~6,9 mm (nahoře / 2× mezi / dole). Umístění: KRAJNÍ panel stěny A u uličky, krabice centrovaná na střed panelu (závěs drží v jediném modulu, ne přes spáru; nosnost panelu = open_question, stejně jako u TV). Výška středu 1500 mm nad podlahou = ODHAD (oční úroveň) — uživatel výšku nezadal, potvrdit.",
+    "name": "monitor_box",
+    "count_screens": 3,
+    "screen_diagonal_inch": 27,
+    "color": "bílá",
+    "dims_mm": {
+      "box": { "width": 600, "height": 1040, "depth": 80 },
+      "screen": { "width": 600, "height": 337.5 }
+    },
+    "placement": {
+      "wall": "A",
+      "where": "krajní panel u uličky (třetí od rohu)",
+      "align": "střed krabice = střed panelu",
+      "center_height_mm": 1500,
+      "center_height_note": "ODHAD — nezadáno, zvolena oční úroveň; krabice pak visí 980–2020 mm nad podlahou"
+    },
+    "fit_check": {
+      "$comment": "Krajní panel stěny A: 1984–2970 mm od rohu, střed 2477; krabice 600 mm → 2177–2777, vejde se do jednoho modulu (600 < 986). Produkt mini končí podél stěny A na 40+50+1901 = 1991 mm → mezera 186 mm. Výška 980–2020 < 2500 (limit na 3m straně). Přepočítává web/viewer.html (build()).",
+      "fits": true,
+      "gap_from_mini_mm": 186
+    }
+  },
+
+  "hanging_banner": {
+    "$comment": "Kruhový závěsný poutač Zip-up Round (Showdown Displays / Jansen Display) NAD stánkem — vypínací látka potištěná po celém obvodu (360°). Zadání 16.7.2026: nahrát do něj grafiku. Uživatel chtěl co NEJVĚTŠÍ povolený průměr. VYBRÁN Ø1520 (menší z nabízených), protože větší Ø3050 se dle regulí IAAPA nad tento stánek NEVEJDE — viz size_choice. Rozměry produktu = z katalogu Showdown Displays (shop.showdowndisplays.eu) → fakt výrobku. VÝŠKA ZAVĚŠENÍ je ODHAD (uživatel nezadal). Model je syntetický válec — staví ho model/export_banner.py; viewer staví vlastní válec s UV pro nahranou grafiku.",
+    "name": "banner",
+    "product": "Zip-up Round (kruhový závěsný banner, 360° textil)",
+    "source": "shop.showdowndisplays.eu/zip-up-round (S = Ø1520, L = Ø3050)",
+    "chosen_size": "S",
+    "dims_mm": { "diameter": 1520, "height": 610 },
+    "radius_mm": 760,
+    "weight_kg": 6.7,
+    "suspension_cable_mm": 257,
+    "size_choice": {
+      "$comment": "Uživatel prioritně chtěl větší Ø3050 (L). NELZE — viz reasons_L_rejected. Vybrán Ø1520 (S) jako největší POVOLENÝ průměr.",
+      "options": [
+        { "size": "L", "diameter": 3050, "height": 760, "weight_kg": 11, "usable": false },
+        { "size": "S", "diameter": 1520, "height": 610, "weight_kg": 6.7, "usable": true }
+      ],
+      "selected": "S",
+      "reasons_L_rejected": [
+        "Ø3050 je širší než kratší rozměr stánku (stěna A = 2970 mm) — sám o sobě přesahuje půdorys.",
+        "IAAPA hanging_sign: branding směřující k dělicí stěně = odstup ≥1000 mm (regulations.hanging_sign.min_clearance_if_branded_toward_wall). Baner je potištěný 360°, odstup proto platí od OBOU dělicích stěn (A i B) → v užším směru zbývá jen A−1000 ≈ 1970 mm využitelné šířky; Ø3050 se tam nevejde.",
+        "signage: grafika/konstrukce nesmí přesáhnout na sousední stánky (S4242 za A, S4345 za B) ani do uliček — Ø3050 by přesáhl."
+      ],
+      "decided": "2026-07-16 (uživatel potvrdil Ø1520)"
+    },
+    "placement": {
+      "$comment": "Zavěšen nad stánkem. VODOROVNĚ: střed podél stěny B = B/2; v užším směru (od líce stěny B, y=0) střed = (A+1000)/2, aby zůstal odstup ≥1000 mm od stěny B a poutač nepřesáhl přední hranu půdorysu. SVISLE: spodní hrana textilu = bottom_mm nad podlahou (ODHAD).",
+      "center_x_along_b": "B/2",
+      "center_y_from_wall_b": "(A+1000)/2",
+      "bottom_mm": 3300,
+      "bottom_mm_note": "ODHAD — výška zavěšení nezadána; zvoleno 800 mm nad horní hranou stěn (2500). Horní hrana textilu pak 3910 mm, k hornímu úchytu +257 mm lanka ≈ 4167 mm.",
+      "clearance_from_walls_mm": 1000
+    },
+    "fit_check": {
+      "$comment": "Ø1520 → poloměr 760. PODÉL B: střed 2970, zásah 2210–3730 z 0–5940 → odstup od stěny A (x=0) i od dalekého konce 2210 mm ≥1000 OK. V UŽŠÍM SMĚRU: střed (2970+1000)/2 = 1985, zásah 1225–2745 → odstup od stěny B (y=0) 1225 mm ≥1000 OK, přední hrana 2745 < 2970 (uvnitř půdorysu, rezerva 225 mm). SVISLE: horní hrana textilu 3910 < grafika max 6000 a < truss max 7000. Závisí na assumed (wall_b_length). Přepočítává model/export_banner.py a web/viewer.html.",
+      "fits": true,
+      "clearance_from_wall_b_mm": 1225,
+      "clearance_from_wall_a_mm": 2210,
+      "top_of_graphic_mm": 3910
+    },
+    "regenerate": "python3 model/export_banner.py  →  model/banner_v_stanku.stl/.dae (viewer staví vlastní válec s UV pro grafiku)"
+  },
+
+  "open_questions": [
+    { "topic": "Povrch a materiál panelů", "why": "rozhoduje řezaná fólie vs. celoplošný wrap", "owner": "GES", "email": "iaapaeu@ges.com" },
+    { "topic": "Počet a rozpal panelů pro S4244", "why": "spec list (data/Shell Scheme.pdf) je z příkladu 3×3 m; u 6m stěny navíc: textil má max. šířku 2970 mm → 2 kusy = svislý spoj cca uprostřed stěny B — kde přesně?", "owner": "GES", "email": "iaapaeu@ges.com" },
+    { "topic": "Nosnost panelu pro TV a monitory", "why": "montáž TV je povolena, nosnost neuvedena; plánujeme 2× 55\" TV (cca 17–25 kg/ks vč. držáku) na stěnu B — viz wall_tvs — a krabici se 3× 27\" monitory (600×1040×80 mm) na stěnu A — viz wall_monitor_box", "owner": "GES", "email": "iaapaeu@ges.com" },
+    { "topic": "Přesný rozměr jmenovky", "why": "chybí kóty", "owner": "GES", "email": "iaapaeu@ges.com" },
+    { "topic": "Závěsný poutač — výška zavěšení a rigging", "why": "Vybrán Zip-up Round Ø1520 × v610 mm, 6,7 kg (viz hanging_banner). Výška spodní hrany 3300 mm je ODHAD — potvrdit; poutač smí věšet jen oficiální rigging kontraktor (uzávěrka 2026-08-09).", "owner": "IAAPA Operations", "email": "OperationsEMEA@IAAPA.org" }
+  ],
+
+  "regulations": {
+    "$comment": "Ze Space-Only regulací IAAPA. Týkají se nás, protože přidáváme konstrukci (LED podlaha).",
+    "max_height_on_3m_wide_stand": 2500,
+    "max_build_height": 4000,
+    "complex_stand_threshold": 4000,
+    "absolute_max_height": 6000,
+    "hanging_sign": {
+      "max_height_to_top_of_truss": 7000,
+      "max_graphic_height_to_top": 6000,
+      "min_clearance_from_dividing_wall": 500,
+      "min_clearance_if_branded_toward_wall": 1000,
+      "rigging_by": "pouze oficiální rigging kontraktor",
+      "derig_forbidden_on": "2026-09-24"
+    },
+    "raised_floor": {
+      "applies": true,
+      "reason": "LED podlaha = zvýšená podlaha",
+      "rules": [
+        "nic pevně nekotvit do podlahy haly",
+        "kabely v místech pro návštěvníky zakrýt a označit",
+        "kabely nesmí vést přes uličky",
+        "nájezd pro přístup vozíčkářů"
+      ]
+    },
+    "dimmed_lighting": "Pokud potlačíme bezpečnostní osvětlení haly, musíme doplnit vlastní nouzové osvětlení (min. 1,5 lux anti-panic, UPS) + piktogramy únikových cest.",
+    "materials_forbidden": ["dřevotříska", "MDF", "LDF (na nosné konstrukce)"],
+    "signage": [
+      "grafika nesmí přesahovat na sousední stánky přes dělicí stěnu",
+      "žádná blikající světla",
+      "světlo nesmí zasahovat na sousedy"
+    ],
+    "no_pillars_in_hall": true,
+    "counter_low_access_point_max": 760
+  },
+
+  "deadlines": [
+    { "date": "2026-06-19", "what": "Platba za booth", "status": "PO TERMÍNU" },
+    { "date": "2026-07-24", "what": "Stand Layout Form + Risk Assessment; Method Statement (kvůli LED podlaze)", "status": "KRITICKÉ" },
+    { "date": "2026-08-05", "what": "Zvýhodněná sazba pipe & rigging", "status": "otevřeno" },
+    { "date": "2026-08-09", "what": "Striktní uzávěrka pipe & rigging", "status": "otevřeno" },
+    { "date": "2026-08-10", "what": "Nejlepší ceny GES", "status": "otevřeno" },
+    { "date": "2026-08-14", "what": "Striktní uzávěrka elektro GES", "status": "otevřeno" },
+    { "date": "2026-09-24", "what": "Breakdown — de-rigging poutače zakázán", "status": "info" }
+  ],
+
+  "contacts": {
+    "GES": { "email": "iaapaeu@ges.com", "for": "panely, grafika, jmenovka, nosnost, elektro" },
+    "IAAPA Operations": { "email": "OperationsEMEA@IAAPA.org", "for": "provoz, poutač, RA/Method Statement" },
+    "Exhibit Sales": { "email": "ExhibitSales@IAAPA.org", "for": "platby, prostor, guest passy" }
+  },
+
+  "design_intent": {
+    "led_floor": "hlavní vizuální prvek stánku, překryje šedý koberec",
+    "lighting": "tlumené (ambientní), aby nepřebilo LED podlahu — spoty lze odebrat",
+    "background": "bílá (panely jsou bílé nativně, sedí značce)",
+    "branding_channels": ["panely stěn", "LED podlaha", "volně stojící prvky (max 2,5 m)"],
+    "branding_not_possible_via": ["jmenovka — obsah je pevně daný pořadatelem"]
+  }
+}

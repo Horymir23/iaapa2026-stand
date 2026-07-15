@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <unit name="millimeter" meter="0.001"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_geometries>
+    <geometry id="LED_podlaha-geo" name="LED_podlaha">
+      <mesh>
+        <source id="LED_podlaha-pos">
+          <float_array id="LED_podlaha-pos-a" count="24">0.000 0.000 -10.000 0.000 2970.000 -10.000 5940.000 2970.000 -10.000 5940.000 0.000 -10.000 0.000 0.000 0.000 5940.000 0.000 0.000 5940.000 2970.000 0.000 0.000 2970.000 0.000</float_array>
+          <technique_common>
+            <accessor source="#LED_podlaha-pos-a" count="8" stride="3">
+              <param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="LED_podlaha-vtx"><input semantic="POSITION" source="#LED_podlaha-pos"/></vertices>
+        <triangles count="12">
+          <input semantic="VERTEX" source="#LED_podlaha-vtx" offset="0"/>
+          <p>0 1 2 0 2 3 4 5 6 4 6 7 0 3 5 0 5 4 2 1 7 2 7 6 3 2 6 3 6 5 0 4 7 0 7 1</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="B_panel_01-geo" name="B_panel_01">
+      <mesh>
+        <source id="B_panel_01-pos">
+          <float_array id="B_panel_01-pos-a" count="24">0.000 0.000 0.000 0.000 40.000 0.000 986.000 40.000 0.000 986.000 0.000 0.000 0.000 0.000 2500.000 986.000 0.000 2500.000 986.000 40.000 2500.000 0.000 40.000 2500.000</float_array>
+          <technique_common>
+            <accessor source="#B_panel_01-pos-a" count="8" stride="3">
+              <param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="B_panel_01-vtx"><input semantic="POSITION" source="#B_panel_01-pos"/></vertices>
+        <triangles count="12">
+          <input semantic="VERTEX" source="#B_panel_01-vtx" offset="0"/>
+          <p>0 1 2 0 2 3 4 5 6 4 6 7 0 3 5 0 5 4 2 1 7 2 7 6 3 2 6 3 6 5 0 4 7 0 7 1</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="B_panel_02-geo" name="B_panel_02">
+      <mesh>
+        <source id="B_panel_02-pos">
+          <float_array id="B_panel_02-pos-a" count="24">990.800 0.000 0.000 990.800 40.000 0.000 1976.800 40.000 0.000 1976.800 0.000 0.000 990.800 0.000 2500.000 1976.800 0.000 2500.000 1976.800 40.000 2500.000 990.800 40.000 2500.000</float_array>
+          <technique_common>
+            <accessor source="#B_panel_02-pos-a" count="8" stride="3">
+              <param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="B_panel_02-vtx"><input semantic="POSITION" source="#B_panel_02-pos"/></vertices>
+        <triangles count="12">
+          <input semantic="VERTEX" source="#B_panel_02-vtx" offset="0"/>
+          <p>0 1 2 0 2 3 4 5 6 4 6 7 0 3 5 0 5 4 2 1 7 2 7 6 3 2 6 3 6 5 0 4 7 0 7 1</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="B_panel_03-geo" name="B_panel_03">
+      <mesh>
+        <source id="B_panel_03-pos">
+          <float_array id="B_panel_03-pos-a" count="24">1981.600 0.000 0.000 1981.600 40.000 0.000 2967.600 40.000 0.000 2967.600 0.000 0.000 1981.600 0.000 2500.000 2967.600 0.000 2500.000 2967.600 40.000 2500.000 1981.600 40.000 2500.000</float_array>
+          <technique_common>
+            <accessor source="#B_panel_03-pos-a" count="8" stride="3">
+              <param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="B_panel_03-vtx"><input semantic="POSITION" source="#B_panel_03-pos"/></vertices>
+        <triangles count="12">
+          <input semantic="VERTEX" source="#B_panel_03-vtx" offset="0"/>
+          <p>0 1 2 0 2 3 4 5 6 4 6 7 0 3 5 0 5 4 2 1 7 2 7 6 3 2 6 3 6 5 0 4 7 0 7 1</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="B_panel_04-geo" name="B_panel_04">
+      <mesh>
+        <source id="B_panel_04-pos">
+          <float_array id="B_panel_04-pos-a" count="24">2972.400 0.000 0.000 2972.400 40.000 0.000 3958.400 40.000 0.000 3958.400 0.000 0.000 2972.400 0.000 2500.000 3958.400 0.000 2500.000 3958.400 40.000 2500.000 2972.400 40.000 2500.000</float_array>
+          <technique_common>
+            <accessor source="#B_panel_04-pos-a" count="8" stride="3">
+              <param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="B_panel_04-vtx"><input semantic="POSITION" source="#B_panel_04-pos"/></vertices>
+        <triangles count="12">
+          <input semantic="VERTEX" source="#B_panel_04-vtx" offset="0"/>
+          <p>0 1 2 0 2 3 4 5 6 4 6 7 0 3 5 0 5 4 2 1 7 2 7 6 3 2 6 3 6 5 0 4 7 0 7 1</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="B_panel_05-geo" name="B_panel_05">
+      <mesh>
+        <source id="B_panel_05-pos">
+          <float_array id="B_panel_05-pos-a" count="24">3963.200 0.000 0.000 3963.200 40.000 0.000 4949.200 40.000 0.000 4949.200 0.000 0.000 3963.200 0.000 2500.000 4949.200 0.000 2500.000 4949.200 40.000 2500.000 3963.200 40.000 2500.000</float_array>
+          <technique_common>
+            <accessor source="#B_panel_05-pos-a" count="8" stride="3">
+              <param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="B_panel_05-vtx"><input semantic="POSITION" source="#B_panel_05-pos"/></vertices>
+        <triangles count="12">
+          <input semantic="VERTEX" source="#B_panel_05-vtx" offset="0"/>
+          <p>0 1 2 0 2 3 4 5 6 4 6 7 0 3 5 0 5 4 2 1 7 2 7 6 3 2 6 3 6 5 0 4 7 0 7 1</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="B_panel_06-geo" name="B_panel_06">
+      <mesh>
+        <source id="B_panel_06-pos">
+          <float_array id="B_panel_06-pos-a" count="24">4954.000 0.000 0.000 4954.000 40.000 0.000 5940.000 40.000 0.000 5940.000 0.000 0.000 4954.000 0.000 2500.000 5940.000 0.000 2500.000 5940.000 40.000 2500.000 4954.000 40.000 2500.000</float_array>
+          <technique_common>
+            <accessor source="#B_panel_06-pos-a" count="8" stride="3">
+              <param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="B_panel_06-vtx"><input semantic="POSITION" source="#B_panel_06-pos"/></vertices>
+        <triangles count="12">
+          <input semantic="VERTEX" source="#B_panel_06-vtx" offset="0"/>
+          <p>0 1 2 0 2 3 4 5 6 4 6 7 0 3 5 0 5 4 2 1 7 2 7 6 3 2 6 3 6 5 0 4 7 0 7 1</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="A_panel_01-geo" name="A_panel_01">
+      <mesh>
+        <source id="A_panel_01-pos">
+          <float_array id="A_panel_01-pos-a" count="24">0.000 0.000 0.000 0.000 986.000 0.000 40.000 986.000 0.000 40.000 0.000 0.000 0.000 0.000 2500.000 40.000 0.000 2500.000 40.000 986.000 2500.000 0.000 986.000 2500.000</float_array>
+          <technique_common>
+            <accessor source="#A_panel_01-pos-a" count="8" stride="3">
+              <param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="A_panel_01-vtx"><input semantic="POSITION" source="#A_panel_01-pos"/></vertices>
+        <triangles count="12">
+          <input semantic="VERTEX" source="#A_panel_01-vtx" offset="0"/>
+          <p>0 1 2 0 2 3 4 5 6 4 6 7 0 3 5 0 5 4 2 1 7 2 7 6 3 2 6 3 6 5 0 4 7 0 7 1</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="A_panel_02-geo" name="A_panel_02">
+      <mesh>
+        <source id="A_panel_02-pos">
+          <float_array id="A_panel_02-pos-a" count="24">0.000 992.000 0.000 0.000 1978.000 0.000 40.000 1978.000 0.000 40.000 992.000 0.000 0.000 992.000 2500.000 40.000 992.000 2500.000 40.000 1978.000 2500.000 0.000 1978.000 2500.000</float_array>
+          <technique_common>
+            <accessor source="#A_panel_02-pos-a" count="8" stride="3">
+              <param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="A_panel_02-vtx"><input semantic="POSITION" source="#A_panel_02-pos"/></vertices>
+        <triangles count="12">
+          <input semantic="VERTEX" source="#A_panel_02-vtx" offset="0"/>
+          <p>0 1 2 0 2 3 4 5 6 4 6 7 0 3 5 0 5 4 2 1 7 2 7 6 3 2 6 3 6 5 0 4 7 0 7 1</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="A_panel_03-geo" name="A_panel_03">
+      <mesh>
+        <source id="A_panel_03-pos">
+          <float_array id="A_panel_03-pos-a" count="24">0.000 1984.000 0.000 0.000 2970.000 0.000 40.000 2970.000 0.000 40.000 1984.000 0.000 0.000 1984.000 2500.000 40.000 1984.000 2500.000 40.000 2970.000 2500.000 0.000 2970.000 2500.000</float_array>
+          <technique_common>
+            <accessor source="#A_panel_03-pos-a" count="8" stride="3">
+              <param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="A_panel_03-vtx"><input semantic="POSITION" source="#A_panel_03-pos"/></vertices>
+        <triangles count="12">
+          <input semantic="VERTEX" source="#A_panel_03-vtx" offset="0"/>
+          <p>0 1 2 0 2 3 4 5 6 4 6 7 0 3 5 0 5 4 2 1 7 2 7 6 3 2 6 3 6 5 0 4 7 0 7 1</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="stanek_S4244">
+      <node id="LED_podlaha-node" name="LED_podlaha" type="NODE">
+        <instance_geometry url="#LED_podlaha-geo"/>
+      </node>
+      <node id="B_panel_01-node" name="B_panel_01" type="NODE">
+        <instance_geometry url="#B_panel_01-geo"/>
+      </node>
+      <node id="B_panel_02-node" name="B_panel_02" type="NODE">
+        <instance_geometry url="#B_panel_02-geo"/>
+      </node>
+      <node id="B_panel_03-node" name="B_panel_03" type="NODE">
+        <instance_geometry url="#B_panel_03-geo"/>
+      </node>
+      <node id="B_panel_04-node" name="B_panel_04" type="NODE">
+        <instance_geometry url="#B_panel_04-geo"/>
+      </node>
+      <node id="B_panel_05-node" name="B_panel_05" type="NODE">
+        <instance_geometry url="#B_panel_05-geo"/>
+      </node>
+      <node id="B_panel_06-node" name="B_panel_06" type="NODE">
+        <instance_geometry url="#B_panel_06-geo"/>
+      </node>
+      <node id="A_panel_01-node" name="A_panel_01" type="NODE">
+        <instance_geometry url="#A_panel_01-geo"/>
+      </node>
+      <node id="A_panel_02-node" name="A_panel_02" type="NODE">
+        <instance_geometry url="#A_panel_02-geo"/>
+      </node>
+      <node id="A_panel_03-node" name="A_panel_03" type="NODE">
+        <instance_geometry url="#A_panel_03-geo"/>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene><instance_visual_scene url="#Scene"/></scene>
+</COLLADA>

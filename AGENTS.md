@@ -90,6 +90,17 @@ python3 model/export_kiosk.py       # kiosky u uličky (bez závislostí)
 python3 model/export_banner.py      # kruhový závěsný poutač nad stánkem (bez závislostí)
 ```
 
+## Nasazení na web
+
+Projekt běží na GitHub Pages: **<https://horymir23.github.io/iaapa2026-stand/>**
+
+- Repozitář: <https://github.com/Horymir23/iaapa2026-stand> — **veřejný** (Pages na free plánu
+  nejde z privátního repa). Vše, co se commitne, je tedy veřejně čitelné.
+- Nasazuje se automaticky **pushem do `main`** — Pages servíruje kořen repozitáře, žádný build.
+- `index.html` v kořeni je jen rozcestník na `web/viewer.html` a `web/index.html`.
+- Viewer čte `../data/stand-spec.json` relativní cestou — **strukturu složek neměnit**,
+  jinak se na webu rozbije sync se zdrojem pravdy.
+
 ## Nejbližší termín
 
 **24. 7. 2026** — Stand Layout Form + Risk Assessment. Kvůli LED podlaze (= konstrukce na shell

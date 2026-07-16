@@ -582,7 +582,7 @@ function screenDefs(){
     {key:'mbTop',    n:3,  label:'Krabice A — horní obrazovka',       mm:[mbc.SW,mbc.SH], px:[1920,1080]},
     {key:'mbMid',    n:4,  label:'Krabice A — prostřední obrazovka',  mm:[mbc.SW,mbc.SH], px:[1920,1080]},
     {key:'mbBot',    n:5,  label:'Krabice A — spodní obrazovka',      mm:[mbc.SW,mbc.SH], px:[1920,1080]},
-    {key:'miniTv',   n:6,  label:'Mini — monitor na věži',            mm:[903,483],       px:[1920,1027]},
+    {key:'miniTv',   n:6,  label:'Mini — monitor na věži (50″)',      mm:[1123,643],      px:[1920,1080]},
     {key:'miniPult', n:7,  label:'Mini — pult u vstupu (šikmý 30°)',  mm:[417.6,214.1],   px:[1920,984]},
     {key:'arc',      n:8,  label:'Arcade — totem (na výšku)',         mm:[560,800],       px:[1080,1543]},
     {key:'k1',       n:9,  label:'Kiosek 1 — blíž stěně A (šikmý)',   mm:[417.6,214.1],   px:[1920,984]},
@@ -731,12 +731,12 @@ function build(){
       mg.position.set((T+CL)*S, 0, (T+CL)*S);
       root.add(mg);
       // obrazovky mini — pozice ZMERENY z mini-mesh.js (lokalni ramec produktu, mm):
-      // vez: sklo 903x483, lic x=254, smer +X; pult u vstupu: sikmina 30°,
-      // stred plochy (4339, 1080, 209), normala (0, cos30, sin30) -> odsazeni 12 mm
+      // vez: celni lic displeje 1123x643 na x=253.5, smer +X; pult u vstupu:
+      // sikmina 30°, stred LICE skla (4339, 1098.5, 220), normala (0, cos30, sin30) + 10 mm
       const mo = T + CL;
-      screenSlot(SDEF.miniTv, [mo + 256, 1433.5, mo + 950.5], {y:Math.PI/2}, 903, 483);
+      screenSlot(SDEF.miniTv, [mo + 256, 1433.5, mo + 950.5], {y:Math.PI/2}, 1123, 643);
       screenSlot(SDEF.miniPult,
-        [mo + 4339, 1080 + 12*Math.cos(Math.PI/6), mo + 209 + 12*Math.sin(Math.PI/6)],
+        [mo + 4339, 1098.5 + 10*Math.cos(Math.PI/6), mo + 220 + 10*Math.sin(Math.PI/6)],
         {x:-Math.PI/3}, 417.6, 214.1);
     }
   }
@@ -778,10 +778,10 @@ function build(){
         const inst = kg.clone();
         inst.position.set(kx*S, 0, kz*S);
         root.add(inst);
-        // sikma obrazovka kiosku (30°, klesa k +z do ulicky) — stred plochy
-        // (290, 1106, 175) ZMEREN z kiosk-mesh.js, odsazeni 12 mm podel normaly
+        // sikma obrazovka kiosku (30°, klesa k +z do ulicky) — stred LICE skla
+        // (290, 1108.4, 176) ZMEREN z kiosk-mesh.js, + 10 mm podel normaly
         screenSlot(SDEF['k' + (i+1)],
-          [kx + 290, 1106 + 12*Math.cos(Math.PI/6), kz + 175 + 12*Math.sin(Math.PI/6)],
+          [kx + 290, 1108.4 + 10*Math.cos(Math.PI/6), kz + 176 + 10*Math.sin(Math.PI/6)],
           {x:-Math.PI/3}, 417.6, 214.1);
       }
     }

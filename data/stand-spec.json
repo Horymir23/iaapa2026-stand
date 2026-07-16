@@ -198,7 +198,7 @@
       { "n": 3,  "id": "mbTop",    "where": "krabice na stěně A — horní obrazovka",  "screen_mm": [600, 337.5],   "recommended_px": [1920, 1080] },
       { "n": 4,  "id": "mbMid",    "where": "krabice na stěně A — prostřední",       "screen_mm": [600, 337.5],   "recommended_px": [1920, 1080] },
       { "n": 5,  "id": "mbBot",    "where": "krabice na stěně A — spodní",           "screen_mm": [600, 337.5],   "recommended_px": [1920, 1080] },
-      { "n": 6,  "id": "miniTv",   "where": "mini — monitor na věži",                "screen_mm": [903, 483],     "recommended_px": [1920, 1027] },
+      { "n": 6,  "id": "miniTv",   "where": "mini — monitor na věži (50″)",          "screen_mm": [1123, 643],    "recommended_px": [1920, 1080] },
       { "n": 7,  "id": "miniPult", "where": "mini — šikmý pult u vstupu (30°)",      "screen_mm": [417.6, 214.1], "recommended_px": [1920, 984] },
       { "n": 8,  "id": "arc",      "where": "arcade — totem (na výšku)",             "screen_mm": [560, 800],     "recommended_px": [1080, 1543] },
       { "n": 9,  "id": "k1",       "where": "kiosek 1 — blíž stěně A (šikmý 30°)",   "screen_mm": [417.6, 214.1], "recommended_px": [1920, 984] },

@@ -106,7 +106,11 @@ python3) i `viewer.html` (`build()`), takže reaguje na posuvníky.
 přední rám vstupní branky). Rám podlahy, podesta i plůtek u věže s TV **zůstávají** —
 do konstrukce podlahy se nezasahuje. Filtr `is_front_fence` v `export_mini.py`;
 `mini.stp` ani `dims_mm` se tím nemění. Ocel se zobrazuje bíle (materiál `matMini.ocel`
-ve `viewer.html`).
+ve `viewer.html`). Věž s monitorem je zepředu krytá průhledným plexi a byla dutá —
+vnitřek se při exportu vyplňuje plnými bílými kvádry (`tower_box` v `export_mini.py`,
+požadavek 16. 7. 2026). Duté jekly mají v CAD otevřená čela; 4 viditelné konce se
+zaslepují zátkami (`CAP_ENDS` v `export_mini.py` — horní konce sloupků plůtku a pahýly
+rámu branky po odstraněném plotu).
 
 **Regenerace** (po změně mini.stp, tloušťky panelu nebo clearance):
 

@@ -90,7 +90,9 @@
       "steel_color": "bílá",
       "floor_frame_gaps_filled": "díry v rámu podlahy po odstraněných sloupcích branky jsou zaslepené (plné kvádry do výšky rámu 80 mm)",
       "entrance_deck": "podesta u vstupu má podlahu s ČERNÝM kobercem (deska 1805×700 mm, povrch v úrovni rámu podlahy)",
-      "led_segments": "dlaždice arény mají svítící vnitřní LED segmenty (rám 25 mm černý, panel 249×249 mm; 5 statických barev dle fotek produktu z 13.7.2026 — BEZ blikání kvůli regulím)"
+      "led_segments": "dlaždice arény mají svítící vnitřní LED segmenty (rám 25 mm černý, panel 249×249 mm; 5 statických barev dle fotek produktu z 13.7.2026 — BEZ blikání kvůli regulím)",
+      "tower_cavity_filled": "věž s monitorem je zepředu krytá průhledným plexi a pod monitorem byla skrz něj vidět dutá jeklová konstrukce — vnitřek věže je vyplněný plnými bílými kvádry (pod monitorem celá hloubka, nad ním zbytek dutiny za monitorem; požadavek 16.7.2026, viz export_mini.py)",
+      "tube_ends_capped": "4 odkryté otevřené konce dutých jeklů jsou zaslepené zátkou podle vnitřního obrysu profilu, 0,3 mm pod lícem: horní konce obou sloupků plůtku u věže (ZAB-BED-DL-1/-3) a dva pahýly rámu vstupní branky (ZAB-VST-4/-6) osiřelé po odstranění předního plotu (požadavek 16.7.2026, CAP_ENDS v export_mini.py; ostatní konce na něco dosedají nebo míří do země)"
     },
     "fit_check": {
       "$comment": "Při clearance 50: podél B potřeba 40+50+4677=4767 z 5940 mm (rezerva 1173 — ale délka B je ASSUMED); podél A 40+50+1901=1991 z 2970 mm (rezerva 979, potvrzeno); výška 1803 < 2500 vč. limitu na 3m straně. Přepočítává model/export_mini.py.",

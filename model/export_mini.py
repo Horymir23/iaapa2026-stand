@@ -88,6 +88,47 @@ def is_front_fence(label, bb):
     return True
 
 
+# Odkryte otevrene konce jeklu (pozadavek 16.7.2026): duté profily maji v CAD
+# nezaslepena cela. Vetsina koncu na neco dosedá nebo miri do zeme, ale 4 zustavaji
+# videt: horni konce obou sloupku plutku u veze (ZAB-BED-DL-1/-3) a dva pahyly
+# ramu vstupni branky (ZAB-VST-4/-6), ktere osirely po odstraneni predniho plotu.
+# Zaslepuji se zatkou podle vnitrniho obrysu profilu, 0.3 mm pod licem cela
+# (aby lic zatky nesplyval s celem profilu). Smer = STEP osa otevreneho konce.
+CAP_ENDS = {
+    "JEKL 40x40x2-ZAB-BED-DL-1": FreeCAD.Vector(0, 0, 1),
+    "JEKL 40x40x2-ZAB-BED-DL-3": FreeCAD.Vector(0, 0, 1),
+    "JEKL 40x40x2-ZAB-VST-4": FreeCAD.Vector(1, 0, 0),
+    "JEKL 40x40x2-ZAB-VST-6": FreeCAD.Vector(1, 0, 0),
+}
+
+
+def end_caps(shape, ax):
+    """Zatky otevrenych koncu profilu ve smeru osy ax (jednotkovy vektor).
+    Konec = rovinne celo s dirou (>=2 wiry) na kraji bboxu daneho solidu."""
+    caps = []
+    for sol in shape.Solids:
+        cen = sol.BoundBox.Center
+        for f in sol.Faces:
+            if len(f.Wires) < 2 or not isinstance(f.Surface, Part.Plane):
+                continue
+            n = f.Surface.Axis
+            c = f.CenterOfMass
+            if (c - cen).dot(n) < 0:
+                n = n.negative()  # ven ze solidu
+            if n.dot(ax) < 0.99:
+                continue
+            outer = max(f.Wires, key=lambda w: w.BoundBox.DiagonalLength)
+            for w in f.Wires:
+                if w.isSame(outer):
+                    continue
+                plug = Part.Face(w).extrude(
+                    FreeCAD.Vector(-2.5 * n.x, -2.5 * n.y, -2.5 * n.z))
+                plug.translate(
+                    FreeCAD.Vector(-0.3 * n.x, -0.3 * n.y, -0.3 * n.z))
+                caps.append(plug)
+    return caps
+
+
 # ---------- import a teselace ----------
 doc = FreeCAD.newDocument("mini")
 Import.insert(STP, doc.Name)
@@ -96,6 +137,7 @@ gbb = None  # globalni bbox produktu v STEP souradnicich
 parts = []  # (bucket, points, facets)
 kostka_bbs = []  # bboxy LED dlazdic - pro dopocet svitivych segmentu
 removed = 0
+capped = []  # zaslepene otevrene konce jeklu (viz CAP_ENDS)
 for obj in doc.Objects:
     sh = getattr(obj, "Shape", None)
     if sh is None or not sh.Solids or obj.TypeId != "Part::Feature":
@@ -125,6 +167,11 @@ for obj in doc.Objects:
     parts.append((bucket(obj.Label), pts, tris))
     if bucket(obj.Label) == "kostky":
         kostka_bbs.append(s.BoundBox)
+    if obj.Label in CAP_ENDS:
+        for plug in end_caps(s, CAP_ENDS[obj.Label]):
+            pts, tris = plug.tessellate(DEFLECTION)
+            parts.append(("ocel", pts, tris))
+            capped.append(obj.Label)
 
 # Podesta u vstupu dostane desku s CERNYM kobercem (pozadavek 13.7.2026).
 # Lezi na L-profilech (horni hrana Z 60), povrch v urovni ramu podlahy (Z 80).
@@ -133,6 +180,25 @@ for obj in doc.Objects:
 deck = Part.makeBox(1805.0, 700.0, 20.0, FreeCAD.Vector(-4.0, -4336.0, 60.0))
 pts, tris = deck.tessellate(DEFLECTION)
 parts.append(("koberec", pts, tris))
+
+# Vez s monitorem ("BED") je zepredu kryta pruhlednym plexi pres celou vysku,
+# monitor sedi az nahore - pod nim bylo skrz plexi videt do dute jeklove
+# konstrukce (pozadavek 16.7.2026: ucpat). Vnitrek se vyplnuje plnymi bilymi
+# kvadry: (1) pod monitorem cela hloubka az k plexi, (2) zbytek dutiny za
+# monitorem az po strop. Souradnice v lokalnim ramci produktu (mm, zmereno
+# z mini.stp): vez lx 3..253 / ly 345.5..1555.5, plexi celo lx 253,
+# monitor lx 198.5..253.5 / lz 1111.5..1755. Vyplne jsou o ~1 mm zapustene,
+# aby licem nesplyvaly s plexi, dibondem ani zady monitoru.
+def tower_box(lx0, lx1, ly0, ly1, lz0, lz1):
+    return Part.makeBox(ly1 - ly0, lx1 - lx0, lz1 - lz0,
+                        FreeCAD.Vector(gbb.XMin + ly0, gbb.YMax - lx1,
+                                       gbb.ZMin + lz0))
+
+
+for box in (tower_box(4.0, 252.0, 346.5, 1554.5, 1.0, 1111.5),
+            tower_box(4.0, 197.5, 346.5, 1554.5, 1111.5, 1799.0)):
+    pts, tris = box.tessellate(DEFLECTION)
+    parts.append(("ocel", pts, tris))
 
 # LED segmenty dlazdic (pozadavek 13.7.2026, dle fotek skutecneho produktu):
 # kazda dlazdice KOSTKA ma cerny ram a vnitrni svitici panel. Panel se vklada
@@ -156,6 +222,7 @@ print(f"LED segmentu: {len(kostka_bbs)}")
 dims = (gbb.YLength, gbb.XLength, gbb.ZLength)  # delka, sirka, vyska
 print(f"Dilu: {len(parts)}, vynechano (predni plot): {removed}, "
       f"trojuhelniku: {sum(len(t) for _, _, t in parts)}")
+print(f"Zaslepene konce jeklu ({len(capped)}): {', '.join(capped)}")
 print(f"Produkt (mm): delka {dims[0]:.0f} x sirka {dims[1]:.0f} x vyska {dims[2]:.0f}")
 
 

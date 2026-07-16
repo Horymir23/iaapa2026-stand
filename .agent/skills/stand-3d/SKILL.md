@@ -69,6 +69,12 @@ t.offset.set(x0 / wallLength, 0);      // odkud výřez začíná
 
 Nikdy nedávej celou texturu na každý panel — obraz by se pak opakoval a uživatel by neviděl reálné rozdělení.
 
+**Pozor na stěnu A:** její grafická rovina je otočená o +90° kolem Y, takže osa U textury
+běží **proti** směru osy Z. Při pohledu zevnitř stánku je panel u uličky (i = nA−1) vlevo,
+proto se výřez přiřazuje **zrcadleným indexem** `panelTex(tex.A, nA-1-i, …)`. S přímým `i`
+vyjde pořadí panelů obráceně (levá část grafiky u stěny B místo u uličky) — už se to jednou
+stalo, ověřeno screenshotem 16. 7. 2026. Stěna B (nerotovaná rovina) používá přímé `i`.
+
 Grafická rovina se umisťuje **2 mm před líc panelu** (aby neprobleskávala), do výšky 2474 mm z 2500 mm.
 
 ## Produkt „mini" (exponát v rohu)

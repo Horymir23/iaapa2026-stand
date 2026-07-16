@@ -568,7 +568,9 @@ function build(){
     if(tex.A){
       const g = new THREE.Mesh(
         new THREE.PlaneGeometry(PANEL_W*S, GFX_H*S),
-        new THREE.MeshStandardMaterial({map:panelTex(tex.A,i,nA,A,gA), roughness:.7})
+        // rovina je otocena o +90° → osa U textury bezi proti smeru Z; pri pohledu
+        // zevnitr je panel u ulicky (i=nA-1) vlevo, proto zrcadleny index vyrezu
+        new THREE.MeshStandardMaterial({map:panelTex(tex.A,nA-1-i,nA,A,gA), roughness:.7})
       );
       g.rotation.y = Math.PI/2;
       g.position.set((T+2)*S, WALL_H*S/2, (z+PANEL_W/2)*S);

@@ -221,6 +221,12 @@
       "bottom_mm_note": "ODHAD — výška zavěšení nezadána; zvoleno 800 mm nad horní hranou stěn (2500). Horní hrana textilu pak 3910 mm, k hornímu úchytu +257 mm lanka ≈ 4167 mm.",
       "clearance_from_walls_mm": 1000
     },
+    "graphic_rotation_deg": {
+      "$comment": "Natočení 360° grafiky kolem svislé osy poutače. 0° = střed obrázku míří kolmo do stěny B (dáno UV švem válce v three.js). Kladná hodnota otáčí střed od stěny B směrem k otevřené kratší straně stánku (hrana x=B, ulička). Zadal uživatel 16.7.2026: 70°. Čte web/viewer.html (addBanner); pro tiskárnu/montáž: šev textilu vychází naproti středu grafiky, tj. 70° od přední uličky směrem ke stěně A.",
+      "value": 70,
+      "zero_means": "střed grafiky do stěny B",
+      "positive_toward": "otevřená kratší strana (x=B)"
+    },
     "fit_check": {
       "$comment": "Ø1520 → poloměr 760. PODÉL B: střed 2970, zásah 2210–3730 z 0–5940 → odstup od stěny A (x=0) i od dalekého konce 2210 mm ≥1000 OK. V UŽŠÍM SMĚRU: střed (2970+1000)/2 = 1985, zásah 1225–2745 → odstup od stěny B (y=0) 1225 mm ≥1000 OK, přední hrana 2745 < 2970 (uvnitř půdorysu, rezerva 225 mm). SVISLE: horní hrana textilu 3910 < grafika max 6000 a < truss max 7000. Závisí na assumed (wall_b_length). Přepočítává model/export_banner.py a web/viewer.html.",
       "fits": true,

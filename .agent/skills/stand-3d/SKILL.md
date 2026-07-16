@@ -140,6 +140,13 @@ pro SketchUp. **Viewer si válec staví VLASTNÍ** (`addBanner()` ve viewer.html
 (jeden souvislý obraz, **ne** dopočet přes panely jako u stěn). Obě cesty čtou stejné rozměry ze
 spec souboru. Grafika se nahrává tlačítkem „Nahrát grafiku — poutač (360°)".
 
+**Natočení grafiky:** UV šev válce je na +Z, takže střed obrázku (u = 0,5) by bez korekce mířil
+na −Z = do stěny B (do cizího stánku — stalo se, opraveno 16. 7. 2026). Válec se proto otáčí
+o `hanging_banner.graphic_rotation_deg` (aktuálně **70°**, zadal uživatel) od stěny B směrem
+k otevřené kratší straně (+X). Ve `viewer.html` je to `out.rotation.y = -ban.ROT·π/180` —
+znaménko je **záporné**, protože kladná rotace kolem Y táhne −Z k −X (ke stěně A). Změna úhlu
+se dělá ve spec souboru, ne v kódu.
+
 ## Soubory a co v nich je
 
 ```

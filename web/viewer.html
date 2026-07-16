@@ -164,9 +164,14 @@
       <input type="file" id="fBan" accept="image/*">
       <span id="tBan">＋ Nahrát grafiku — poutač (360°)</span>
     </label>
+    <div class="fld">
+      <label for="sBanR">Natočení grafiky poutače <b id="lBanR">70°</b></label>
+      <input type="range" id="sBanR" min="0" max="360" step="5" value="70">
+    </div>
     <button class="btn" id="bClr">Odebrat všechny grafiky</button>
     <div class="note">
       Grafika se rozpočítá přes všechny panely stěny — uvidíš, kde ji spáry rozdělí. Poměr stran drž dle stěny.
+      Natočení poutače: 0° = střed grafiky do stěny B, kladný úhel otáčí střed k uličce u kratší otevřené strany.
     </div>
   </div>
 
@@ -239,7 +244,8 @@ let tvc = { n:2, W:1230, H:710, D:60, OFF:35, CY:1850, MIN_GAP:300 };
 let mbc = { n:3, W:600, H:1040, D:80, SW:600, SH:337.5, CY:1500 };
 // kruhový závěsný poutač Zip-up Round nad stánkem, dle spec hanging_banner
 // (vybrán Ø1520 — větší Ø3050 se dle IAAPA nad stánek nevejde; BOT = ODHAD výšky)
-let ban = { D:1520, H:610, BOT:3300, CL:1000, CABLE:257 };
+// ROT = natočení středu grafiky od stěny B směrem k otevřené kratší straně (°)
+let ban = { D:1520, H:610, BOT:3300, CL:1000, CABLE:257, ROT:70 };
 let opt = { spot:true, joint:true, mini:true, arc:true, kiosk:true, tv:true, mon:true, ban:true };
 let tex = { B:null, A:null, ban:null };
 
@@ -264,7 +270,10 @@ fetch('../data/stand-spec.json')
     if(d.hanging_banner){
       const h = d.hanging_banner;
       ban = { D:h.dims_mm.diameter, H:h.dims_mm.height, BOT:h.placement.bottom_mm,
-              CL:h.placement.clearance_from_walls_mm, CABLE:h.suspension_cable_mm };
+              CL:h.placement.clearance_from_walls_mm, CABLE:h.suspension_cable_mm,
+              ROT:h.graphic_rotation_deg?.value ?? ban.ROT };
+      document.getElementById('sBanR').value = ban.ROT;
+      document.getElementById('lBanR').textContent = ban.ROT + '°';
     }
     ['sB','sA','sT'].forEach((id,i) => {
       const v = [cfg.B, cfg.A, cfg.T][i];
@@ -432,6 +441,9 @@ function addMonitorBox(cz){
 // Vypinaci latka potistena po CELEM obvodu (360°). Grafika se obtoci kolem valce:
 // THREE.CylinderGeometry ma UV (u = obvod, v = vyska), takze staci nahranou texturu
 // dat jako map — narozdil od sten se nepocita pres panely, je to jeden souvisly obraz.
+// UV sev valce je na +Z, stred obrazku (u=0.5) tedy bez otoceni miri na -Z = do steny B.
+// Proto se valec otaci o ban.ROT (spec graphic_rotation_deg) od steny B smerem
+// k otevrene kratsi strane (+X); rotation.y je zaporne, protoze +Y rotace tahne -Z k -X.
 // Vnitrek i zavreny vrch bile (videt zespodu otevrenym dnem, jako u realneho produktu).
 const matBanner   = new THREE.MeshStandardMaterial({color:0xF4F4F2, roughness:.72, metalness:.02, side:THREE.FrontSide});
 const matBannerIn = new THREE.MeshStandardMaterial({color:0xEBEBE8, roughness:.85, side:THREE.BackSide});
@@ -453,6 +465,7 @@ function addBanner(cx, cz){
     ? new THREE.MeshStandardMaterial({map:tex.ban, roughness:.72, side:THREE.FrontSide})
     : matBanner;
   const out = new THREE.Mesh(new THREE.CylinderGeometry(R,R,H,SEG,1,true), outMat);
+  out.rotation.y = -ban.ROT * Math.PI/180; // stred grafiky od steny B k ulicce
   out.castShadow = true; g.add(out);
   const inn = new THREE.Mesh(new THREE.CylinderGeometry(R-.005,R-.005,H,SEG,1,true), matBannerIn);
   g.add(inn);
@@ -865,6 +878,13 @@ function slider(id, key, lab, unit='mm'){
   });
 }
 slider('sB','B','lB'); slider('sA','A','lA'); slider('sT','T','lT');
+
+// natoceni grafiky poutace — zapisuje do ban.ROT (ne cfg), jednotka stupne
+$('sBanR').addEventListener('input', e=>{
+  ban.ROT = +e.target.value;
+  $('lBanR').textContent = ban.ROT + '°';
+  build();
+});
 
 function upload(fid, tid, uid, key){
   $(fid).addEventListener('change', e=>{

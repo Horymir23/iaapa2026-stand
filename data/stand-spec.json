@@ -189,6 +189,23 @@
     }
   },
 
+  "monitors": {
+    "$comment": "Inventář a ČÍSLOVÁNÍ všech 10 obrazovek stánku (zadání 16.7.2026 — přepínač čísel + nahrávání grafiky per monitor ve web/viewer.html). Logika číslování: po obvodu od rohu — stěna B zleva (1–2), krabice na stěně A shora dolů (3–5), pak exponáty od rohu (6 = monitor na věži mini, 7 = šikmý pult mini u vstupu, 8 = totem arcade) a nakonec kiosky u uličky od stěny A (9–10). screen_mm = viditelná plocha obrazovky: u TV odvozeno z wall_tvs (rozměry TV jsou ODHAD), u krabice z wall_monitor_box, u obrazovek produktů ZMĚŘENO z generovaných meshů (fakt modelu). recommended_px = doporučený rozměr podkladu grafiky (drží poměr viditelné plochy; u 16:9 obrazovek standard 1920×1080). id odpovídá klíčům ve viewer.html (screenDefs).",
+    "count": 10,
+    "numbering": [
+      { "n": 1,  "id": "tv1",      "where": "TV 55″ — stěna B, blíž rohu",           "screen_mm": [1194, 674],    "recommended_px": [1920, 1080] },
+      { "n": 2,  "id": "tv2",      "where": "TV 55″ — stěna B, dál od rohu",         "screen_mm": [1194, 674],    "recommended_px": [1920, 1080] },
+      { "n": 3,  "id": "mbTop",    "where": "krabice na stěně A — horní obrazovka",  "screen_mm": [600, 337.5],   "recommended_px": [1920, 1080] },
+      { "n": 4,  "id": "mbMid",    "where": "krabice na stěně A — prostřední",       "screen_mm": [600, 337.5],   "recommended_px": [1920, 1080] },
+      { "n": 5,  "id": "mbBot",    "where": "krabice na stěně A — spodní",           "screen_mm": [600, 337.5],   "recommended_px": [1920, 1080] },
+      { "n": 6,  "id": "miniTv",   "where": "mini — monitor na věži",                "screen_mm": [903, 483],     "recommended_px": [1920, 1027] },
+      { "n": 7,  "id": "miniPult", "where": "mini — šikmý pult u vstupu (30°)",      "screen_mm": [417.6, 214.1], "recommended_px": [1920, 984] },
+      { "n": 8,  "id": "arc",      "where": "arcade — totem (na výšku)",             "screen_mm": [560, 800],     "recommended_px": [1080, 1543] },
+      { "n": 9,  "id": "k1",       "where": "kiosek 1 — blíž stěně A (šikmý 30°)",   "screen_mm": [417.6, 214.1], "recommended_px": [1920, 984] },
+      { "n": 10, "id": "k2",       "where": "kiosek 2 — blíž arcade (šikmý 30°)",    "screen_mm": [417.6, 214.1], "recommended_px": [1920, 984] }
+    ]
+  },
+
   "hanging_banner": {
     "$comment": "Kruhový závěsný poutač Zip-up Round (Showdown Displays / Jansen Display) NAD stánkem — vypínací látka potištěná po celém obvodu (360°). Zadání 16.7.2026: nahrát do něj grafiku. Uživatel chtěl co NEJVĚTŠÍ povolený průměr. VYBRÁN Ø1520 (menší z nabízených), protože větší Ø3050 se dle regulí IAAPA nad tento stánek NEVEJDE — viz size_choice. Rozměry produktu = z katalogu Showdown Displays (shop.showdowndisplays.eu) → fakt výrobku. VÝŠKA ZAVĚŠENÍ je ODHAD (uživatel nezadal). Model je syntetický válec — staví ho model/export_banner.py; viewer staví vlastní válec s UV pro nahranou grafiku.",
     "name": "banner",
@@ -222,8 +239,8 @@
       "clearance_from_walls_mm": 1000
     },
     "graphic_rotation_deg": {
-      "$comment": "Natočení 360° grafiky kolem svislé osy poutače. 0° = střed obrázku míří kolmo do stěny B (dáno UV švem válce v three.js). Kladná hodnota otáčí střed od stěny B směrem k otevřené kratší straně stánku (hrana x=B, ulička). Zadal uživatel 16.7.2026: 70°. Čte web/viewer.html (addBanner); pro tiskárnu/montáž: šev textilu vychází naproti středu grafiky, tj. 70° od přední uličky směrem ke stěně A.",
-      "value": 70,
+      "$comment": "Natočení 360° grafiky kolem svislé osy poutače. 0° = střed obrázku míří kolmo do stěny B (dáno UV švem válce v three.js). Kladná hodnota otáčí střed od stěny B směrem k otevřené kratší straně stánku (hrana x=B, ulička). Zadal uživatel 16.7.2026: nejdřív 70°, poté upraveno na 115°. Čte web/viewer.html (addBanner) a nastavuje výchozí polohu posuvníku; pro tiskárnu/montáž: šev textilu vychází naproti středu grafiky, tj. 115° od přední uličky směrem ke stěně A.",
+      "value": 115,
       "zero_means": "střed grafiky do stěny B",
       "positive_toward": "otevřená kratší strana (x=B)"
     },
@@ -294,6 +311,17 @@
     "GES": { "email": "iaapaeu@ges.com", "for": "panely, grafika, jmenovka, nosnost, elektro" },
     "IAAPA Operations": { "email": "OperationsEMEA@IAAPA.org", "for": "provoz, poutač, RA/Method Statement" },
     "Exhibit Sales": { "email": "ExhibitSales@IAAPA.org", "for": "platby, prostor, guest passy" }
+  },
+
+  "default_graphics": {
+    "$comment": "Výchozí grafiky, které web/viewer.html načte sám při otevření (funkce loadDefaultGraphics) — uživatel je nemusí nahrávat ručně. Zadal uživatel 16.7.2026, přiřazení dle názvů souborů. Cesty jsou relativní k web/viewer.html; názvy mají diakritiku a mezery → ve vieweru encodeURI. Když soubor chybí, plocha zůstane bez grafiky (tichý fallback). Nahrání souboru přes tlačítko i tlačítko „Odebrat všechny grafiky\" výchozí grafiku přebijí až do reloadu stránky.",
+    "folder": "assets/grafika/",
+    "map": {
+      "wall_b": "Stěna B v3.jpg",
+      "wall_a": "Stěna A v1.jpg",
+      "hanging_banner": "Poutač360v2.jpg"
+    },
+    "note_versions": "V názvech je verze (v1/v2/v3). Když přibude novější, uprav DEF_GFX ve web/viewer.html i tuhle sekci."
   },
 
   "design_intent": {

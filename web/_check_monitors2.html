@@ -273,7 +273,7 @@ let mbc = { n:3, W:600, H:1040, D:80, SW:600, SH:337.5, CY:1500 };
 // (vybrán Ø1520 — větší Ø3050 se dle IAAPA nad stánek nevejde; BOT = ODHAD výšky)
 // ROT = natočení středu grafiky od stěny B směrem k otevřené kratší straně (°)
 let ban = { D:1520, H:610, BOT:3300, CL:1000, CABLE:257, ROT:115 };
-let opt = { spot:true, joint:true, mini:true, arc:true, kiosk:true, tv:true, mon:true, ban:true, num:false };
+let opt = { spot:true, joint:true, mini:true, arc:true, kiosk:true, tv:true, mon:true, ban:true, num:true };
 let tex = { B:null, A:null, ban:null };
 let scrTex = {}, scrName = {}; // nahrané grafiky obrazovek, klíč dle screenDefs()
 
@@ -1126,7 +1126,23 @@ function resize(){
 }
 addEventListener('resize', resize);
 
-buildScreenList(); build(); views('iso'); resize();
+
+// TEST: vyplnit vsechny obrazovky zkusebni texturou (kontrola pozic a zrcadleni)
+(function(){
+  const cols = ['#E4572E','#17BEBB','#FFC914','#2E933C','#7768AE','#DA4167','#3185FC','#F26430','#83B692','#DB2955'];
+  screenDefs().forEach((d,i)=>{
+    const c = document.createElement('canvas'); c.width=640; c.height=360;
+    const x = c.getContext('2d');
+    x.fillStyle = cols[i]; x.fillRect(0,0,640,360);
+    x.fillStyle = '#fff'; x.font='700 80px sans-serif';
+    x.textAlign='left'; x.textBaseline='top'; x.fillText('TL', 12, 8);
+    x.textAlign='center'; x.textBaseline='middle'; x.font='700 64px sans-serif';
+    x.fillText(d.key, 320, 220);
+    const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding;
+    scrTex[d.key] = t; scrName[d.key] = 'test';
+  });
+})();
+buildScreenList(); build(); views('iso'); sph={r:8, th:1.8, ph:1.15}; place(); resize();
 loadDefaultGraphics();  // vychozi grafiky ze slozky assets/grafika (async -> prestavi po nacteni)
 (function loop(){ requestAnimationFrame(loop); renderer.render(scene,cam); })();
 </script>

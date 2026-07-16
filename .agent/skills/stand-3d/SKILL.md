@@ -162,8 +162,25 @@ model/*.stl         — pro SketchUp Free (import → zvol jednotky Millimeters)
 model/*.dae         — pro SketchUp Go/Pro, Blender (jednotky uvnitř souboru)
 data/stand-spec.json— zdroj pravdy
 assets/brand/       — sem patří brandové grafiky (polepy stěn, vizuál LED podlahy)
+assets/grafika/     — VÝCHOZÍ grafiky, které viewer načte sám při otevření (viz níže)
 assets/export/      — sem ukládej rendery a snímky
 ```
+
+## Výchozí grafiky
+
+Viewer si při otevření sám načte grafiky z `assets/grafika/` (funkce `loadDefaultGraphics`,
+konstanta `DEF_GFX`) — uživatel nic nahrávat nemusí. Přiřazení je i ve spec souboru →
+`default_graphics`:
+
+| Soubor | Kam |
+|---|---|
+| `Stěna B v3.jpg` | stěna B |
+| `Stěna A v1.jpg` | stěna A |
+| `Poutač360v2.jpg` | poutač (360°) |
+
+Názvy mají diakritiku a mezery → cesta se balí do `encodeURI`. Načítá se `TextureLoader`em
+(funguje i z `file://`, narozdíl od `fetch` spec souboru); chybějící soubor tiše přeskočí.
+Když dodá uživatel novější verzi, uprav `DEF_GFX` **i** `default_graphics` ve spec souboru.
 
 Přegenerování modelu:
 ```bash
@@ -207,7 +224,19 @@ Viewer zobrazuje prvky převzaté z oficiálního renderu shell scheme od pořad
   překážky měří přímo z meshů (`tallSpan()` ve viewer.html), takže změna produktů se propíše sama.
   Nosnost panelů pro TV je pořád `open_question` u GES.
 
-## Zásady
+## Monitory — číslování a grafika (10 obrazovek)
+
+Stánek má **10 obrazovek**; číslování a viditelné plochy jsou ve spec souboru → `monitors.numbering`.
+Logika: po obvodu od rohu — stěna B zleva (1–2), krabice na stěně A shora dolů (3–5), exponáty
+od rohu (6 věž mini, 7 šikmý pult mini u vstupu, 8 totem arcade), kiosky od stěny A (9–10).
+
+Ve vieweru: přepínač „Čísla monitorů" + rozevírací seznam nahrávání grafiky per monitor
+(`screenDefs()` = jediné místo s rozměry v JS, `screenSlot()` kreslí grafiku i číslo).
+Obrazovky produktů (věž/pult mini, totem, kiosky) **nemají v meshích UV** — grafika i číslo se
+kreslí jako překryvná rovina (`MeshBasicMaterial`, svítí jako obrazovka). Jejich pozice jsou
+**ZMĚŘENÉ z generovaných meshů** a zapsané natvrdo ve voláních `screenSlot` v `build()` —
+po přegenerování meshů ověř screenshotem, že překryvy pořád sedí. Šikmé obrazovky (pult mini,
+kiosky) mají sklon 30° → `rotation.x = -π/3`, střed odsazený 12 mm podél normály.
 
 - Rozměr, který není v `confirmed`, označ jako odhad. Nevydávej ho za fakt.
 - Když uživatel dodá skutečnou výměru stánku, uprav `stand-spec.json`, přegeneruj model a řekni, co se změnilo.

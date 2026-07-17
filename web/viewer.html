@@ -385,6 +385,9 @@ const matMini = {
   kostky:  new THREE.MeshStandardMaterial({color:0x17191D, roughness:.5}), // černé rámy dlaždic
   plexi:   new THREE.MeshStandardMaterial({color:0xBFD9E2, roughness:.15, transparent:true, opacity:.25, depthWrite:false}),
   monitor: new THREE.MeshStandardMaterial({color:0x0B0D12, roughness:.35, metalness:.2}),
+  // sklo integrovanych FHD monitoru (pult mini, kiosky): lic presne v rovine
+  // sikminy, grafika se kresli POD nim na tmavou vyplne (pozadavek 17.7.2026)
+  sklo:    new THREE.MeshStandardMaterial({color:0xAFC4CE, roughness:.08, metalness:.25, transparent:true, opacity:.16, depthWrite:false}),
   dibond:  new THREE.MeshStandardMaterial({color:0xE8EAEC, roughness:.6}),
   koberec: new THREE.MeshStandardMaterial({color:0x161616, roughness:.97}) // černý koberec podesty u vstupu
 };
@@ -409,8 +412,8 @@ function meshGroup(data){
     geo = geo.toNonIndexed();
     geo.computeVertexNormals();
     const m = new THREE.Mesh(geo, matMini[g.name] || matMini.ocel);
-    // plexi a svítící segmenty stíny nevrhají ani nepřijímají (segmenty by stín ztmavil)
-    if(g.name !== 'plexi' && !g.name.startsWith('led')) m.castShadow = m.receiveShadow = true;
+    // plexi, sklo a svítící segmenty stíny nevrhají ani nepřijímají (segmenty by stín ztmavil)
+    if(g.name !== 'plexi' && g.name !== 'sklo' && !g.name.startsWith('led')) m.castShadow = m.receiveShadow = true;
     grp.add(m);
   });
   return grp;
@@ -583,10 +586,10 @@ function screenDefs(){
     {key:'mbMid',    n:4,  label:'Krabice A — prostřední obrazovka',  mm:[mbc.SW,mbc.SH], px:[1920,1080]},
     {key:'mbBot',    n:5,  label:'Krabice A — spodní obrazovka',      mm:[mbc.SW,mbc.SH], px:[1920,1080]},
     {key:'miniTv',   n:6,  label:'Mini — monitor na věži (50″)',      mm:[1123,643],      px:[1920,1080]},
-    {key:'miniPult', n:7,  label:'Mini — pult u vstupu (šikmý 30°)',  mm:[417.6,214.1],   px:[1920,984]},
+    {key:'miniPult', n:7,  label:'Mini — pult u vstupu (šikmý 30°)',  mm:[517.6,291.15],  px:[1920,1080]},
     {key:'arc',      n:8,  label:'Arcade — totem (na výšku)',         mm:[560,800],       px:[1080,1543]},
-    {key:'k1',       n:9,  label:'Kiosek 1 — blíž stěně A (šikmý)',   mm:[417.6,214.1],   px:[1920,984]},
-    {key:'k2',       n:10, label:'Kiosek 2 — blíž arcade (šikmý)',    mm:[417.6,214.1],   px:[1920,984]},
+    {key:'k1',       n:9,  label:'Kiosek 1 — blíž stěně A (šikmý)',   mm:[517.6,291.15],  px:[1920,1080]},
+    {key:'k2',       n:10, label:'Kiosek 2 — blíž arcade (šikmý)',    mm:[517.6,291.15],  px:[1920,1080]},
   ];
 }
 let SDEF = {}; // key -> def, plni se v build()
@@ -732,12 +735,14 @@ function build(){
       root.add(mg);
       // obrazovky mini — pozice ZMERENY z mini-mesh.js (lokalni ramec produktu, mm):
       // vez: celni lic displeje 1123x643 na x=253.5, smer +X; pult u vstupu:
-      // sikmina 30°, stred LICE skla (4339, 1098.5, 220), normala (0, cos30, sin30) + 10 mm
+      // bezrameckovy FHD panel zapusteny do sikminy 30° (lic skla PRESNE v rovine
+      // plechu, sklo pruhledne — export_mini.py). Stred lice (4339, 1100.0, 221.15);
+      // grafika lezi 1,05 mm POD sklem na tmave vyplni (pozadavek 17.7.2026)
       const mo = T + CL;
       screenSlot(SDEF.miniTv, [mo + 256, 1433.5, mo + 950.5], {y:Math.PI/2}, 1123, 643);
       screenSlot(SDEF.miniPult,
-        [mo + 4339, 1098.5 + 10*Math.cos(Math.PI/6), mo + 220 + 10*Math.sin(Math.PI/6)],
-        {x:-Math.PI/3}, 417.6, 214.1);
+        [mo + 4339, 1100.0 - 1.05*Math.cos(Math.PI/6), mo + 221.15 - 1.05*Math.sin(Math.PI/6)],
+        {x:-Math.PI/3}, 517.6, 291.15);
     }
   }
 
@@ -778,11 +783,13 @@ function build(){
         const inst = kg.clone();
         inst.position.set(kx*S, 0, kz*S);
         root.add(inst);
-        // sikma obrazovka kiosku (30°, klesa k +z do ulicky) — stred LICE skla
-        // (290, 1108.4, 176) ZMEREN z kiosk-mesh.js, + 10 mm podel normaly
+        // sikma obrazovka kiosku (30°, klesa k +z do ulicky) — bezrameckovy FHD
+        // panel zapusteny do sikminy (lic skla PRESNE v rovine sikminy, sklo
+        // pruhledne — export_kiosk.py). Stred lice (290, 1098.0, 170.0) ZMEREN
+        // z kiosk-mesh.js; grafika lezi 1,05 mm POD sklem na tmave vyplni
         screenSlot(SDEF['k' + (i+1)],
-          [kx + 290, 1108.4 + 10*Math.cos(Math.PI/6), kz + 176 + 10*Math.sin(Math.PI/6)],
-          {x:-Math.PI/3}, 417.6, 214.1);
+          [kx + 290, 1098.0 - 1.05*Math.cos(Math.PI/6), kz + 170.0 - 1.05*Math.sin(Math.PI/6)],
+          {x:-Math.PI/3}, 517.6, 291.15);
       }
     }
   }

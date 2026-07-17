@@ -3,11 +3,14 @@
 Synteticky model kiosku "pult + monitor" u ulicky.
 
 Odvozeno z pultu se sikmym displejem u vstupni branky produktu mini
-(dily PLECH MONITOR VRCH/SPODEK + DISPLEJ/DISPLEJ001 v mini.stp, zmereno
-15.7.2026): sikma horni deska 30 stupnu, skrin displeje 517,6 x 313,5 mm,
-aktivni plocha 417,6 x 214,1 mm. Sirka pultu dle zadani = skrin + 2x mensi
-z okraju puvodniho pultu (31,2 mm) = 580 mm. Telo je plny bily kvadr se
-sikmou horni plochou, az na zem. Rozmery a umisteni cte z
+(dily PLECH MONITOR VRCH/SPODEK v mini.stp, zmereno 15.7.2026): sikma horni
+deska 30 stupnu. Sirka pultu dle zadani = skrin + 2x mensi z okraju
+puvodniho pultu (31,2 mm) = 580 mm. Telo je plny bily kvadr se sikmou horni
+plochou, az na zem. Monitor je bezrameckovy FHD panel 16:9 integrovany do
+sikminy (zadani 17.7.2026): v sikme plose je otvor presne na miru skla,
+LIC SKLA LEZI PRESNE V ROVINE SIKMINY (zadny schod - pozadavek 17.7.2026),
+sklo je pruhledne a pod nim je tmava vyplne panelu; grafika se ve vieweru
+kresli POD sklem na tuto vyplne. Rozmery a umisteni cte z
 data/stand-spec.json (product_kiosk) - zdroj pravdy.
 
 Spousti se obycejnym python3 (bez FreeCADu):
@@ -51,11 +54,10 @@ body = k["dims_mm"]["body"]
 W, D = body["width"], body["depth"]
 HB, HF = body["height_back"], body["height_front"]
 mon = k["dims_mm"]["monitor"]
-MON_W, MON_L = mon["housing"]["width"], mon["housing"]["length_on_slope"]
 SCR_W, SCR_L = mon["screen"]["width"], mon["screen"]["length_on_slope"]
 
-MON_H = 12.0  # jak moc skrin displeje vystupuje nad sikminu
-SCR_H = 1.0   # obrazovka tesne nad celem skrine (aby se plochy neprekryvaly)
+SCR_T = 0.8   # tloustka skla; LIC presne v rovine sikminy (h = -0.8..0)
+BACK_D = 1.3  # horni lic tmave vyplne panelu pod sklem (grafika lezi nad nim)
 
 # sikma horni plocha: z hrany (y=HB, z=0) do hrany (y=HF, z=D)
 L = math.hypot(D, HB - HF)          # delka sikminy (~392 mm)
@@ -74,12 +76,21 @@ def quad(p0, p1, p2, p3):
 
 
 # ---------- telo pultu: plny kvadr se sikmou horni plochou ----------
-def pult(name):
+# Sikma plocha ma OTVOR presne na miru skla monitoru - sklo pak muze lezet
+# licem presne v rovine sikminy, aniz by se koplanarni plochy praly (z-fighting).
+def pult(name, hole):
+    """hole = (x0, x1, t0, t1) otvoru na sikmine (t = po spadu od zadni hrany)."""
+    def sp(x, tt):
+        return (x, HB + tt * s[0], tt * s[1])
+    x0, x1, t0, t1 = hole
     t = []
     t += quad((0, 0, D), (W, 0, D), (W, HF, D), (0, HF, D))    # predni lic (+z)
     t += quad((0, 0, 0), (0, HB, 0), (W, HB, 0), (W, 0, 0))    # zadni stena (-z)
     t += quad((0, 0, 0), (W, 0, 0), (W, 0, D), (0, 0, D))      # dno (-y)
-    t += quad((0, HB, 0), (0, HF, D), (W, HF, D), (W, HB, 0))  # sikma horni plocha
+    t += quad(sp(0, 0), sp(0, t0), sp(W, t0), sp(W, 0))        # sikmina nad otvorem
+    t += quad(sp(0, t1), sp(0, L), sp(W, L), sp(W, t1))        # sikmina pod otvorem
+    t += quad(sp(0, t0), sp(0, t1), sp(x0, t1), sp(x0, t0))    # sikmina vlevo
+    t += quad(sp(x1, t0), sp(x1, t1), sp(W, t1), sp(W, t0))    # sikmina vpravo
     t += quad((W, 0, 0), (W, HB, 0), (W, HF, D), (W, 0, D))    # bok (+x)
     t += quad((0, 0, 0), (0, 0, D), (0, HF, D), (0, HB, 0))    # bok (-x)
     emit(name, t)
@@ -101,20 +112,22 @@ def slope_box(name, x0, x1, t0, t1, h0, h1):
 
 
 # ---------- stavba ----------
-pult("body")
-# skrin displeje centrovana na sikmine (boky presne 31,2 mm dle zadani)
-mt0 = (L - MON_L) / 2
-slope_box("screen", (W - MON_W) / 2, (W + MON_W) / 2, mt0, mt0 + MON_L, 0, MON_H)
+# sklo bezrameckoveho FHD monitoru centrovane na sikmine (boky 31,2 mm dle
+# zadani); lic skla presne v rovine sikminy, pod nim tmava vyplne panelu
+# (o 10 mm vetsi, aby pres pruhledne sklo nebylo sikmo videt do dutiny tela)
 st0 = (L - SCR_L) / 2
-slope_box("screen", (W - SCR_W) / 2, (W + SCR_W) / 2, st0, st0 + SCR_L,
-          MON_H, MON_H + SCR_H)
+sx0, sx1 = (W - SCR_W) / 2, (W + SCR_W) / 2
+pult("body", (sx0, sx1, st0, st0 + SCR_L))
+slope_box("sklo", sx0, sx1, st0, st0 + SCR_L, -SCR_T, 0)
+slope_box("screen", sx0 - 10, sx1 + 10, st0 - 10, st0 + SCR_L + 10,
+          -BACK_D - 1.0, -BACK_D)
 
 ntris = sum(len(t) for t in groups.values())
 print(f"Kiosk: {ntris} trojuhelniku, telo {W:.0f} x {D:.0f} mm, "
       f"vyska {HB:.0f}/{HF:.0f} mm, sikmina {math.degrees(math.atan2(HB - HF, D)):.1f} st.")
 
 # ---------- web/kiosk-mesh.js (three.js ramec, metry, JEDEN kiosk) ----------
-order = ["body", "screen"]
+order = ["body", "screen", "sklo"]
 js = [
     "// AUTOGENEROVANO skriptem model/export_kiosk.py - NEEDITUJ RUCNE.",
     "// three.js ramec (Y nahoru), metry, lokalni ramec JEDNOHO kiosku:",

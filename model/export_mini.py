@@ -24,6 +24,7 @@ Pro viewer (three.js, Y nahoru) se osy prohodi na (lx, lz, ly) - to je zrcadleni
 proto se u vieweru obraci poradi vrcholu trojuhelniku (winding).
 """
 import json
+import math
 import os
 import struct
 
@@ -138,6 +139,8 @@ parts = []  # (bucket, points, facets)
 kostka_bbs = []  # bboxy LED dlazdic - pro dopocet svitivych segmentu
 removed = 0
 capped = []  # zaslepene otevrene konce jeklu (viz CAP_ENDS)
+disp_bb = None    # spolecny bbox vynechanych dilu DISPLEJ* (sikmy pult u vstupu)
+vrch_shape = None  # sikmy plech pultu (PLECH MONITOR VRCH) - rovina pro nove sklo
 for obj in doc.Objects:
     sh = getattr(obj, "Shape", None)
     if sh is None or not sh.Solids or obj.TypeId != "Part::Feature":
@@ -150,6 +153,20 @@ for obj in doc.Objects:
         gbb = FreeCAD.BoundBox(s.BoundBox)
     else:
         gbb.add(s.BoundBox)
+    # Sikmy displej pultu u vstupu (DISPLEJ = aktivni plocha, DISPLEJ001 =
+    # vystoupla skrin s cernym rameckem) se vynechava - pult bude mit
+    # bezrameckovy FHD monitor integrovany do sikminy (pozadavek 17.7.2026,
+    # viz product.modifications.pult_display_integrated). Nahrazuje ho sklo
+    # polozene na sikmy plech nize. mini.stp se NEMENI.
+    if obj.Label.upper().startswith("DISPLEJ"):
+        if disp_bb is None:
+            disp_bb = FreeCAD.BoundBox(s.BoundBox)
+        else:
+            disp_bb.add(s.BoundBox)
+        continue
+    if obj.Label.upper().startswith("PLECH MONITOR VRCH"):
+        vrch_shape = s
+        continue  # tessellace az po vyrezu zapusteni pro sklo (nize)
     if is_front_fence(obj.Label, s.BoundBox):
         removed += 1
         bb = s.BoundBox
@@ -200,6 +217,57 @@ for box in (tower_box(4.0, 252.0, 346.5, 1554.5, 1.0, 1111.5),
     pts, tris = box.tessellate(DEFLECTION)
     parts.append(("ocel", pts, tris))
 
+# Bezrameckovy FHD monitor pultu u vstupu (pozadavek 17.7.2026): misto
+# vynechanych dilu DISPLEJ* dostane sikmy plech (PLECH MONITOR VRCH, 30 stupnu)
+# vyrez-zapusteni a do nej se vklada pruhledne sklo 16:9 tak, aby jeho LIC
+# LEZEL PRESNE V ROVINE PLECHU (zadny schod - pozadavek 17.7.2026). Pod sklem
+# je tmava vyplne panelu; grafika se ve vieweru kresli POD sklem na tuto
+# vyplne. Rozmer skla se cte z product_kiosk.dims_mm.monitor.screen (kiosky
+# maji tyz panel). Sklo je centrovane na puvodni skrin displeje a s rezervou
+# zakryva i montazni otvor v plechu (480 x 271 mm na spadu).
+kscr = spec["product_kiosk"]["dims_mm"]["monitor"]["screen"]
+GL_W, GL_L = kscr["width"], kscr["length_on_slope"]
+CUT_D = 1.5   # hloubka zapusteni v plechu (plech ma 2 mm)
+SCR_T = 0.8   # tloustka skla; lic presne v rovine plechu (-0.8..0)
+BACK_D = 1.3  # horni lic tmave vyplne pod sklem
+face = max((f for f in vrch_shape.Faces
+            if isinstance(f.Surface, Part.Plane) and f.Surface.Axis.z > 0.7
+            and abs(f.Surface.Axis.y) < 0.02 and f.Area > 50000),
+           key=lambda f: f.CenterOfMass.dot(f.Surface.Axis))  # vnejsi lic plechu
+n = face.Surface.Axis.normalize()
+hp = disp_bb.Center - n * (disp_bb.Center.dot(n) - face.CenterOfMass.dot(n))
+
+
+def on_slope(shape):
+    """Lokalni ramec skla (z = kolmo na plech, 0 = lic plechu) -> STEP."""
+    shape.rotate(FreeCAD.Vector(0, 0, 0), FreeCAD.Vector(0, 1, 0),
+                 math.degrees(math.atan2(n.x, n.z)))
+    shape.translate(hp)
+    return shape
+
+
+# vyrez o 1 mm sirsi nez sklo (0,5 mm sparka okolo - boky skla se jinak
+# koplanarne perou se stenami vyrezu); presahuje 0,5 mm nad lic, at rez projde
+recess = on_slope(Part.makeBox(GL_L + 1, GL_W + 1, CUT_D + 0.5,
+                               FreeCAD.Vector(-(GL_L + 1) / 2, -(GL_W + 1) / 2,
+                                              -CUT_D)))
+pts, tris = vrch_shape.cut(recess).tessellate(DEFLECTION)
+parts.append(("ocel", pts, tris))
+glass = on_slope(Part.makeBox(GL_L, GL_W, SCR_T,
+                              FreeCAD.Vector(-GL_L / 2, -GL_W / 2, -SCR_T)))
+pts, tris = glass.tessellate(DEFLECTION)
+parts.append(("sklo", pts, tris))
+# tmava vyplne panelu o 10 mm vetsi, aby pres sklo nebylo sikmo videt do dutiny
+back = on_slope(Part.makeBox(GL_L + 20, GL_W + 20, 1.0,
+                             FreeCAD.Vector(-(GL_L + 20) / 2, -(GL_W + 20) / 2,
+                                            -BACK_D - 1.0)))
+pts, tris = back.tessellate(DEFLECTION)
+parts.append(("monitor", pts, tris))
+print(f"Pult: sklo FHD {GL_W:.1f} x {GL_L:.2f} mm, sklon "
+      f"{math.degrees(math.atan2(n.x, n.z)):.1f} st., stred lice skla "
+      f"viewer (x,y,z) = ({gbb.YMax - hp.y:.1f}, {hp.z - gbb.ZMin:.1f}, "
+      f"{hp.x - gbb.XMin:.1f})")
+
 # LED segmenty dlazdic (pozadavek 13.7.2026, dle fotek skutecneho produktu):
 # kazda dlazdice KOSTKA ma cerny ram a vnitrni svitici panel. Panel se vklada
 # jako tenka deska nad horni plochou dlazdice, odsazena od hran (ram zustava
@@ -232,7 +300,7 @@ def to_local(p):
 
 
 # ---------- web/mini-mesh.js (three.js, Y nahoru, metry) ----------
-order = ["ocel", "kostky", "plexi", "monitor", "dibond", "koberec",
+order = ["ocel", "kostky", "plexi", "monitor", "sklo", "dibond", "koberec",
          "led0", "led1", "led2", "led3", "led4"]
 groups = {k: {"pos": [], "idx": []} for k in order}
 for buck, pts, tris in parts:

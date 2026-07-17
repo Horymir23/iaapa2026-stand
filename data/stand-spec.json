@@ -325,7 +325,17 @@
       "wall_a": "Stěna A v1.jpg",
       "hanging_banner": "Poutač360v2.jpg"
     },
-    "note_versions": "V názvech je verze (v1/v2/v3). Když přibude novější, uprav DEF_GFX ve web/viewer.html i tuhle sekci."
+    "screens": {
+      "$comment": "Výchozí grafiky jednotlivých monitorů (zadal uživatel 17.7.2026). Klíč = číslo monitoru dle monitors.numbering, ve vieweru konstanta DEF_SCR (klíče dle screenDefs). Monitory 3–5 (krabice na stěně A) zatím výchozí grafiku nemají.",
+      "1": "1 TV 55.jpg",
+      "2": "2 TV 55.jpg",
+      "6": "6 mini monitor na vezi.jpg",
+      "7": "7 mini monitor na pultu.jpg",
+      "8": "8 arcade totem.jpg",
+      "9": "9 Kiosek 1.jpg",
+      "10": "10 Kiosek 2.jpg"
+    },
+    "note_versions": "V názvech je verze (v1/v2/v3). Když přibude novější, uprav DEF_GFX / DEF_SCR ve web/viewer.html i tuhle sekci."
   },
 
   "design_intent": {

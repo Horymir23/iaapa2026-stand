@@ -285,6 +285,16 @@ const DEF_GFX = {
   A:   '../assets/grafika/Stěna A v1.jpg',
   ban: '../assets/grafika/Poutač360v2.jpg'
 };
+// vychozi grafiky obrazovek (klic dle screenDefs()); monitory 3-5 (krabice A) zatim nemaji
+const DEF_SCR = {
+  tv1:      '../assets/grafika/1 TV 55.jpg',
+  tv2:      '../assets/grafika/2 TV 55.jpg',
+  miniTv:   '../assets/grafika/6 mini monitor na vezi.jpg',
+  miniPult: '../assets/grafika/7 mini monitor na pultu.jpg',
+  arc:      '../assets/grafika/8 arcade totem.jpg',
+  k1:       '../assets/grafika/9 Kiosek 1.jpg',
+  k2:       '../assets/grafika/10 Kiosek 2.jpg'
+};
 const DEF_UI = { B:['tB','upB'], A:['tA','upA'], ban:['tBan','upBan'] };
 function loadDefaultGraphics(){
   Object.keys(DEF_GFX).forEach(key=>{
@@ -297,6 +307,15 @@ function loadDefaultGraphics(){
       document.getElementById(tid).textContent = '✓ ' + (name.length>24 ? name.slice(0,22)+'…' : name);
       document.getElementById(uid).classList.add('has');
       build();
+    }, undefined, ()=>{});
+  });
+  Object.keys(DEF_SCR).forEach(key=>{
+    const url = DEF_SCR[key];
+    new THREE.TextureLoader().load(encodeURI(url), t=>{
+      t.encoding = THREE.sRGBEncoding;
+      scrTex[key] = t;
+      scrName[key] = decodeURIComponent(url.split('/').pop());
+      buildScreenList(); build();
     }, undefined, ()=>{});
   });
 }

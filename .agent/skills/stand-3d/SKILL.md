@@ -189,9 +189,16 @@ konstanta `DEF_GFX`) — uživatel nic nahrávat nemusí. Přiřazení je i ve s
 | `Stěna A v1.jpg` | stěna A |
 | `Poutač360v2.jpg` | poutač (360°) |
 
+Od 17. 7. 2026 mají výchozí grafiku i **monitory** — konstanta `DEF_SCR` (klíče dle
+`screenDefs()`), soubory pojmenované číslem monitoru (`1 TV 55.jpg` … `10 Kiosek 2.jpg`),
+přiřazení ve spec souboru → `default_graphics.screens`. Monitory 3–5 (krabice na stěně A)
+výchozí grafiku zatím nemají.
+
 Názvy mají diakritiku a mezery → cesta se balí do `encodeURI`. Načítá se `TextureLoader`em
 (funguje i z `file://`, narozdíl od `fetch` spec souboru); chybějící soubor tiše přeskočí.
-Když dodá uživatel novější verzi, uprav `DEF_GFX` **i** `default_graphics` ve spec souboru.
+POZOR: v **headless** Chromu (screenshoty) `file://` obrázky blokuje CORS — pro ověření
+grafik pusť viewer přes `python3 -m http.server` a screenshotuj `http://127.0.0.1:…`.
+Když dodá uživatel novější verzi, uprav `DEF_GFX`/`DEF_SCR` **i** `default_graphics` ve spec souboru.
 
 Přegenerování modelu:
 ```bash

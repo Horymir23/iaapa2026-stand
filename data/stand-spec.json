@@ -27,7 +27,7 @@
     "open_sides": 2,
     "corner_stand": true,
     "floor_nominal": {
-      "$comment": "Z půdorysu haly (data/preview.webp): kóty 3 × 6 m, výměra 18 m² — dvě spojená místa 3×3 m. POZOR: nominální výměra plochy ≠ stavební délka stěn; stěny stojí uvnitř plochy (viz assumed.wall_b_length).",
+      "$comment": "Z půdorysu haly (data/preview.webp): kóty 3 × 6 m, výměra 18 m² — dvě spojená místa 3×3 m. POZOR: nominální výměra plochy ≠ stavební délka stěn; stěny stojí uvnitř plochy (viz assumed.wall_b_length). PŘEKONTROLOVÁNO 19.7.2026 přímo z půdorysu (zvětšeno 10×): blok S4244 'PIXEL FLOORS' je popsaný '18m²', kóta '3' na vodorovné (spodní) hraně a kóta '6' na svislé (levé) hraně → 3 m × 6 m POTVRZENO. Sousedé sedí: S4242 Blacklight Attractions (9m²) nad 3m hranou, S4345 House of Play (18m²) za 6m hranou. Zbylé dvě strany (levá 6 m a spodní 3 m) leží v zelené ploše = ulička → rohový stánek se 2 otevřenými stranami SEDÍ.",
       "width_mm": 3000,
       "depth_mm": 6000,
       "area_m2": 18,
@@ -73,6 +73,26 @@
     "wall_b_length": {
       "value": 5940,
       "reason": "Nominální hloubka 6000 mm je POTVRZENÁ půdorysem (confirmed.floor_nominal) — odhad je jen STAVEBNÍ délka stěny. Analogie s potvrzenou stěnou A (2970 mm na nominální 3 m): 2 × 2970 = 5940 mm = 6 modulů 986 mm + 5 spár 4,8 mm. Přesný počet a rozpal panelů musí potvrdit GES.",
+      "INCONSISTENCY_found_2026-07-19": {
+        "$comment": "Odhad 5940 NENÍ vnitřně konzistentní s potvrzenou stěnou A. Není to chyba ve výpočtu spár (gap_for() v generator.py počítá správně), ale chyba v ODVOZENÍ délky 5940.",
+        "problem": "Stěna A (2970, POTVRZENO) = 3×986 + 2 spáry → spára vychází 6,0 mm. Stěna B jako 2×2970 = 5940 → 6×986 + 5 spár → spára vychází 4,8 mm. Stejný panelový systém by měl mít stejně širokou spáru; 6,0 vs 4,8 mm si odporuje.",
+        "cause": "2 × 2970 = 6 panelů + 4 spáry. Spojitá šestipanelová stěna má ale 5 spár. Sečtením dvou samostatných stěn se JEDNA SPÁRA ZTRATÍ.",
+        "alternative_value": 5946,
+        "alternative_reason": "6 × 986 + 5 × 6,0 mm = 5946 mm — drží stejnou spáru 6,0 mm jako potvrzená stěna A.",
+        "impact": "Rozdíl 6 mm. Na umístění produktů zanedbatelné, ALE posouvá polohy spár na stěně B — a mapování grafiky přes spáry je hlavní účel celého nástroje. Pro tisk grafiky to potřebuje přesnou hodnotu.",
+        "action": "Nechávám 5940 (needitovat bez podkladu od GES), ale při dotazu na rozpal panelů se ptát PŘÍMO na šířku spáry a celkovou stavební délku — viz open_questions."
+      },
+      "verify_with": "iaapaeu@ges.com"
+    },
+    "panel_counts": {
+      "$comment": "PŘIDÁNO 19.7.2026. Počty panelů v data/Shell Scheme.pdf ('AMP Panels: 6 x 986mm', 'AMP Fabric: 2 x 2970mm') platí pro PŘÍKLAD 3×3 m, NE pro náš stánek — PDF to samo říká v patičce: 'IMAGE IS AN EXAMPLE OF A 3M X 3M SHELL SCHEME STAND WITH 2 OPEN SIDES ... SUBJECT TO CHANGE BASED ON YOUR STAND SIZE AND CONFIGURATION.' Náš stánek 3×6 m má delší stěnu → víc panelů. Hodnoty níže jsou DOPOČET, ne údaj od GES.",
+      "wall_a_panels": 3,
+      "wall_b_panels": 6,
+      "total_panels": 9,
+      "wall_a_fabric_pieces": 1,
+      "wall_b_fabric_pieces": 2,
+      "total_fabric_pieces": 3,
+      "note_fabric": "Textil má max. šířku 2970 mm, takže stěna B potřebuje 2 kusy = svislý spoj. KDE přesně spoj padne, není známo — pro grafiku zásadní. Viz open_questions.",
       "verify_with": "iaapaeu@ges.com"
     },
     "panel_thickness": {

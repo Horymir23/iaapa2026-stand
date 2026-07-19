@@ -181,6 +181,10 @@
       <label for="sBanR">Natočení grafiky poutače <b id="lBanR">115°</b></label>
       <input type="range" id="sBanR" min="0" max="360" step="5" value="115">
     </div>
+    <label class="up" id="upArcT">
+      <input type="file" id="fArcT" accept="image/*">
+      <span id="tArcT">＋ Nahrát grafiku — totem arcade (tělo)</span>
+    </label>
     <button class="btn" id="bClr">Odebrat všechny grafiky</button>
     <div class="note">
       Grafika se rozpočítá přes všechny panely stěny — uvidíš, kde ji spáry rozdělí. Poměr stran drž dle stěny.
@@ -253,6 +257,10 @@
 <script src="mini-mesh.js"></script>
 <script src="arcade-mesh.js"></script>
 <script src="kiosk-mesh.js"></script>
+<!-- vychozi grafiky jako data URI (generuje model/export_gfx.py) — pres file://
+     Chrome blokuje obrazkove textury CORSem, data URI je jedina funkcni cesta.
+     Soubor je volitelny: kdyz chybi, loadDefaultGraphics zkusi prime cesty (http). -->
+<script src="gfx-default.js"></script>
 <script>
 // ============ KONSTANTY (mm, dle GES AMP spec) ============
 // Výchozí hodnoty odpovídají data/stand-spec.json.
@@ -274,7 +282,7 @@ let mbc = { n:3, W:600, H:1040, D:80, SW:600, SH:337.5, CY:1500 };
 // ROT = natočení středu grafiky od stěny B směrem k otevřené kratší straně (°)
 let ban = { D:1520, H:610, BOT:3300, CL:1000, CABLE:257, ROT:115 };
 let opt = { spot:true, joint:true, mini:true, arc:true, kiosk:true, tv:true, mon:true, ban:true, num:false };
-let tex = { B:null, A:null, ban:null };
+let tex = { B:null, A:null, ban:null, arcTot:null };
 let scrTex = {}, scrName = {}; // nahrané grafiky obrazovek, klíč dle screenDefs()
 
 // vychozi grafiky ze slozky assets/grafika (nazev souboru -> plocha). Nazvy maji
@@ -283,7 +291,8 @@ let scrTex = {}, scrName = {}; // nahrané grafiky obrazovek, klíč dle screenD
 const DEF_GFX = {
   B:   '../assets/grafika/Stěna B v3.jpg',
   A:   '../assets/grafika/Stěna A v1.jpg',
-  ban: '../assets/grafika/Poutač360v2.jpg'
+  ban: '../assets/grafika/Poutač360v2.jpg',
+  arcTot: '../assets/grafika/Arcade.webp'
 };
 // vychozi grafiky obrazovek (klic dle screenDefs()); monitory 3-5 (krabice A) zatim nemaji
 const DEF_SCR = {
@@ -295,14 +304,24 @@ const DEF_SCR = {
   k1:       '../assets/grafika/9 Kiosek 1.jpg',
   k2:       '../assets/grafika/10 Kiosek 2.jpg'
 };
-const DEF_UI = { B:['tB','upB'], A:['tA','upA'], ban:['tBan','upBan'] };
+const DEF_UI = { B:['tB','upB'], A:['tA','upA'], ban:['tBan','upBan'], arcTot:['tArcT','upArcT'] };
+// data URI z gfx-default.js ma prednost pred primou cestou: pres file:// Chrome
+// blokuje obrazkove textury CORSem (a bez crossorigin je odmitne texImage2D),
+// takze prima cesta funguje jen pres http. Klic v bundlu = nazev souboru.
+function defGfxSrc(url){
+  // NFC normalizace: klice bundlu jsou NFC, ale kdyby nekdo vlozil do DEF_*
+  // nazev zkopirovany z macOS Finderu, byl by NFD a lookup by selhal
+  const name = url.split('/').pop().normalize('NFC');
+  if(typeof GFX_DATA !== 'undefined' && GFX_DATA[name]) return GFX_DATA[name];
+  return encodeURI(url);
+}
 function loadDefaultGraphics(){
   Object.keys(DEF_GFX).forEach(key=>{
     const url = DEF_GFX[key];
-    new THREE.TextureLoader().load(encodeURI(url), t=>{
+    new THREE.TextureLoader().load(defGfxSrc(url), t=>{
       t.encoding = THREE.sRGBEncoding;
       tex[key] = t;
-      const name = decodeURIComponent(url.split('/').pop());
+      const name = url.split('/').pop();
       const [tid, uid] = DEF_UI[key];
       document.getElementById(tid).textContent = '✓ ' + (name.length>24 ? name.slice(0,22)+'…' : name);
       document.getElementById(uid).classList.add('has');
@@ -311,10 +330,10 @@ function loadDefaultGraphics(){
   });
   Object.keys(DEF_SCR).forEach(key=>{
     const url = DEF_SCR[key];
-    new THREE.TextureLoader().load(encodeURI(url), t=>{
+    new THREE.TextureLoader().load(defGfxSrc(url), t=>{
       t.encoding = THREE.sRGBEncoding;
       scrTex[key] = t;
-      scrName[key] = decodeURIComponent(url.split('/').pop());
+      scrName[key] = url.split('/').pop();
       buildScreenList(); build();
     }, undefined, ()=>{});
   });
@@ -779,6 +798,23 @@ function build(){
       // totem arcade: obrazovka 560x800 na celni stene bedny (lokalni z=254,
       // smer +Z do stanku) — rozmery z model/export_arcade.py
       screenSlot(SDEF.arc, [ax0 + 680, 1350, T + CL + 256], {}, 560, 800);
+      // potisk tela totemu (kostky + slogan) pod obrazovkou. Bedna 700 mm
+      // siroka (lokalni x 330..1030), celni lic z=250 (export_arcade.py) —
+      // rovina 2 mm pred licem, jako grafika na stenach. Prava hrana grafiky
+      // (oriznute kostky) licuje s pravou hranou bedny a horni hrana se spodni
+      // hranou obrazovky (y=950) — pozadavek 17.7.2026 dle dodane vizualizace.
+      // Platebni terminal (lic z=253) zustava PRED potiskem, jako na vizualizaci.
+      if(tex.arcTot && tex.arcTot.image){
+        const im = tex.arcTot.image;
+        let gw = 700, gh = gw * im.height / im.width;
+        if(gh > 950){ gh = 950; gw = gh * im.width / im.height; } // nesahat pod podlahu
+        const gr = new THREE.Mesh(
+          new THREE.PlaneGeometry(gw*S, gh*S),
+          new THREE.MeshStandardMaterial({map:tex.arcTot, roughness:.7, transparent:true})
+        );
+        gr.position.set((ax0 + 1030 - gw/2)*S, (950 - gh/2)*S, (T + CL + 252)*S);
+        root.add(gr);
+      }
     }
   }
 
@@ -1069,6 +1105,7 @@ function upload(fid, tid, uid, key){
 upload('fB','tB','upB','B');
 upload('fA','tA','upA','A');
 upload('fBan','tBan','upBan','ban');
+upload('fArcT','tArcT','upArcT','arcTot');
 
 // ---- rozeviraci seznam nahravani grafik na jednotlive monitory ----
 // Radky se generuji ze screenDefs() (jedine misto s rozmery), proto se seznam
@@ -1102,14 +1139,15 @@ function buildScreenList(){
 }
 
 $('bClr').addEventListener('click', ()=>{
-  tex = {B:null,A:null,ban:null};
+  tex = {B:null,A:null,ban:null,arcTot:null};
   scrTex = {}; scrName = {};
   [['tB','upB','＋ Nahrát grafiku — stěna B'],
    ['tA','upA','＋ Nahrát grafiku — stěna A'],
-   ['tBan','upBan','＋ Nahrát grafiku — poutač (360°)']].forEach(([t,u,l])=>{
+   ['tBan','upBan','＋ Nahrát grafiku — poutač (360°)'],
+   ['tArcT','upArcT','＋ Nahrát grafiku — totem arcade (tělo)']].forEach(([t,u,l])=>{
     $(t).textContent = l; $(u).classList.remove('has');
   });
-  ['fB','fA','fBan'].forEach(i=>$(i).value='');
+  ['fB','fA','fBan','fArcT'].forEach(i=>$(i).value='');
   buildScreenList();
   build();
 });

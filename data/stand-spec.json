@@ -318,13 +318,16 @@
   },
 
   "default_graphics": {
-    "$comment": "Výchozí grafiky, které web/viewer.html načte sám při otevření (funkce loadDefaultGraphics) — uživatel je nemusí nahrávat ručně. Zadal uživatel 16.7.2026, přiřazení dle názvů souborů. Cesty jsou relativní k web/viewer.html; názvy mají diakritiku a mezery → ve vieweru encodeURI. Když soubor chybí, plocha zůstane bez grafiky (tichý fallback). Nahrání souboru přes tlačítko i tlačítko „Odebrat všechny grafiky\" výchozí grafiku přebijí až do reloadu stránky.",
+    "$comment": "Výchozí grafiky, které web/viewer.html načte sám při otevření (funkce loadDefaultGraphics) — uživatel je nemusí nahrávat ručně. Zadal uživatel 16.7.2026, přiřazení dle názvů souborů. Když soubor chybí, plocha zůstane bez grafiky (tichý fallback). Nahrání souboru přes tlačítko i tlačítko „Odebrat všechny grafiky\" výchozí grafiku přebijí až do reloadu stránky. POZOR (19.7.2026): přes file:// Chrome blokuje obrázkové textury CORSem, proto se grafiky balí do web/gfx-default.js jako data URI — po každé změně souborů v assets/grafika/ spusť: python3 model/export_gfx.py",
     "folder": "assets/grafika/",
+    "bundle": "web/gfx-default.js (generuje model/export_gfx.py, klíč = název souboru; viewer ho bere přednostně, přímá cesta je fallback funkční jen přes http)",
     "map": {
       "wall_b": "Stěna B v3.jpg",
       "wall_a": "Stěna A v1.jpg",
-      "hanging_banner": "Poutač360v2.jpg"
+      "hanging_banner": "Poutač360v2.jpg",
+      "arcade_totem_body": "Arcade.webp"
     },
+    "note_arcade_totem_body": "Arcade.webp = potisk těla totemu arcade (holografické kostky + slogan 'STEP INTO THE LIGHT.') pod obrazovkou, dle vizualizace dodané 17.7.2026. WebP s alfou → kreslí se jako průhledný decal na bílém těle. Zarovnání (zadal uživatel 17.7.2026): pravá hrana grafiky (oříznuté kostky) licuje s pravou hranou bedny, horní hrana se spodní hranou obrazovky (y=950); šířka = plná šířka bedny 700 mm, výška dle poměru stran (399×541 px → ~949 mm). Platební terminál zůstává před potiskem.",
     "screens": {
       "$comment": "Výchozí grafiky jednotlivých monitorů (zadal uživatel 17.7.2026). Klíč = číslo monitoru dle monitors.numbering, ve vieweru konstanta DEF_SCR (klíče dle screenDefs). Monitory 3–5 (krabice na stěně A) zatím výchozí grafiku nemají.",
       "1": "1 TV 55.jpg",

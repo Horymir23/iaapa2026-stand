@@ -165,6 +165,8 @@ web/index.html      — datová stránka (technický podklad pro branding, češ
 web/viewer.html     — 3D editor (three.js r128 z cdnjs, vlastní orbit ovládání)
 web/mini-mesh.js    — GENEROVANÝ mesh produktu (export_mini.py) — needituj ručně
 web/kiosk-mesh.js   — GENEROVANÝ mesh kiosku (export_kiosk.py) — needituj ručně
+web/gfx-default.js  — GENEROVANÉ výchozí grafiky jako data URI (export_gfx.py) — needituj ručně
+model/export_gfx.py — assets/grafika/*.{jpg,png,webp} → gfx-default.js (python3)
 model/generator.py  — generuje STL + DAE stánku; uprav parametry nahoře a spusť
 model/mini.stp      — CAD sestava produktu „mini" (dodaná, zdrojová — neměnit)
 model/export_mini.py— mini.stp → mini-mesh.js + mini_v_stanku.stl/.dae (freecadcmd)
@@ -188,17 +190,23 @@ konstanta `DEF_GFX`) — uživatel nic nahrávat nemusí. Přiřazení je i ve s
 | `Stěna B v3.jpg` | stěna B |
 | `Stěna A v1.jpg` | stěna A |
 | `Poutač360v2.jpg` | poutač (360°) |
+| `Arcade.webp` | tělo totemu arcade — potisk (kostky + slogan) pod obrazovkou; pravá hrana licuje s pravou hranou bedny, horní se spodkem obrazovky |
 
 Od 17. 7. 2026 mají výchozí grafiku i **monitory** — konstanta `DEF_SCR` (klíče dle
 `screenDefs()`), soubory pojmenované číslem monitoru (`1 TV 55.jpg` … `10 Kiosek 2.jpg`),
 přiřazení ve spec souboru → `default_graphics.screens`. Monitory 3–5 (krabice na stěně A)
 výchozí grafiku zatím nemají.
 
-Názvy mají diakritiku a mezery → cesta se balí do `encodeURI`. Načítá se `TextureLoader`em
-(funguje i z `file://`, narozdíl od `fetch` spec souboru); chybějící soubor tiše přeskočí.
-POZOR: v **headless** Chromu (screenshoty) `file://` obrázky blokuje CORS — pro ověření
-grafik pusť viewer přes `python3 -m http.server` a screenshotuj `http://127.0.0.1:…`.
-Když dodá uživatel novější verzi, uprav `DEF_GFX`/`DEF_SCR` **i** `default_graphics` ve spec souboru.
+POZOR na `file://`: Chrome (GUI i headless) blokuje obrázkové textury CORSem a bez
+`crossorigin` je odmítne `texImage2D` (ověřeno 19. 7. 2026) — přímé cesty fungují jen přes
+http. Proto se výchozí grafiky balí do **`web/gfx-default.js`** jako data URI (generuje
+`model/export_gfx.py`, klíč = název souboru) a viewer je bere přednostně (`defGfxSrc`);
+přímá cesta je jen fallback. **Po každé změně grafik v `assets/grafika/` spusť
+`python3 model/export_gfx.py`** — jinak viewer z `file://` ukáže starou/žádnou grafiku.
+Chybějící soubor se tiše přeskočí. Pro headless screenshoty s grafikou dál platí:
+pusť `python3 -m http.server` a snímkuj `http://127.0.0.1:…` (nebo od 19. 7. stačí `file://`,
+když je bundle čerstvý). Když dodá uživatel novější verzi grafiky, uprav `DEF_GFX`/`DEF_SCR`
+**i** `default_graphics` ve spec souboru a přegeneruj bundle.
 
 Přegenerování modelu:
 ```bash

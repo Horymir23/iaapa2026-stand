@@ -305,6 +305,28 @@ const DEF_SCR = {
   k2:       '../assets/grafika/10 Kiosek 2.jpg'
 };
 const DEF_UI = { B:['tB','upB'], A:['tA','upA'], ban:['tBan','upBan'], arcTot:['tArcT','upArcT'] };
+// dekaly kostek na celni plose veze mini pod TV (pozadavek 19.7.2026 dle fotky
+// skutecneho produktu; spec -> product.tower_decals). Pozice = stred dekalu
+// v lokalnim ramci veze (y vyska, z sirka produktu), w = sirka v mm (vyska dle
+// pomeru stran SVG), rot = natoceni ve stupnich (kladne = proti smeru rucicek
+// pri pohledu na plochu). SVG maji alfu -> kresli se jako pruhledny potisk.
+const DEF_DECALS = [
+  {file:'Datový zdroj 3.svg', w:440, y:800,  z:704,  rot:-18},  // velka kostka vpravo (za repro)
+  {file:'Datový zdroj 2.svg', w:210, y:677,  z:1345, rot:0},    // mala kostka vlevo
+  {file:'Datový zdroj 1.svg', w:360, y:422,  z:1050, rot:0}     // spodni kostka uprostred
+];
+// potisk tela kiosku (pozadavek 19.7.2026; spec -> product_kiosk.graphics):
+// logo centrovane nahore na predni stene, sirka = sirka pultu / 1,618 (zlaty
+// rez); 3 kostky s pomerem velikosti 1,618 uvnitr trojice (300/185,4/114,6),
+// krajni prechazeji pres svisle rohy na bocni steny (wrap = podil sirky na
+// boku). cy/cx = stred v mm v lokalnim ramci kiosku, oba pulty stejne.
+const KIOSK_LOGO = {file:'Primary Pixel Floors logo.svg', cy:740};
+const KIOSK_DICE = [
+  {file:'Datový zdroj 3.svg', w:300,   cy:350, corner:'R', wrap:.35}, // velka pres pravy roh
+  {file:'Datový zdroj 1.svg', w:185.4, cy:250, corner:'L', wrap:.35}, // stredni pres levy roh
+  {file:'Datový zdroj 2.svg', w:114.6, cy:140, cx:300}                // mala cela na cele
+];
+let decTex = {}, logoTex = null; // klic = nazev souboru (kostky sdili vez i kiosky)
 // data URI z gfx-default.js ma prednost pred primou cestou: pres file:// Chrome
 // blokuje obrazkove textury CORSem (a bez crossorigin je odmitne texImage2D),
 // takze prima cesta funguje jen pres http. Klic v bundlu = nazev souboru.
@@ -337,6 +359,16 @@ function loadDefaultGraphics(){
       buildScreenList(); build();
     }, undefined, ()=>{});
   });
+  new Set([...DEF_DECALS, ...KIOSK_DICE].map(d=>d.file)).forEach(f=>{
+    new THREE.TextureLoader().load(defGfxSrc('../assets/grafika/kostky/' + f), t=>{
+      t.encoding = THREE.sRGBEncoding;
+      decTex[f] = t; build();
+    }, undefined, ()=>{});
+  });
+  new THREE.TextureLoader().load(defGfxSrc('../assets/grafika/' + KIOSK_LOGO.file), t=>{
+    t.encoding = THREE.sRGBEncoding;
+    logoTex = t; build();
+  }, undefined, ()=>{});
 }
 
 // Sync se zdrojem pravdy (selže tiše u file:// – výchozí hodnoty výše jsou stejné)
@@ -446,8 +478,10 @@ function meshGroup(data){
     let geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.Float32BufferAttribute(g.pos, 3));
     geo.setIndex(g.idx);
-    // FreeCAD svaruje vrcholy pres hrany -> rozbalit, jinak by normaly zaoblily hrany
-    geo = geo.toNonIndexed();
+    // FreeCAD svaruje vrcholy pres hrany -> rozbalit, jinak by normaly zaoblily hrany.
+    // VYJIMKA 'repro' (kupole reproduktoru veze): svarene vrcholy se naopak hodi,
+    // prumerovane normaly = hladka koule bez facet (flat shading delal diamantovy vzor)
+    if(g.name !== 'repro') geo = geo.toNonIndexed();
     geo.computeVertexNormals();
     const m = new THREE.Mesh(geo, matMini[g.name] || matMini.ocel);
     // plexi, sklo a svítící segmenty stíny nevrhají ani nepřijímají (segmenty by stín ztmavil)
@@ -781,6 +815,24 @@ function build(){
       screenSlot(SDEF.miniPult,
         [mo + 4339, 1100.0 - 1.05*Math.cos(Math.PI/6), mo + 221.15 - 1.05*Math.sin(Math.PI/6)],
         {x:-Math.PI/3}, 517.6, 291.15);
+      // dekaly kostek na celni plose veze pod TV: lic veze x=253 (zmereno
+      // z mini-mesh.js), rovina 2 mm pred licem jako ostatni grafiky.
+      // Reproduktory (kupole primo v meshi, vypouklost 15 mm) zustavaji
+      // PRED dekaly — kostky je neprekryvaji (pozadavek 19.7.2026).
+      DEF_DECALS.forEach(d=>{
+        const t = decTex[d.file]; if(!t || !t.image) return;
+        const h = d.w * t.image.height / t.image.width;
+        const m = new THREE.Mesh(
+          new THREE.PlaneGeometry(d.w*S, h*S),
+          new THREE.MeshStandardMaterial({map:t, roughness:.7, transparent:true})
+        );
+        m.rotation.z = d.rot*Math.PI/180;
+        const g = new THREE.Group();
+        g.rotation.y = Math.PI/2;
+        g.position.set((mo + 255)*S, d.y*S, (mo + d.z)*S);
+        g.add(m);
+        root.add(g);
+      });
     }
   }
 
@@ -845,6 +897,53 @@ function build(){
         screenSlot(SDEF['k' + (i+1)],
           [kx + 290, 1098.0 - 1.05*Math.cos(Math.PI/6), kz + 170.0 - 1.05*Math.sin(Math.PI/6)],
           {x:-Math.PI/3}, 517.6, 291.15);
+        // ---- potisk tela pultu: logo + kostky (spec product_kiosk.graphics) ----
+        // roviny 2 mm pred licem jako ostatni potisky; predni lic na z = kz+hloubka
+        const fz = kz + kd.hloubka;
+        const dMat = t => new THREE.MeshStandardMaterial({map:t, roughness:.7, transparent:true});
+        if(logoTex && logoTex.image){
+          const lw = kd.sirka/1.618, lh = lw*logoTex.image.height/logoTex.image.width;
+          const m = new THREE.Mesh(new THREE.PlaneGeometry(lw*S, lh*S), dMat(logoTex));
+          m.position.set((kx + kd.sirka/2)*S, KIOSK_LOGO.cy*S, (fz + 2)*S);
+          root.add(m);
+        }
+        // krajni kostky prechazeji pres svisly roh na bocni stenu: textura se
+        // deli vyrezem pres repeat/offset (stejne jako grafika pres panely),
+        // predni a bocni cast na rohu presne navazuji
+        KIOSK_DICE.forEach(d=>{
+          const t = decTex[d.file]; if(!t || !t.image) return;
+          const h = d.w * t.image.height / t.image.width;
+          if(!d.corner){
+            const m = new THREE.Mesh(new THREE.PlaneGeometry(d.w*S, h*S), dMat(t));
+            m.position.set((kx + d.cx)*S, d.cy*S, (fz + 2)*S);
+            root.add(m);
+            return;
+          }
+          const slice = (u0,u1)=>{
+            const c = t.clone(); c.needsUpdate = true;
+            c.wrapS = c.wrapT = THREE.ClampToEdgeWrapping;
+            c.repeat.set(u1-u0, 1); c.offset.set(u0, 0);
+            return c;
+          };
+          const f = d.wrap, fw = f*d.w, pw = d.w - fw; // sirka na boku / na cele
+          const front = new THREE.Mesh(new THREE.PlaneGeometry(pw*S, h*S),
+            dMat(slice(d.corner==='R' ? 0 : f, d.corner==='R' ? 1-f : 1)));
+          const side  = new THREE.Mesh(new THREE.PlaneGeometry(fw*S, h*S),
+            dMat(slice(d.corner==='R' ? 1-f : 0, d.corner==='R' ? 1 : f)));
+          front.position.y = side.position.y = d.cy*S;
+          front.position.z = (fz + 2)*S;
+          side.position.z = (fz - fw/2)*S;
+          if(d.corner==='R'){
+            front.position.x = (kx + kd.sirka - pw/2)*S;
+            side.rotation.y = Math.PI/2;  // normala +X, osa U textury bezi dozadu (-Z)
+            side.position.x = (kx + kd.sirka + 2)*S;
+          } else {
+            front.position.x = (kx + pw/2)*S;
+            side.rotation.y = -Math.PI/2; // normala -X, osa U textury bezi k celu (+Z)
+            side.position.x = (kx - 2)*S;
+          }
+          root.add(front, side);
+        });
       }
     }
   }
@@ -1140,7 +1239,7 @@ function buildScreenList(){
 
 $('bClr').addEventListener('click', ()=>{
   tex = {B:null,A:null,ban:null,arcTot:null};
-  scrTex = {}; scrName = {};
+  scrTex = {}; scrName = {}; decTex = {}; logoTex = null;
   [['tB','upB','＋ Nahrát grafiku — stěna B'],
    ['tA','upA','＋ Nahrát grafiku — stěna A'],
    ['tBan','upBan','＋ Nahrát grafiku — poutač (360°)'],

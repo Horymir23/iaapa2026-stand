@@ -104,6 +104,16 @@ Tělo plné, bílé, až na zem. Rozmístění rovnoměrně
 ve volném úseku hrany mezi stěnou A a arcade — počítá ho `model/export_kiosk.py` (obyčejný
 python3) i `viewer.html` (`build()`), takže reaguje na posuvníky.
 
+**Potisk těla kiosků** (požadavek 19. 7. 2026, spec → `product_kiosk.graphics`): logo
+`Primary Pixel Floors logo.svg` centrované nahoře na přední stěně, **šířka = šířka pultu
+/ 1,618** (zadáno); pod ním **3 kostky** (SVG z `assets/grafika/kostky/`, sdílené s věží
+mini) s poměrem velikostí **1,618 uvnitř trojice** (300/185,4/114,6 mm — poměr platí mezi
+3 kostkami jednoho pultu, ne přes všech 6). Krajní kostky **přecházejí přes svislé rohy na
+boční stěny**: textura se dělí výřezem přes `repeat`/`offset` (stejná technika jako grafika
+přes panely) na přední a boční rovinu, které na rohu přesně navazují. Kreslí to jen viewer
+(konstanty `KIOSK_LOGO`/`KIOSK_DICE` v `build()`, roviny 2 mm před lícem; do STL/DAE se
+nepropisuje). Pozice a základní velikost 300 mm jsou návrh, poměry jsou zadání.
+
 **Úpravy pro vizualizaci** (viz `product.modifications` ve spec souboru): vynechává se
 **jen nadpodlažní část** předního zábradlí (strana do uličky: sloupky, horní rám, plexi,
 přední rám vstupní branky). Rám podlahy, podesta i plůtek u věže s TV **zůstávají** —
@@ -113,7 +123,12 @@ ve `viewer.html`). Věž s monitorem je zepředu krytá průhledným plexi a byl
 vnitřek se při exportu vyplňuje plnými bílými kvádry (`tower_box` v `export_mini.py`,
 požadavek 16. 7. 2026). Duté jekly mají v CAD otevřená čela; 4 viditelné konce se
 zaslepují zátkami (`CAP_ENDS` v `export_mini.py` — horní konce sloupků plůtku a pahýly
-rámu branky po odstraněném plotu). Šikmý displej pultu u vstupu (díly `DISPLEJ*`, černý
+rámu branky po odstraněném plotu). Na čelní ploše věže pod monitorem jsou **2 bílé
+reproduktory** (mírně vypouklé kupole Ø250, vypouklost 15 mm, střed y=910, z=650/1250 —
+staví `export_mini.py`, hodnoty odečtené z fotky 19. 7. 2026) a **potisk kostek**
+(3 SVG z `assets/grafika/kostky/`, kreslí viewer — `DEF_DECALS`, rovina 2 mm před lícem
+věže x=253; pozice ve spec souboru → `product.tower_decals`). Kostky reproduktory
+nepřekrývají — kupole jsou 3D před rovinou potisku. Šikmý displej pultu u vstupu (díly `DISPLEJ*`, černý
 rámeček) se **nezobrazuje** — nahrazuje ho bezrámečkový FHD panel zapuštěný do plechu:
 vyříznuté zapuštění 1,5 mm, průhledné sklo 517,6 × 291,15 mm s lícem **přesně v rovině
 plechu**, pod ním tmavá výplň; stejný panel jako u kiosků (požadavek 17. 7. 2026; staví
@@ -191,6 +206,11 @@ konstanta `DEF_GFX`) — uživatel nic nahrávat nemusí. Přiřazení je i ve s
 | `Stěna A v1.jpg` | stěna A |
 | `Poutač360v2.jpg` | poutač (360°) |
 | `Arcade.webp` | tělo totemu arcade — potisk (kostky + slogan) pod obrazovkou; pravá hrana licuje s pravou hranou bedny, horní se spodkem obrazovky |
+| `kostky/Datový zdroj 1–3.svg` | potisk kostek na čelní ploše věže mini pod TV (`DEF_DECALS`, pozice ve spec → `product.tower_decals`) **a** na tělech kiosků (`KIOSK_DICE`) |
+| `Primary Pixel Floors logo.svg` | logo na přední stěně obou kiosků (`KIOSK_LOGO`, spec → `product_kiosk.graphics`) |
+
+Bundler `export_gfx.py` bere i podsložky (klíč = holý název souboru, kolize hlásí) a SVG:
+bez width/height by se SVG rasterizovalo na 300×150, proto doplňuje rozměry z viewBoxu ×2.
 
 Od 17. 7. 2026 mají výchozí grafiku i **monitory** — konstanta `DEF_SCR` (klíče dle
 `screenDefs()`), soubory pojmenované číslem monitoru (`1 TV 55.jpg` … `10 Kiosek 2.jpg`),

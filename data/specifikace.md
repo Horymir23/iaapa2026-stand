@@ -32,6 +32,11 @@ Sousedé: za 3m stěnou **S4242 Blacklight Attractions**, za 6m stěnou **S4345 
 
 **Výška prvků**
 - Strana 3 m → volně stojící prvky **max. 2500 mm**
+  — doslova z e-mailu pořadatele 3. 7. 2026: *„As one length of your booth is 3m, you are only
+  permitted to build/ hang a flag to 2.5m"*, odpověď na dotaz *„maximum permitted height of
+  **freestanding elements** (e.g. beach flags, lightboxes, etc.)"*.
+  Limit se týká **volně stojících prvků a vlajek**, ne závěsného poutače — ten má vlastní
+  pravidla (7 m k trusu / 6 m grafika, viz Regulace níže).
 
 ## Odhady — nutno potvrdit
 
@@ -47,7 +52,21 @@ Sousedé: za 3m stěnou **S4242 Blacklight Attractions**, za 6m stěnou **S4345 
 3. Nosnost panelu pro TV
 4. Přesný rozměr jmenovky
 
-Na pořadateli (`OperationsEMEA@IAAPA.org`): parametry závěsného poutače (rozměr, hmotnost).
+Na pořadateli (`OperationsEMEA@IAAPA.org`): **výška zavěšení poutače** (spodní hrana 3300 mm je
+zatím odhad) a rigging — věšet smí jen oficiální kontraktor, uzávěrka **9. 8. 2026**.
+
+## Závěsný poutač — vybráno 16. 7. 2026
+
+**Zip-up Round Ø1520 × 610 mm, 6,7 kg** — kruhový textil potištěný po celém obvodu (360°).
+
+- Spodní hrana **3300 mm**, horní hrana grafiky **3910 mm** — *výška zavěšení je ODHAD*
+- Natočení grafiky **115°** od přední uličky směrem ke stěně A (šev vychází naproti středu grafiky)
+- Grafika: `assets/grafika/Poutač360v2.jpg`
+- Větší **Ø3050 zamítnut** — při povinném odstupu 1000 mm od obou stěn (branding míří 360°,
+  tedy i ke stěnám) zbývá v užším směru jen ~1970 mm; navíc by přesáhl půdorys i k sousedům
+- Limit 2,5 m pro volně stojící prvky se ho **netýká** — poutač má vlastní pravidla
+
+Detaily a kontrolní přepočty: `hanging_banner` v `stand-spec.json`.
 
 ## Regulace, které omezují design
 

@@ -217,6 +217,28 @@ for box in (tower_box(4.0, 252.0, 346.5, 1554.5, 1.0, 1111.5),
     pts, tris = box.tessellate(DEFLECTION)
     parts.append(("ocel", pts, tris))
 
+# Dva bile reproduktory na celni plose veze pod monitorem (pozadavek 19.7.2026
+# dle fotky skutecneho produktu): mirne vypoukle kruhy Ø250 mm, stred ve vysce
+# 910 mm, symetricky ±300 mm od stredu sirky (ly 650 a 1250). Zplostela koule
+# (vypouklost 15 mm) polozena stredem NA lic veze lx=253 - vnitrni polovina
+# je utopena v tele, ven kouka nizka kupole. Rozmery odectene z dodane fotky
+# (skala pres sirku obrazovky 1123 mm) - viz stand-spec.json product.speakers.
+SPK_R, SPK_BULGE, SPK_FACE_LX = 125.0, 15.0, 253.0
+for spk_ly in (650.0, 1250.0):
+    dome = Part.makeSphere(SPK_R)
+    m = FreeCAD.Matrix()
+    m.scale(1.0, SPK_BULGE / SPK_R, 1.0)  # zplosteni podel STEP y (= osa lx)
+    dome = dome.transformGeometry(m)
+    dome.translate(FreeCAD.Vector(gbb.XMin + spk_ly,
+                                  gbb.YMax - SPK_FACE_LX,
+                                  gbb.ZMin + 910.0))
+    # vlastni skupina 'repro': viewer ji NErozbaluje na toNonIndexed, takze
+    # svarene vrcholy daji hladke (prumerovane) normaly - kupole bez facet.
+    # Material spadne na matMini.ocel (fallback ve meshGroup).
+    pts, tris = dome.tessellate(2.0)
+    parts.append(("repro", pts, tris))
+print("Reproduktory veze: 2x Ø%.0f mm, vypouklost %.0f mm" % (2 * SPK_R, SPK_BULGE))
+
 # Bezrameckovy FHD monitor pultu u vstupu (pozadavek 17.7.2026): misto
 # vynechanych dilu DISPLEJ* dostane sikmy plech (PLECH MONITOR VRCH, 30 stupnu)
 # vyrez-zapusteni a do nej se vklada pruhledne sklo 16:9 tak, aby jeho LIC
@@ -300,8 +322,8 @@ def to_local(p):
 
 
 # ---------- web/mini-mesh.js (three.js, Y nahoru, metry) ----------
-order = ["ocel", "kostky", "plexi", "monitor", "sklo", "dibond", "koberec",
-         "led0", "led1", "led2", "led3", "led4"]
+order = ["ocel", "repro", "kostky", "plexi", "monitor", "sklo", "dibond",
+         "koberec", "led0", "led1", "led2", "led3", "led4"]
 groups = {k: {"pos": [], "idx": []} for k in order}
 for buck, pts, tris in parts:
     g = groups[buck]

@@ -103,10 +103,16 @@
   },
 
   "product": {
-    "$comment": "Exponát 'mini' — LED podlahová aréna (rastr 6×12 dlaždic 300×300 mm, zábradlí s plexi v 1200, věž s 50\" monitorem v 1800, vstupní branka). Rozměry ZMĚŘENY z model/mini.stp (FreeCAD, bbox sestavy) — fakt modelu, ne odhad. Umístění zvoleno 13.7.2026: roh stánku, vůle 50 mm od obou stěn (panely GES nesmí nést zátěž, neopírat).",
+    "$comment": "Exponát 'mini' — LED podlahová aréna (rastr 6×12 dlaždic 300×300 mm, zábradlí s plexi v 1200, věž s 50\" monitorem v 1800, vstupní branka). PŘEDĚLÁNO 21.7.2026 (zadání uživatele): členění podél delší strany = bedna s TV 200 + zábradlí 3600 + chodítko 810 → celkem 4610 mm (dříve 253 + 3636 + 788 = 4677 změřených z mini.stp). Plocha pixelů se NEMĚNÍ (12×6 dlaždic po 299,5 mm = 3594 × 1797). mini.stp zůstává beze změny — díly posouvá/zkracuje až export (remodel v model/export_mini.py). Šířka a výška dál ZMĚŘENY z modelu. Umístění zvoleno 13.7.2026: roh stánku, vůle 50 mm od obou stěn (panely GES nesmí nést zátěž, neopírat).",
     "name": "mini",
     "source_file": "model/mini.stp",
-    "dims_mm": { "length": 4677, "width": 1901, "height": 1803 },
+    "dims_mm": { "length": 4610, "width": 1901, "height": 1803 },
+    "sections_mm": {
+      "$comment": "ZADÁNO uživatelem 21.7.2026 — členění délky 4610 mm. Zábradlí 3600 = vnější rozpal sloupků; dlaždice (3594) leží uvnitř s 3 mm vůlí na obou koncích, krajní sloupky stojí nad okrajem dlaždic.",
+      "bedna_tv": 200,
+      "zabradli": 3600,
+      "choditko": 810
+    },
     "placement": {
       "where": "vnitřní roh stánku (styk stěn A a B)",
       "long_side_along": "stěna B",
@@ -123,10 +129,11 @@
       "tower_cavity_filled": "věž s monitorem je zepředu krytá průhledným plexi a pod monitorem byla skrz něj vidět dutá jeklová konstrukce — vnitřek věže je vyplněný plnými bílými kvádry (pod monitorem celá hloubka, nad ním zbytek dutiny za monitorem; požadavek 16.7.2026, viz export_mini.py)",
       "tube_ends_capped": "4 odkryté otevřené konce dutých jeklů jsou zaslepené zátkou podle vnitřního obrysu profilu, 0,3 mm pod lícem: horní konce obou sloupků plůtku u věže (ZAB-BED-DL-1/-3) a dva pahýly rámu vstupní branky (ZAB-VST-4/-6) osiřelé po odstranění předního plotu (požadavek 16.7.2026, CAP_ENDS v export_mini.py; ostatní konce na něco dosedají nebo míří do země)",
       "pult_display_integrated": "šikmý displej pultu u vstupu (díly DISPLEJ = aktivní plocha 417,6 × 214,1, DISPLEJ001 = vystouplá skříň 517,6 × 313,5) se NEZOBRAZUJE — nahrazen bezrámečkovým FHD monitorem 16:9 zapuštěným do šikminy plechu: v plechu je vyříznuté zapuštění 1,5 mm, průhledné sklo 517,6 × 291,15 mm (rozměr sdílený s product_kiosk.dims_mm.monitor.screen) má LÍC PŘESNĚ V ROVINĚ PLECHU, pod sklem je tmavá výplň panelu a grafika se ve vieweru kreslí pod sklem; centrováno na původní skříň, zakrývá i montážní otvor v PLECH MONITOR VRCH (480 × 271 mm). Požadavek 17.7.2026, viz export_mini.py; mini.stp beze změny",
-      "tower_speakers": "2 bílé reproduktory na čelní ploše věže pod monitorem (požadavek 19.7.2026 dle fotky skutečného produktu): mírně vypouklé kruhy Ø250 mm, vypouklost 15 mm, střed ve výšce 910 mm, symetricky ±300 mm od středu šířky (z 650 a 1250 v rámci vieweru). Zploštělé koule položené středem na líc věže x=253 — staví export_mini.py, jsou přímo v meshi (viewer i STL/DAE). VŠECHNY HODNOTY ODEČTENÉ Z FOTKY (škála přes šířku obrazovky 1123 mm) — odhad, ne výkres"
+      "tower_speakers": "2 bílé reproduktory na čelní ploše věže pod monitorem (požadavek 19.7.2026 dle fotky skutečného produktu): mírně vypouklé kruhy Ø250 mm, vypouklost 15 mm, střed ve výšce 910 mm, symetricky ±300 mm od středu šířky (z 650 a 1250 v rámci vieweru). Zploštělé koule položené středem na líc věže x=200 (do 21.7.2026 x=253) — staví export_mini.py, jsou přímo v meshi (viewer i STL/DAE). VŠECHNY HODNOTY ODEČTENÉ Z FOTKY (škála přes šířku obrazovky 1123 mm) — odhad, ne výkres",
+      "sections_2026-07-21": "PŘEDĚLÁNÍ SEKCÍ (zadání uživatele): bedna s TV zkrácena 253 → 200 mm (zkráceny příčky věže, profily 40×40 se nedeformují), zábradlí 3636 → 3600 mm (dlaždice 3594 beze změny, posun na 3 mm od krajů; krajní sloupky nově stojí nad okrajem dlaždic jako dosud u vstupu), chodítko 788 → 810 mm (podesta s černým kobercem a pult 700 → 722 mm). Celkem 4677 → 4610. Provádí remodel() v export_mini.py — mini.stp beze změny; sklo FHD panelu pultu zůstává přesně 517,6 × 291,15"
     },
     "tower_decals": {
-      "$comment": "Potisk kostek na čelní ploše věže pod monitorem (požadavek 19.7.2026 dle dodané fotky). SVG s alfou z assets/grafika/kostky/ — kreslí je viewer.html (DEF_DECALS, rovina 2 mm před lícem věže x=253); do bundlu je balí model/export_gfx.py (SVG dostane width/height z viewBoxu ×2, jinak se rasterizuje 300×150). Kostky NEPŘEKRÝVAJÍ reproduktory — kupole reproduktorů jsou 3D před rovinou potisku. Pozice = střed dekálu (y výška, z šířka ve vieweru), w = šířka mm, rot = natočení ve stupních. HODNOTY ODEČTENÉ Z FOTKY — odhad.",
+      "$comment": "Potisk kostek na čelní ploše věže pod monitorem (požadavek 19.7.2026 dle dodané fotky). SVG s alfou z assets/grafika/kostky/ — kreslí je viewer.html (DEF_DECALS, rovina 2 mm před lícem věže x=200; do 21.7.2026 x=253); do bundlu je balí model/export_gfx.py (SVG dostane width/height z viewBoxu ×2, jinak se rasterizuje 300×150). Kostky NEPŘEKRÝVAJÍ reproduktory — kupole reproduktorů jsou 3D před rovinou potisku. Pozice = střed dekálu (y výška, z šířka ve vieweru), w = šířka mm, rot = natočení ve stupních. HODNOTY ODEČTENÉ Z FOTKY — odhad.",
       "decals": [
         { "file": "Datový zdroj 3.svg", "w_mm": 440, "y_mm": 800, "z_mm": 704, "rot_deg": -18, "note": "velká kostka vpravo, zasahuje za pravý reproduktor" },
         { "file": "Datový zdroj 2.svg", "w_mm": 210, "y_mm": 677, "z_mm": 1345, "rot_deg": 0, "note": "malá kostka vlevo pod levým reproduktorem" },
@@ -134,7 +141,7 @@
       ]
     },
     "fit_check": {
-      "$comment": "Při clearance 50: podél B potřeba 40+50+4677=4767 z 5940 mm (rezerva 1173 — ale délka B je ASSUMED); podél A 40+50+1901=1991 z 2970 mm (rezerva 979, potvrzeno); výška 1803 < 2500 vč. limitu na 3m straně. Přepočítává model/export_mini.py.",
+      "$comment": "Při clearance 50: podél B potřeba 40+50+4610=4700 z 5940 mm (rezerva 1240 — ale délka B je ASSUMED); podél A 40+50+1901=1991 z 2970 mm (rezerva 979, potvrzeno); výška 1803 < 2500 vč. limitu na 3m straně. Přepočítává model/export_mini.py.",
       "fits": true,
       "depends_on_assumed": ["wall_b_length", "panel_thickness"]
     },
@@ -142,13 +149,13 @@
   },
 
   "product_arcade": {
-    "$comment": "Druhý exponát 'Arcade' — herní LED podlaha s totemem (dle vizualizací dodaných 13.7.2026). Rozměry ZADANÉ uživatelem 13.7.2026: bedna (totem s obrazovkou) v1800 × š700 × h250, podlaha 1200×2400 (rastr 4×8 dlaždic 300 mm, výška 80 jako u mini), šikmina 80×80 po celém obvodu podlahy. Model je syntetický — žádný STEP, staví ho model/export_arcade.py.",
+    "$comment": "Druhý exponát 'Arcade' — herní LED podlaha s totemem (dle vizualizací dodaných 13.7.2026). Rozměry ZADANÉ uživatelem 13.7.2026: bedna (totem s obrazovkou) v1800 × š700 × h250, podlaha 1200×2400 (rastr 4×8 dlaždic 300 mm, výška 80 jako u mini). PŘEDĚLÁNO 21.7.2026 (zadání uživatele): šikminy 80×80 ODSTRANĚNY, kolem plochy dlaždic je jen svislý profil 20 mm do výšky dlaždic → celková šířka 1240 mm (zadáno 124 cm), plocha pixelů beze změny. Model je syntetický — žádný STEP, staví ho model/export_arcade.py.",
     "name": "arcade",
     "dims_mm": {
       "bedna": { "height": 1800, "width": 700, "depth": 250 },
       "podlaha": { "width": 1200, "length": 2400, "tile": 300, "height": 80 },
-      "sikmina": 80,
-      "footprint": { "width": 1360, "depth": 2810, "height": 1800 }
+      "profil": 20,
+      "footprint": { "width": 1240, "depth": 2690, "height": 1800 }
     },
     "placement": {
       "where": "vedle produktu mini (na volné části u stěny B), bedna s obrazovkou u stěny B, podlaha směrem do stánku",
@@ -156,15 +163,17 @@
       "clearance_from_wall_b_mm": 50
     },
     "fit_check": {
-      "$comment": "NEVEJDE SE podél stěny B: potřeba 40+50+4677+0+1360 = 6127 z 5940 mm → PŘESAH 187 mm přes hranu stánku do uličky (délka B je navíc ASSUMED). Hloubka OK: 40+50+2810 = 2900 z 2970 mm. Možnosti řešení: potvrdit skutečnou délku B u GES, zmenšit vůle, vynechat boční šikminy (−160 mm, pořád −27 chybí), otočit/přemístit. ROZHODNUTÍ ČEKÁ NA UŽIVATELE. ⚠️ UPŘESNĚNO 19.7.2026: tenhle přesah NENÍ jen estetický problém — je to VYMÁHANÉ PORUŠENÍ PRAVIDEL. Sankce 'Awning/Overhang Beyond Stand Boundaries' = €300 + ztráta 1 roku seniority, případně 'Aisle Infringement' = €600 + 2 roky (viz regulations.penalties). Regulace: 'Exhibitors are prohibited from engaging in any exhibit activity in any space other than that which has been contracted.' Přesah se MUSÍ odstranit, ne jen vzít na vědomí.",
-      "fits": false,
-      "overhang_along_b_mm": 187
+      "$comment": "VYŘEŠENO 21.7.2026 zkrácením mini na 4610 mm: potřeba 40+50+4610+0+1240 = 5940 z 5940 mm → přesah 0, arcade končí PŘESNĚ v hraně stánku (NULOVÁ rezerva). Hloubka OK: 40+50+2690 = 2780 z 2970 mm. ⚠️ Délka stěny B 5940 je ASSUMED — pokud GES potvrdí kratší stěnu, přesah se vrátí (při 5946 dle konzistentní spáry 6 mm by naopak přibyla rezerva 6 mm). Lícování s hranou bez rezervy je rizikové i milimetrově — po potvrzení délky B zvážit pár mm vůle. Historie přesahu: 187 mm (šikminy) → 67 mm (předělání arcade na profil 20 mm, 21.7.2026) → 0 mm (zkrácení mini 4677→4610, 21.7.2026). Sankce za přesah viz regulations.penalties ('Awning/Overhang Beyond Stand Boundaries' €300 + 1 rok seniority).",
+      "fits": true,
+      "overhang_along_b_mm": 0,
+      "margin_along_b_mm": 0,
+      "depends_on_assumed": ["wall_b_length", "panel_thickness"]
     },
     "regenerate": "python3 model/export_arcade.py  →  web/arcade-mesh.js + model/arcade_v_stanku.stl/.dae"
   },
 
   "product_kiosk": {
-    "$comment": "Dva kiosky 'pult + monitor' podél delší otevřené strany (zadání 15.7.2026). Odvozeno z pultu se šikmým displejem u vstupní branky produktu mini (díly PLECH MONITOR VRCH/SPODEK + DISPLEJ/DISPLEJ001 v mini.stp) — rozměry ZMĚŘENY z modelu (fakt modelu, ne odhad): šikmá deska 30° od vodorovné. Původní pult je 700 mm široký a displej na něm sedí asymetricky (rámečky 151,2 / 31,2 mm) — šířka kiosku dle zadání = skříň + 2× menší rámeček 31,2 = přesně 580 mm. Tělo plné, bílé, až na zem (původní konzole visela mezi sloupky branky). ZMĚNA 17.7.2026: vystouplá černá skříň displeje (517,6 × 313,5, aktivní plocha 417,6 × 214,1) se NEPOUŽÍVÁ — kiosky mají bezrámečkový FHD monitor integrovaný do šikminy, viz dims_mm.monitor.",
+    "$comment": "Dva kiosky 'pult + monitor' podél delší otevřené strany (zadání 15.7.2026). Odvozeno z pultu se šikmým displejem u vstupní branky produktu mini (díly PLECH MONITOR VRCH/SPODEK + DISPLEJ/DISPLEJ001 v mini.stp) — rozměry ZMĚŘENY z modelu (fakt modelu, ne odhad): šikmá deska 30° od vodorovné. Původní pult je 700 mm široký a displej na něm sedí asymetricky (rámečky 151,2 / 31,2 mm) — šířka kiosku dle zadání = skříň + 2× menší rámeček 31,2 = přesně 580 mm. Tělo plné, bílé, až na zem (původní konzole visela mezi sloupky branky). ZMĚNA 17.7.2026: vystouplá černá skříň displeje (517,6 × 313,5, aktivní plocha 417,6 × 214,1) se NEPOUŽÍVÁ — kiosky mají bezrámečkový FHD monitor integrovaný do šikminy, viz dims_mm.monitor. ZMĚNA 21.7.2026 (zadání + náčrt uživatele): kiosky OTOČENY OD SEBE — zády (delší stranou 580 mm) proti sobě, kiosek 1 monitorem ke stěně A, kiosek 2 k arcade; mezi zády je stůl s poličkou na tiskoviny (viz table). Lidé u kiosků tak stojí uvnitř stánku, ne v uličce.",
     "name": "kiosk",
     "count": 2,
     "derived_from": "model/mini.stp — pult s displejem u vstupní branky",
@@ -179,19 +188,31 @@
       }
     },
     "placement": {
-      "where": "podél delší otevřené strany (hrana do uličky naproti stěně B)",
-      "orientation": "šikmina s monitorem klesá do uličky — lidé přistupují přímo z uličky",
+      "where": "podél delší otevřené strany (hrana do uličky naproti stěně B) — sestava kiosek + stůl + kiosek",
+      "orientation": "ZMĚNA 21.7.2026: kiosky otočeny OD SEBE, zády (delší stranou 580 mm) proti sobě — kiosek 1 monitorem ke stěně A, kiosek 2 monitorem k arcade. Lidé u kiosků stojí UVNITŘ stánku (v kapse u stěny A, resp. u arcade), ne v uličce. Šikmina obou kiosků klesá směrem od stolu.",
       "front_flush_with_edge": true,
-      "distribution": "rovnoměrně ve volném úseku hrany mezi stěnou A a podlahou arcade (3 stejné mezery)"
+      "gap_from_wall_a_mm": 1500,
+      "gap_from_wall_a_note": "NÁVRH z analýzy 21.7.2026: 750 mm aktivní zóna člověka u krabice s monitory na stěně A + 750 mm člověka u kiosku 1 — stojí zády k sobě (krabice 2177–2777 a kiosek 2390–2970 se v ose podél stěny A překrývají, uhnout není kam)",
+      "layout_along_b_mm": "líc stěny A 40 → mezera 1500 → kiosek 1 (hloubka 340, čelem ke stěně A): 1540–1880 → stůl 600: 1880–2480 → kiosek 2 (340, čelem k arcade): 2480–2820 → průchod 1880 → arcade 4700"
     },
     "fit_check": {
-      "$comment": "Volný úsek podél hrany: od líce stěny A (x=40) po začátek arcade (40+50+4677=4767) → 4727 mm; 2× 580 + 3 mezery po 1189 mm. Hloubkově: zadní hrana kiosku na y=2630 > jižní hrana mini 1991 (vůle 639 mm). Výška 1196 < 2500 (limit na 3m straně). ZÁVISÍ na assumed (tloušťka panelu) a na pozici arcade, jejíž přesah 187 mm je stále nevyřešený. Přepočítává model/export_kiosk.py a web/viewer.html (build()).",
+      "$comment": "PŘEPOČTENO 21.7.2026 po otočení kiosků a zkrácení mini na 4610. Sestava 340+600+340 = 1280 mm ve volném úseku 4660 mm (líc stěny A x=40 → začátek arcade x=4700). Západní mezera 1500 = dva lidé zády k sobě (obrazovky stěny A + kiosek 1, po 750 mm), východní 1880 = 750 (člověk u kiosku 2) + ~1130 průchod k mini a arcade — JEDINÝ přístup dovnitř stánku (koridor za stolem má jen 399 mm) a musí pobrat i rampu pro vozíčkáře k mini (viz open_questions, nález N4). Hloubkově: sestava 580 mm, zadní hrana y=2390 > jižní hrana mini 1991 (vůle 399 mm). Výška zad kiosků 1196 < 2500 (limit na 3m straně). ZÁVISÍ na assumed (tloušťka panelu, délka stěny B). Přepočítává model/export_kiosk.py a web/viewer.html (build()).",
       "fits": true,
-      "gap_between_mm": 1189,
+      "gap_wall_a_mm": 1500,
+      "gap_to_arcade_mm": 1880,
+      "corridor_behind_mm": 399,
       "depends_on_assumed": ["panel_thickness", "wall_b_length"]
     },
+    "table": {
+      "$comment": "Stůl s poličkou na tiskoviny mezi zády kiosků (zadání 21.7.2026 dle náčrtu uživatele; z náčrtu se rozměry NEODVOZUJÍ). ZADÁNO: délka desky 600 mm (z analýzy prostoru 21.7.2026, potvrdil uživatel), hloubka sestavy = šířka kiosku 580 mm, zepředu (pohled z uličky) krycí deska, nad ní šikmá police s brožurami viditelnými z uličky, krycí deska přesahuje nad spodní hranu police jako zarážka, ať letáky nespadnou. VÝŠKY, TLOUŠŤKY A ÚHEL = NÁVRH (uživatel nezadal): deska stolu v 760 mm = regulations.counter_low_access_point_max (nízký přístupový bod), police 45° od vodorovné, spodní hrana 1000 mm, horní hrana 1196 mm = výška zad kiosků, zarážka 60 mm. Staví model/export_kiosk.py (mesh TABLE_MESH ve web/kiosk-mesh.js + součást STL/DAE).",
+      "dims_mm": {
+        "deska": { "length": 600, "depth": 562, "thickness": 25, "top_height": 760, "note": "hloubka 562 = 580 minus krycí deska 18; celková hloubka sestavy 580 (zadáno: jako kiosek)" },
+        "kryci_deska": { "thickness": 18, "bottom": 700, "top": 1060, "note": "vnější líc v hraně stánku (spolu s čely kiosků); horní hrana = zarážka 60 mm nad spodní hranou police" },
+        "police": { "angle_deg": 45, "edge_low_mm": 1000, "edge_high_mm": 1196, "thickness": 18, "note": "stoupá od vnitřního líce krycí desky dovnitř stánku; brožury na ní leží lícem šikmo vzhůru do uličky" }
+      }
+    },
     "graphics": {
-      "$comment": "Potisk těla pultu (zadání 19.7.2026) — kreslí ho JEN web/viewer.html (konstanty KIOSK_LOGO / KIOSK_DICE, roviny 2 mm před lícem jako ostatní potisky; do STL/DAE se nepropisuje, oba pulty stejně). Logo centrované nahoře na přední stěně (do uličky), šířka = šířka pultu / 1,618 (zlatý řez, ZADÁNO) = 358,5 mm. Kostky: 3 SVG s alfou z assets/grafika/kostky/ na každý pult, poměr velikostí uvnitř trojice 1,618 (300 → 185,4 → 114,6 mm; poměr platí mezi 3 kostkami jednoho pultu, ne přes všech 6 — ZADÁNO). Kostky jsou primárně na přední straně, krajní přecházejí přes svislé rohy na boční stěny (ZADÁNO); wrap = podíl šířky kostky na boční stěně, textura se dělí přes repeat/offset a na rohu přesně navazuje. Konkrétní POZICE (center_y/center_x), základní velikost 300 mm a wrap 0,35 jsou NÁVRH (odhad), ne zadání.",
+      "$comment": "Potisk těla pultu (zadání 19.7.2026) — kreslí ho JEN web/viewer.html (konstanty KIOSK_LOGO / KIOSK_DICE, roviny 2 mm před lícem jako ostatní potisky; do STL/DAE se nepropisuje, oba pulty stejně). Logo centrované nahoře na přední stěně (do uličky), šířka = šířka pultu / 1,618 (zlatý řez, ZADÁNO) = 358,5 mm. Kostky: 3 SVG s alfou z assets/grafika/kostky/ na každý pult, poměr velikostí uvnitř trojice 1,618 (300 → 185,4 → 114,6 mm; poměr platí mezi 3 kostkami jednoho pultu, ne přes všech 6 — ZADÁNO). Kostky jsou primárně na přední straně, krajní přecházejí přes svislé rohy na boční stěny (ZADÁNO); wrap = podíl šířky kostky na boční stěně, textura se dělí přes repeat/offset a na rohu přesně navazuje. Konkrétní POZICE (center_y/center_x), základní velikost 300 mm a wrap 0,35 jsou NÁVRH (odhad), ne zadání. POZN. 21.7.2026: po otočení kiosků míří potisk čel do kapes (ke stěně A / k arcade), ne do uličky; krycí deska stolu je zatím bez potisku.",
       "logo": { "file": "Primary Pixel Floors logo.svg", "width_rule": "body.width / 1.618", "width_mm": 358.5, "center_x_mm": 290, "center_y_mm": 740 },
       "dice": [
         { "file": "Datový zdroj 3.svg", "w_mm": 300, "center_y_mm": 350, "corner": "right", "wrap": 0.35, "note": "velká kostka, přechází přes pravý roh (při pohledu z uličky)" },
@@ -252,8 +273,8 @@
       { "n": 6,  "id": "miniTv",   "where": "mini — monitor na věži (50″)",          "screen_mm": [1123, 643],    "recommended_px": [1920, 1080] },
       { "n": 7,  "id": "miniPult", "where": "mini — šikmý pult u vstupu (30°)",      "screen_mm": [517.6, 291.15], "recommended_px": [1920, 1080] },
       { "n": 8,  "id": "arc",      "where": "arcade — totem (na výšku)",             "screen_mm": [560, 800],     "recommended_px": [1080, 1543] },
-      { "n": 9,  "id": "k1",       "where": "kiosek 1 — blíž stěně A (šikmý 30°)",   "screen_mm": [517.6, 291.15], "recommended_px": [1920, 1080] },
-      { "n": 10, "id": "k2",       "where": "kiosek 2 — blíž arcade (šikmý 30°)",    "screen_mm": [517.6, 291.15], "recommended_px": [1920, 1080] }
+      { "n": 9,  "id": "k1",       "where": "kiosek 1 — čelem ke stěně A (šikmý 30°; od 21.7.2026 otočen)", "screen_mm": [517.6, 291.15], "recommended_px": [1920, 1080] },
+      { "n": 10, "id": "k2",       "where": "kiosek 2 — čelem k arcade (šikmý 30°; od 21.7.2026 otočen)",   "screen_mm": [517.6, 291.15], "recommended_px": [1920, 1080] }
     ]
   },
 
@@ -312,7 +333,7 @@
     { "topic": "Přesný rozměr jmenovky", "why": "chybí kóty", "owner": "GES", "email": "iaapaeu@ges.com" },
     { "topic": "Závěsný poutač — výška zavěšení a rigging", "why": "Vybrán Zip-up Round Ø1520 × v610 mm, 6,7 kg (viz hanging_banner). Výška spodní hrany 3300 mm je ODHAD — potvrdit; poutač smí věšet jen oficiální rigging kontraktor (uzávěrka 2026-08-09).", "owner": "IAAPA Operations", "email": "OperationsEMEA@IAAPA.org" },
     { "topic": "ROZPOR v regulacích: odstup poutače od dělicí stěny 1 m, nebo 3 m?", "why": "PRIORITA — rozhoduje o tom, jestli poutač vůbec může viset. Regulace IAAPA si samy odporují: sekce 'Rigging' říká 'must be set back a minimum of 1m from the dividing wall' (branding ke stěně), ale sekce ke komplexním konstrukcím říká 'must be STEPPED IN AT LEAST 3M from the dividing wall'. Při 3 m poutač NELZE — stánek je 2970 mm široký, po odečtení 2× 3 m nezbude nic. Použili jsme 1 m. Viz regulations.hanging_sign.CONFLICT_3m.", "owner": "IAAPA Operations", "email": "OperationsEMEA@IAAPA.org" },
-    { "topic": "Kiosky: nízký přístupový bod 760 mm a obsluha z uličky", "why": "DVA problémy najednou. (1) PŘÍSTUPNOST: regulace chtějí u obslužných pultů nízký přístupový bod ≤760 mm nebo podnos; product_kiosk má 1000–1196 mm → nesplňuje. (2) ULIČKA: kiosky lícují s hranou stánku a podle placement se 'obsluhují přímo z uličky' — sankce 'Customers in Aisle Due to Stand Design' je €600 + 2 roky seniority. Zvážit zatažení kiosků dovnitř stánku. Viz regulations.aisles_and_boundaries a penalties.", "owner": "IAAPA Operations", "email": "OperationsEMEA@IAAPA.org" },
+    { "topic": "Kiosky: nízký přístupový bod 760 mm a obsluha z uličky", "why": "(1) PŘÍSTUPNOST: regulace chtějí u obslužných pultů nízký přístupový bod ≤760 mm nebo podnos; kiosky mají 1000–1196 mm. ZMÍRNĚNO 21.7.2026: deska stolu mezi kiosky je navržena ve výšce 760 mm — ověřit u Operations, zda to požadavek naplňuje. (2) ULIČKA: VYŘEŠENO 21.7.2026 — kiosky otočeny od sebe (monitory ke stěně A / k arcade), lidé u nich stojí uvnitř stánku, design už netlačí návštěvníky do uličky. Viz product_kiosk.placement.", "owner": "IAAPA Operations", "email": "OperationsEMEA@IAAPA.org" },
     { "topic": "Construction Phase Plan + Public Liability Insurance — týkají se shell scheme s konstrukcí?", "why": "Bulletin je značí '(Space only exhibitors)', my jsme shell scheme. U Method Statement regulace výslovně říkají 'or shell scheme stands with construction' — u těchto dvou dokumentů taková věta CHYBÍ. Termín je ale stejný, 24.7.2026, takže se to musí vyjasnit hned.", "owner": "IAAPA Operations", "email": "OperationsEMEA@IAAPA.org" },
     { "topic": "Nájezd pro vozíčkáře na zvýšené LED podlahy", "why": "ZJIŠTĚNO AUDITEM 19.7.2026 (web/audit.html, nález N4). regulations.raised_floor vyžaduje nájezd pro přístup vozíčkářů; vstup arény mini má ale jen schod 80 mm přes branku a arcade jen obvodovou šikminu 80/80 mm = 45°, což nájezd není (běžný standard přístupnosti ~1:12 → na 80 mm výšky ~1 m délky; přesný sklon regulace neuvádějí). Bez vyřešeného přístupu neprojde Risk Assessment + Method Statement (termín 24.7.2026). Návrh řešení: přenosná rampa u vstupní branky mini a popsat v RA/MS.", "owner": "HTDM (úprava návrhu) + IAAPA Operations", "email": "OperationsEMEA@IAAPA.org" }
   ],

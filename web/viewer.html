@@ -805,17 +805,18 @@ function build(){
     if(opt.mini){
       mg.position.set((T+CL)*S, 0, (T+CL)*S);
       root.add(mg);
-      // obrazovky mini — pozice ZMERENY z mini-mesh.js (lokalni ramec produktu, mm):
-      // vez: celni lic displeje 1123x643 na x=253.5, smer +X; pult u vstupu:
+      // obrazovky mini — pozice ZMERENY z mini-mesh.js (lokalni ramec produktu,
+      // mm; po predelani sekci 21.7.2026 — bedna 200 / zabradli 3600 / choditko 810):
+      // vez: celni lic displeje 1123x643 na x=200.5, smer +X; pult u vstupu:
       // bezrameckovy FHD panel zapusteny do sikminy 30° (lic skla PRESNE v rovine
-      // plechu, sklo pruhledne — export_mini.py). Stred lice (4339, 1100.0, 221.15);
+      // plechu, sklo pruhledne — export_mini.py). Stred lice (4262.9, 1100.0, 221.15);
       // grafika lezi 1,05 mm POD sklem na tmave vyplni (pozadavek 17.7.2026)
       const mo = T + CL;
-      screenSlot(SDEF.miniTv, [mo + 256, 1433.5, mo + 950.5], {y:Math.PI/2}, 1123, 643);
+      screenSlot(SDEF.miniTv, [mo + 203, 1433.5, mo + 950.5], {y:Math.PI/2}, 1123, 643);
       screenSlot(SDEF.miniPult,
-        [mo + 4339, 1100.0 - 1.05*Math.cos(Math.PI/6), mo + 221.15 - 1.05*Math.sin(Math.PI/6)],
+        [mo + 4262.9, 1100.0 - 1.05*Math.cos(Math.PI/6), mo + 221.15 - 1.05*Math.sin(Math.PI/6)],
         {x:-Math.PI/3}, 517.6, 291.15);
-      // dekaly kostek na celni plose veze pod TV: lic veze x=253 (zmereno
+      // dekaly kostek na celni plose veze pod TV: lic veze x=200 (zmereno
       // z mini-mesh.js), rovina 2 mm pred licem jako ostatni grafiky.
       // Reproduktory (kupole primo v meshi, vypouklost 15 mm) zustavaji
       // PRED dekaly — kostky je neprekryvaji (pozadavek 19.7.2026).
@@ -829,7 +830,7 @@ function build(){
         m.rotation.z = d.rot*Math.PI/180;
         const g = new THREE.Group();
         g.rotation.y = Math.PI/2;
-        g.position.set((mo + 255)*S, d.y*S, (mo + d.z)*S);
+        g.position.set((mo + 202)*S, d.y*S, (mo + d.z)*S);
         g.add(m);
         root.add(g);
       });
@@ -841,7 +842,7 @@ function build(){
   let arcFit = null, arcOver = 0; // null = mesh chybi
   if(ag){
     const ad = ARCADE_MESH.dims_mm;
-    const ax0 = T + CL + (typeof MINI_MESH !== 'undefined' ? MINI_MESH.dims_mm.delka : 4677) + ARC_GAP;
+    const ax0 = T + CL + (typeof MINI_MESH !== 'undefined' ? MINI_MESH.dims_mm.delka : 4610) + ARC_GAP;
     arcOver = Math.max(0, Math.round(ax0 + ad.sirka - B));
     arcFit = arcOver === 0 && (T + CL + ad.hloubka <= A);
     if(opt.arc){
@@ -849,9 +850,9 @@ function build(){
       root.add(ag);
       // totem arcade: obrazovka 560x800 na celni stene bedny (lokalni z=254,
       // smer +Z do stanku) — rozmery z model/export_arcade.py
-      screenSlot(SDEF.arc, [ax0 + 680, 1350, T + CL + 256], {}, 560, 800);
+      screenSlot(SDEF.arc, [ax0 + 620, 1350, T + CL + 256], {}, 560, 800);
       // potisk tela totemu (kostky + slogan) pod obrazovkou. Bedna 700 mm
-      // siroka (lokalni x 330..1030), celni lic z=250 (export_arcade.py) —
+      // siroka (lokalni x 270..970), celni lic z=250 (export_arcade.py) —
       // rovina 2 mm pred licem, jako grafika na stenach. Prava hrana grafiky
       // (oriznute kostky) licuje s pravou hranou bedny a horni hrana se spodni
       // hranou obrazovky (y=950) — pozadavek 17.7.2026 dle dodane vizualizace.
@@ -864,7 +865,7 @@ function build(){
           new THREE.PlaneGeometry(gw*S, gh*S),
           new THREE.MeshStandardMaterial({map:tex.arcTot, roughness:.7, transparent:true})
         );
-        gr.position.set((ax0 + 1030 - gw/2)*S, (950 - gh/2)*S, (T + CL + 252)*S);
+        gr.position.set((ax0 + 970 - gw/2)*S, (950 - gh/2)*S, (T + CL + 252)*S);
         root.add(gr);
       }
     }
@@ -879,7 +880,7 @@ function build(){
   if(kg){
     const kd = KIOSK_MESH.dims_mm, kn = KIOSK_MESH.count;
     const kLo = T;
-    const kHi = T + CL + (typeof MINI_MESH !== 'undefined' ? MINI_MESH.dims_mm.delka : 4677) + ARC_GAP;
+    const kHi = T + CL + (typeof MINI_MESH !== 'undefined' ? MINI_MESH.dims_mm.delka : 4610) + ARC_GAP;
     kioskGap = (kHi - kLo - kn*kd.sirka) / (kn+1);
     const kz = A - kd.hloubka; // zadni hrana kiosku (predni lic na y = A)
     kioskFit = kioskGap >= 0
@@ -961,7 +962,7 @@ function build(){
     if(mSpan) lo = Math.max(lo, T + CL + mSpan[1]);
     const aSpan = (typeof ARCADE_MESH !== 'undefined') ? tallSpan(ARCADE_MESH, 'arc', tvBot) : null;
     if(aSpan){
-      const ax = T + CL + (typeof MINI_MESH !== 'undefined' ? MINI_MESH.dims_mm.delka : 4677) + ARC_GAP;
+      const ax = T + CL + (typeof MINI_MESH !== 'undefined' ? MINI_MESH.dims_mm.delka : 4610) + ARC_GAP;
       hi = Math.min(hi, ax + aSpan[0]);
     }
     for(let i=0; i<nB && tvPick.length<tvc.n; i++){

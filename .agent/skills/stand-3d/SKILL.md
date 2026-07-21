@@ -81,8 +81,12 @@ Grafická rovina se umisťuje **2 mm před líc panelu** (aby neprobleskávala),
 
 `model/mini.stp` je CAD sestava exponátu — LED podlahová aréna (rastr 6×12 dlaždic
 300×300 mm, zábradlí s plexi do 1200 mm, věž s 50" monitorem do 1800 mm, vstupní branka).
-Rozměry a umístění jsou v `stand-spec.json` → `product` (rozměry **změřeny z modelu**,
-délka 4677 × šířka 1901 × výška 1803 mm).
+Rozměry a umístění jsou v `stand-spec.json` → `product`: **délka 4610 × šířka 1901 ×
+výška 1803 mm**. Délka je od 21. 7. 2026 **zadaná členěním sekcí** (`product.sections_mm`):
+bedna s TV 200 + zábradlí 3600 + chodítko 810; plocha pixelů (12×6 dlaždic po 299,5 mm)
+se předěláním nezměnila. `mini.stp` má stále původní rozměry (4677) — díly posouvá/zkracuje
+až `remodel()` v `export_mini.py` (afinní mapa po sekcích aplikovaná na vrcholy teselace;
+profily 40×40 se nedeformují, zkracují se jen po délce).
 
 **Umístění:** vnitřní roh stánku, delší strana podél stěny B, věž s monitorem u stěny A,
 vstup směrem do uličky. Vůle od stěn = `product.placement.clearance_mm` (panely GES
@@ -90,8 +94,11 @@ nesmí nést zátěž, produkt se o ně nesmí opírat).
 
 **Druhý exponát „arcade"** (`product_arcade` ve spec souboru): herní LED podlaha s totemem,
 syntetický model bez STEP — staví ho `model/export_arcade.py` (obyčejný python3) z rozměrů
-ve spec souboru. Stojí vedle mini, bedna u stěny B. POZOR: s aktuálními rozměry **přesahuje
-187 mm přes hranu stánku** (viz `product_arcade.fit_check`) — řešení čeká na rozhodnutí.
+ve spec souboru. Stojí vedle mini, bedna u stěny B. Od 21. 7. 2026 bez šikmin — kolem plochy
+dlaždic je jen profil 20 mm do výšky dlaždic, celková šířka 1240 mm. Zbylý přesah 67 mm
+přes hranu stánku byl **vyřešen zkrácením mini na 4610 mm** (21. 7. 2026) — arcade teď končí
+**přesně v hraně**, rezerva 0 (délka stěny B je ale pořád jen odhad, viz
+`product_arcade.fit_check`).
 
 **Třetí produkt „kiosky"** (`product_kiosk` ve spec souboru): 2× volně stojící pult se šikmým
 monitorem podél delší otevřené strany, přední líc v hraně stánku, monitor směrem do uličky —
@@ -128,7 +135,8 @@ reproduktory** (mírně vypouklé kupole Ø250, vypouklost 15 mm, střed y=910, 
 staví `export_mini.py`, hodnoty odečtené z fotky 19. 7. 2026) a **potisk kostek**
 (3 SVG z `assets/grafika/kostky/`, kreslí viewer — `DEF_DECALS`, rovina 2 mm před lícem
 věže x=253; pozice ve spec souboru → `product.tower_decals`). Kostky reproduktory
-nepřekrývají — kupole jsou 3D před rovinou potisku. Šikmý displej pultu u vstupu (díly `DISPLEJ*`, černý
+nepřekrývají — kupole jsou 3D před rovinou potisku. (Líc věže je po předělání 21. 7. 2026
+na **x=200**, dekály kreslí viewer na x=202.) Šikmý displej pultu u vstupu (díly `DISPLEJ*`, černý
 rámeček) se **nezobrazuje** — nahrazuje ho bezrámečkový FHD panel zapuštěný do plechu:
 vyříznuté zapuštění 1,5 mm, průhledné sklo 517,6 × 291,15 mm s lícem **přesně v rovině
 plechu**, pod ním tmavá výplň; stejný panel jako u kiosků (požadavek 17. 7. 2026; staví

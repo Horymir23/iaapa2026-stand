@@ -2,8 +2,10 @@
 """
 Syntetycky model exponatu "Arcade" - herni LED podlaha s totemem.
 Zadny STEP: stavi se z kvadru podle vizualizaci a rozmeru zadanych 13.7.2026
-(bedna 1800x700x250, podlaha 1200x2400 = 4x8 dlazdic po 300, sikmina 80x80
-kolem podlahy). Rozmery a umisteni cte z data/stand-spec.json (product_arcade).
+(bedna 1800x700x250, podlaha 1200x2400 = 4x8 dlazdic po 300). Predelano
+21.7.2026: sikminy odstraneny, kolem plochy dlazdic je jen svisly profil
+20 mm do vysky dlazdic. Rozmery a umisteni cte z data/stand-spec.json
+(product_arcade).
 
 Spousti se obycejnym python3 (bez FreeCADu):
     python3 model/export_arcade.py
@@ -15,9 +17,9 @@ Vystupy:
     model/arcade_v_stanku.dae   - totez pro SketchUp Go/Pro, Blender
 
 Lokalni ramec (three.js konvence, mm):
-    x = sirka  0..1360  (podel steny B)
+    x = sirka  0..1240  (podel steny B)
     y = vyska  0..1800
-    z = hloubka 0..2810 (zada bedny u steny B -> podlaha smerem do ulicky)
+    z = hloubka 0..2690 (zada bedny u steny B -> podlaha smerem do ulicky)
 """
 import json
 import os
@@ -41,10 +43,10 @@ BED_W, BED_D, BED_H = d["bedna"]["width"], d["bedna"]["depth"], d["bedna"]["heig
 FLOOR_W, FLOOR_L = d["podlaha"]["width"], d["podlaha"]["length"]
 TILE = d["podlaha"]["tile"]
 H = d["podlaha"]["height"]
-RAMP = d["sikmina"]
+PROF = d["profil"]
 
-W = FLOOR_W + 2 * RAMP          # 1360 - vnejsi sirka
-D = BED_D + 2 * RAMP + FLOOR_L  # 2810 - vnejsi hloubka
+W = FLOOR_W + 2 * PROF          # 1240 - vnejsi sirka
+D = BED_D + 2 * PROF + FLOOR_L  # 2690 - vnejsi hloubka
 SEG_INSET = 15.0                # bily ramecek okolo svitici plochy dlazdice
 SEG_THICK = 3.0
 
@@ -76,23 +78,6 @@ def box(name, x0, y0, z0, x1, y1, z1):
     emit(name, t)
 
 
-def frustum(name, ox0, oz0, ox1, oz1, ix0, iz0, ix1, iz1, h):
-    """Komoly jehlan: dolni obdelnik (vnejsi, y=0) -> horni (vnitrni, y=h).
-    Tvori celou podlahovou platformu vc. sikmin po obvodu."""
-    b0, b1 = (ox0, 0.0, oz0), (ox1, 0.0, oz0)
-    b2, b3 = (ox1, 0.0, oz1), (ox0, 0.0, oz1)
-    t0, t1 = (ix0, h, iz0), (ix1, h, iz0)
-    t2, t3 = (ix1, h, iz1), (ix0, h, iz1)
-    t = []
-    t += quad(t0, t3, t2, t1)  # horni plocha (+y)
-    t += quad(b0, b1, b2, b3)  # dno (-y)
-    t += quad(b0, t0, t1, b1)  # -z (sikmina k bedne)
-    t += quad(b3, b2, t2, t3)  # +z (predni sikmina)
-    t += quad(b1, t1, t2, b2)  # +x (prava sikmina)
-    t += quad(b0, b3, t3, t0)  # -x (leva sikmina)
-    emit(name, t)
-
-
 # ---------- stavba ----------
 # bedna (totem s obrazovkou) - zada na z=0 (u steny B), celem k podlaze
 bx0 = (W - BED_W) / 2
@@ -102,14 +87,15 @@ box("screen", bx0 + 70, 950, BED_D, bx0 + BED_W - 70, 1750, BED_D + 4)
 # platebni terminal (maly panel pod obrazovkou)
 box("screen", W / 2 - 65, 620, BED_D, W / 2 + 65, 800, BED_D + 3)
 
-# podlahova platforma vc. sikmin = komoly jehlan (bile boky, bila horni plocha)
-frustum("body", 0, BED_D, W, D, RAMP, BED_D + RAMP, W - RAMP, D - RAMP, H)
+# podlahova platforma = kvadr do vysky dlazdic; svisle boky, na horni plose
+# tvori okraj kolem dlazdic profil sirky PROF (sikminy zruseny 21.7.2026)
+box("body", 0, 0, BED_D, W, H, D)
 
 # svitici segmenty dlazdic (staticke barvy - blikat nesmi, regulace)
 for j, row in enumerate(PATTERN):
     for i, ch in enumerate(row):
-        x0 = RAMP + i * TILE
-        z0 = BED_D + RAMP + j * TILE
+        x0 = PROF + i * TILE
+        z0 = BED_D + PROF + j * TILE
         box(LED_KEY[ch], x0 + SEG_INSET, H, z0 + SEG_INSET,
             x0 + TILE - SEG_INSET, H + SEG_THICK, z0 + TILE - SEG_INSET)
 

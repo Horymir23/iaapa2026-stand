@@ -253,5 +253,5 @@ print(f"Kontrola: volny usek {HI - LO:.0f} mm {'OK' if ok_gap else 'NEVEJDOU SE!
       f" | zadni hrana y={Y0:.0f} vs mini {T + CL + MINI_DEPTH} "
       f"{'OK' if ok_depth else 'KOLIZE S MINI!'}"
       f" | vyska {HB:.0f} / {H_MAX} mm {'OK' if ok_h else 'PRES LIMIT!'}")
-print("POZOR: pozice zavisi na tloustce panelu (ODHAD) a na poloze arcade,"
-      " jejiz presah 187 mm pres hranu stanku neni vyreseny.")
+print("POZOR: pozice zavisi na tloustce panelu (ODHAD) a na delce steny B"
+      " (ODHAD) - arcade po zkraceni mini (21.7.2026) konci presne v hrane.")

@@ -17,11 +17,16 @@ Orientace: delsi strana produktu podel steny B, vez s monitorem u steny A
 (v rohu), vstup smerem do ulicky.
 
 Transformace STEP -> lokalni ramec produktu (Z nahoru, mm):
-    lx = bbox.YMax - y   (0..4677, vez u lx=0)
+    lx = bbox.YMax - y   (0..4610, vez u lx=0)
     ly = x - bbox.XMin   (0..1901)
     lz = z - bbox.ZMin   (0..1803)
 Pro viewer (three.js, Y nahoru) se osy prohodi na (lx, lz, ly) - to je zrcadleni,
 proto se u vieweru obraci poradi vrcholu trojuhelniku (winding).
+
+PREDELANI 21.7.2026 (zadani uzivatele): bedna s TV 200 + zabradli 3600
++ choditko 810 = 4610 mm (drive 253 + 3636 + 788 = 4677). Plocha pixelu
+se nemeni. mini.stp zustava beze zmeny - dily se posouvaji/zkracuji az
+pri exportu, viz remodel() nize.
 """
 import json
 import math
@@ -130,71 +135,164 @@ def end_caps(shape, ax):
     return caps
 
 
+# ---------- PREDELANI sekci (21.7.2026, zadani uzivatele) ----------
+# Stare cleneni podel delky (lx, vez u 0): vez 0..253 | zabradli 253..3889
+#   | choditko 3889..4677  (celkem 4677)
+# Nove cleneni:                            vez 0..200 | zabradli 200..3800
+#   | choditko 3800..4610  (celkem 4610)
+# Plocha pixelu (12 x 6 dlazdic po 299,5 = 3594 x 1797 mm) se NEMENI - dlazdice
+# se jen posouvaji na lx 203..3797 (3 mm ke sloupkum zabradli na obou koncich;
+# sloupky nove stoji NAD krajem dlazdic, jako dosud u vstupu).
+# Kazdy dil dostane JEDNU afinni mapu podel STEP osy y: bud cisty posun, nebo
+# u podelnych prvku (madla, plechy pultu, plexi, dibond) zkraceni/natazeni po
+# delce - prurezy profilu 40x40 se nikdy nedeformuji.
+
+F_R = [(0.0, 43.0, 0.0, 43.0),          # zadni sloupky veze beze zmeny
+       (43.0, 213.0, 43.0, 160.0),      # pricky veze: 170 -> 117
+       (213.0, 253.0, 160.0, 200.0),    # predni sloupky veze (posun -53)
+       (253.0, 3889.0, 200.0, 3800.0)]  # zabradli: 3636 -> 3600
+F_W = [(3889.0, 3929.0, 3800.0, 3840.0),  # ram branky u areny (posun -89)
+       (3929.0, 4629.0, 3840.0, 4562.0),  # podesta: 700 -> 722
+       (4629.0, 4677.0, 4562.0, 4610.0)]  # koncovy ram + plexi (posun -67)
+
+
+def piecewise(x, zones):
+    for a0, a1, b0, b1 in zones:
+        if a0 - 0.25 <= x <= a1 + 0.25:
+            return b0 + (x - a0) * (b1 - b0) / (a1 - a0)
+    raise ValueError("lx %.1f mimo zony" % x)
+
+
+def lx_target(label, l0, l1):
+    """Nove lx rozpeti dilu; None = dil zustava. l0/l1 = puvodni lx bboxu."""
+    L = label.upper()
+    if L.startswith("KOSTKA"):
+        return (l0 - 90.0, l1 - 90.0)   # dlazdice: pevny rozmer, jen posun
+    if l1 <= 43.5:
+        return None                     # zadni stena veze
+    if L.startswith("DIBOND"):
+        return (l0, l1 - 53.0)          # bocni/horni desky veze 5..251 -> 5..198
+    if "BED-KR" in L and "ZAB" not in L:
+        return (piecewise(l0, F_R), piecewise(l1, F_R))  # pricky veze
+    if l0 >= 195.0 and l1 <= 261.5:
+        return (l0 - 53.0, l1 - 53.0)   # celo veze: monitor, predni sloupky,
+                                        #  plutek ZAB-BED, plexi, plochy
+    if L.startswith("HRANOL"):
+        return (200.0, 203.0)           # vypln mezi vezi a 1. radou dlazdic
+    if l0 >= 3848.0 and l1 <= 3889.5:
+        return (l0 - 89.0, l1 - 89.0)   # koncove sloupky zabradli + jejich plexi
+    if "ZAB-KR" in L and l1 <= 300.0:
+        return (l0 - 53.0, l1 - 53.0)   # sloupky zabradli u veze -> 200..240
+    if "ZAB-KR" in L:
+        return (l0 - 71.0, l1 - 71.0)   # stredni sloupky -> stred presne 2000
+    if l1 <= 3889.5:
+        return (piecewise(l0, F_R), piecewise(l1, F_R))  # podelne prvky zabradli
+    return (piecewise(l0, F_W), piecewise(l1, F_W))      # choditko
+
+
+def y_affine(label, bb, y_max):
+    """(a, b): y' = a*y + b pro dany dil; identita = (1.0, 0.0).
+
+    Mapa se aplikuje az na VRCHOLY po teselaci, ne na B-rep tvar -
+    transformGeometry by prevedl rovinne plochy na B-spline (nafoukle
+    bboxy z kontrolnich bodu, 3x vic trojuhelniku). Mapovani vrcholu je
+    pro afinni mapu exaktni: primky zustavaji primkami.
+    """
+    l0, l1 = y_max - bb.YMax, y_max - bb.YMin
+    tgt = lx_target(label, l0, l1)
+    if tgt is None:
+        return 1.0, 0.0
+    n0, n1 = tgt
+    a = (n1 - n0) / (l1 - l0)
+    # lx' = n0 + a*(lx - l0);  y = y_max - lx  =>  y' = a*y + b
+    return a, (y_max - n0) - a * (y_max - l0)
+
+
+def map_pts(pts, a, b):
+    if a == 1.0 and b == 0.0:
+        return pts
+    return [FreeCAD.Vector(p.x, a * p.y + b, p.z) for p in pts]
+
+
 # ---------- import a teselace ----------
 doc = FreeCAD.newDocument("mini")
 Import.insert(STP, doc.Name)
 
-gbb = None  # globalni bbox produktu v STEP souradnicich
-parts = []  # (bucket, points, facets)
-kostka_bbs = []  # bboxy LED dlazdic - pro dopocet svitivych segmentu
-removed = 0
-capped = []  # zaslepene otevrene konce jeklu (viz CAP_ENDS)
-disp_bb = None    # spolecny bbox vynechanych dilu DISPLEJ* (sikmy pult u vstupu)
-vrch_shape = None  # sikmy plech pultu (PLECH MONITOR VRCH) - rovina pro nove sklo
+feats = []   # (obj, tvar s globalnim umistenim)
+gbb0 = None  # bbox PUVODNI sestavy - referencni ramec pro remodel
 for obj in doc.Objects:
     sh = getattr(obj, "Shape", None)
     if sh is None or not sh.Solids or obj.TypeId != "Part::Feature":
         continue
     s = sh.copy()
     s.Placement = obj.getGlobalPlacement()
-    # bbox se pocita ze VSECH dilu vc. vynechanych - rozmery a lokalni ramec
-    # produktu musi odpovidat skutecnemu vyrobku, ne orezane vizualizaci
-    if gbb is None:
-        gbb = FreeCAD.BoundBox(s.BoundBox)
+    if gbb0 is None:
+        gbb0 = FreeCAD.BoundBox(s.BoundBox)
     else:
-        gbb.add(s.BoundBox)
+        gbb0.add(s.BoundBox)
+    feats.append((obj, s))
+Y0 = gbb0.YMax  # lx = Y0 - y v puvodnim modelu
+
+# Bbox produktu PO predelani: mapa meni jen STEP y a vsechny cile lezi
+# v lx 0..4610 s krajnimi dily na obou koncich, X/Z zustavaji. Analyticky
+# bbox (z puvodniho gbb0) odpovida skutecnemu vyrobku vc. vynechanych dilu.
+gbb = FreeCAD.BoundBox(gbb0.XMin, Y0 - 4610.0, gbb0.ZMin,
+                       gbb0.XMax, Y0, gbb0.ZMax)
+parts = []  # (bucket, points, facets)
+kostka_bbs = []  # bboxy LED dlazdic (po predelani) - pro svitive segmenty
+removed = 0
+capped = []  # zaslepene otevrene konce jeklu (viz CAP_ENDS)
+disp_bb = None    # bbox vynechanych dilu DISPLEJ* PO predelani (sikmy pult)
+vrch_shape = None  # sikmy plech pultu (PLECH MONITOR VRCH), PUVODNI tvar
+vrch_ab = None     #  + jeho afinni mapa (rez sklem se dela pred mapovanim)
+for obj, s in feats:
+    bb = s.BoundBox
+    a, b = y_affine(obj.Label, bb, Y0)
     # Sikmy displej pultu u vstupu (DISPLEJ = aktivni plocha, DISPLEJ001 =
     # vystoupla skrin s cernym rameckem) se vynechava - pult bude mit
     # bezrameckovy FHD monitor integrovany do sikminy (pozadavek 17.7.2026,
     # viz product.modifications.pult_display_integrated). Nahrazuje ho sklo
     # polozene na sikmy plech nize. mini.stp se NEMENI.
     if obj.Label.upper().startswith("DISPLEJ"):
+        nb = FreeCAD.BoundBox(bb.XMin, a * bb.YMin + b, bb.ZMin,
+                              bb.XMax, a * bb.YMax + b, bb.ZMax)
         if disp_bb is None:
-            disp_bb = FreeCAD.BoundBox(s.BoundBox)
+            disp_bb = nb
         else:
-            disp_bb.add(s.BoundBox)
+            disp_bb.add(nb)
         continue
     if obj.Label.upper().startswith("PLECH MONITOR VRCH"):
-        vrch_shape = s
-        continue  # tessellace az po vyrezu zapusteni pro sklo (nize)
-    if is_front_fence(obj.Label, s.BoundBox):
+        vrch_shape, vrch_ab = s, (a, b)
+        continue  # rez zapusteni pro sklo + teselace az nize
+    if is_front_fence(obj.Label, bb):
         removed += 1
-        bb = s.BoundBox
         # Sloupky brany prochazely skrz ram podlahy az na zem - po jejich
         # odstraneni by v ramu zustaly diry. Misto spodnich 80 mm sloupku
         # se vklada PLNA zaslepka v pudorysu sloupku (plny kvadr vypada
-        # shora cisteji nez duty profil jeklu).
+        # shora cisteji nez duty profil jeklu). Pudorys uz v NOVYCH y.
         if bb.ZMin < 80 and "JEKL" in obj.Label.upper():
-            filler = Part.makeBox(bb.XLength, bb.YLength, 80.0,
-                                  FreeCAD.Vector(bb.XMin, bb.YMin, 0))
+            filler = Part.makeBox(bb.XLength, a * bb.YLength, 80.0,
+                                  FreeCAD.Vector(bb.XMin, a * bb.YMin + b, 0))
             pts, tris = filler.tessellate(DEFLECTION)
             parts.append(("ocel", pts, tris))
         continue
     pts, tris = s.tessellate(DEFLECTION)
-    parts.append((bucket(obj.Label), pts, tris))
+    parts.append((bucket(obj.Label), map_pts(pts, a, b), tris))
     if bucket(obj.Label) == "kostky":
-        kostka_bbs.append(s.BoundBox)
+        kostka_bbs.append(FreeCAD.BoundBox(bb.XMin, a * bb.YMin + b, bb.ZMin,
+                                           bb.XMax, a * bb.YMax + b, bb.ZMax))
     if obj.Label in CAP_ENDS:
         for plug in end_caps(s, CAP_ENDS[obj.Label]):
             pts, tris = plug.tessellate(DEFLECTION)
-            parts.append(("ocel", pts, tris))
+            parts.append(("ocel", map_pts(pts, a, b), tris))
             capped.append(obj.Label)
 
 # Podesta u vstupu dostane desku s CERNYM kobercem (pozadavek 13.7.2026).
 # Lezi na L-profilech (horni hrana Z 60), povrch v urovni ramu podlahy (Z 80).
 # Pudorys = vnitrek ramu podesty: X mezi bocnicemi (-4..1801),
-# Y mezi celnim ramem a predelem k arene (-4336..-3636). Vse v STEP mm.
-deck = Part.makeBox(1805.0, 700.0, 20.0, FreeCAD.Vector(-4.0, -4336.0, 60.0))
+# Y mezi celnim ramem a predelem k arene - po predelani 21.7.2026 je podesta
+# 722 mm (lx 3840..4562 -> STEP Y -4269..-3547). Vse v STEP mm.
+deck = Part.makeBox(1805.0, 722.0, 20.0, FreeCAD.Vector(-4.0, -4269.0, 60.0))
 pts, tris = deck.tessellate(DEFLECTION)
 parts.append(("koberec", pts, tris))
 
@@ -202,9 +300,9 @@ parts.append(("koberec", pts, tris))
 # monitor sedi az nahore - pod nim bylo skrz plexi videt do dute jeklove
 # konstrukce (pozadavek 16.7.2026: ucpat). Vnitrek se vyplnuje plnymi bilymi
 # kvadry: (1) pod monitorem cela hloubka az k plexi, (2) zbytek dutiny za
-# monitorem az po strop. Souradnice v lokalnim ramci produktu (mm, zmereno
-# z mini.stp): vez lx 3..253 / ly 345.5..1555.5, plexi celo lx 253,
-# monitor lx 198.5..253.5 / lz 1111.5..1755. Vyplne jsou o ~1 mm zapustene,
+# monitorem az po strop. Souradnice v lokalnim ramci produktu (mm, po
+# predelani 21.7.2026): vez lx 3..200 / ly 345.5..1555.5, plexi celo lx 200,
+# monitor lx 145.5..200.5 / lz 1111.5..1755. Vyplne jsou o ~1 mm zapustene,
 # aby licem nesplyvaly s plexi, dibondem ani zady monitoru.
 def tower_box(lx0, lx1, ly0, ly1, lz0, lz1):
     return Part.makeBox(ly1 - ly0, lx1 - lx0, lz1 - lz0,
@@ -212,18 +310,18 @@ def tower_box(lx0, lx1, ly0, ly1, lz0, lz1):
                                        gbb.ZMin + lz0))
 
 
-for box in (tower_box(4.0, 252.0, 346.5, 1554.5, 1.0, 1111.5),
-            tower_box(4.0, 197.5, 346.5, 1554.5, 1111.5, 1799.0)):
+for box in (tower_box(4.0, 199.0, 346.5, 1554.5, 1.0, 1111.5),
+            tower_box(4.0, 144.5, 346.5, 1554.5, 1111.5, 1799.0)):
     pts, tris = box.tessellate(DEFLECTION)
     parts.append(("ocel", pts, tris))
 
 # Dva bile reproduktory na celni plose veze pod monitorem (pozadavek 19.7.2026
 # dle fotky skutecneho produktu): mirne vypoukle kruhy Ø250 mm, stred ve vysce
 # 910 mm, symetricky ±300 mm od stredu sirky (ly 650 a 1250). Zplostela koule
-# (vypouklost 15 mm) polozena stredem NA lic veze lx=253 - vnitrni polovina
+# (vypouklost 15 mm) polozena stredem NA lic veze lx=200 - vnitrni polovina
 # je utopena v tele, ven kouka nizka kupole. Rozmery odectene z dodane fotky
 # (skala pres sirku obrazovky 1123 mm) - viz stand-spec.json product.speakers.
-SPK_R, SPK_BULGE, SPK_FACE_LX = 125.0, 15.0, 253.0
+SPK_R, SPK_BULGE, SPK_FACE_LX = 125.0, 15.0, 200.0
 for spk_ly in (650.0, 1250.0):
     dome = Part.makeSphere(SPK_R)
     m = FreeCAD.Matrix()
@@ -257,6 +355,9 @@ face = max((f for f in vrch_shape.Faces
             and abs(f.Surface.Axis.y) < 0.02 and f.Area > 50000),
            key=lambda f: f.CenterOfMass.dot(f.Surface.Axis))  # vnejsi lic plechu
 n = face.Surface.Axis.normalize()
+# vrch_shape je PUVODNI (nemapovany) tvar - rovina sikminy se predelanim
+# nemeni, protoze jeji normala nema y-slozku. disp_bb uz je po predelani,
+# takze hp = stred lice skla v NOVYCH souradnicich.
 hp = disp_bb.Center - n * (disp_bb.Center.dot(n) - face.CenterOfMass.dot(n))
 
 
@@ -269,12 +370,27 @@ def on_slope(shape):
 
 
 # vyrez o 1 mm sirsi nez sklo (0,5 mm sparka okolo - boky skla se jinak
-# koplanarne perou se stenami vyrezu); presahuje 0,5 mm nad lic, at rez projde
-recess = on_slope(Part.makeBox(GL_L + 1, GL_W + 1, CUT_D + 0.5,
-                               FreeCAD.Vector(-(GL_L + 1) / 2, -(GL_W + 1) / 2,
-                                              -CUT_D)))
+# koplanarne perou se stenami vyrezu); presahuje 0,5 mm nad lic, at rez projde.
+# Rez se dela na PUVODNIM plechu (ciste roviny) a mapuji se az vrcholy teselace:
+# sirka vyrezu podel y je proto PREDEM delena va, aby po natazeni podesty
+# (podel lx) vysla presne GL_W + 1 - sklo samo se stavi uz v novem ramci.
+va, vb = vrch_ab
+hp0 = FreeCAD.Vector(hp.x, (hp.y - vb) / va, hp.z)  # stred skla v puvodnich y
+rw = (GL_W + 1) / va
+
+
+def on_slope0(shape):
+    shape.rotate(FreeCAD.Vector(0, 0, 0), FreeCAD.Vector(0, 1, 0),
+                 math.degrees(math.atan2(n.x, n.z)))
+    shape.translate(hp0)
+    return shape
+
+
+recess = on_slope0(Part.makeBox(GL_L + 1, rw, CUT_D + 0.5,
+                                FreeCAD.Vector(-(GL_L + 1) / 2, -rw / 2,
+                                               -CUT_D)))
 pts, tris = vrch_shape.cut(recess).tessellate(DEFLECTION)
-parts.append(("ocel", pts, tris))
+parts.append(("ocel", map_pts(pts, va, vb), tris))
 glass = on_slope(Part.makeBox(GL_L, GL_W, SCR_T,
                               FreeCAD.Vector(-GL_L / 2, -GL_W / 2, -SCR_T)))
 pts, tris = glass.tessellate(DEFLECTION)
@@ -299,7 +415,8 @@ LED_INSET = 25.0  # sirka viditelneho ramu dlazdice
 LED_THICK = 2.0
 for bb in kostka_bbs:
     col = int(round(bb.XMin / 299.5))
-    row = int(round((bb.YMin + 3594.0) / 299.5))
+    # dlazdice jsou po predelani 21.7.2026 posunute o -90 v lx (= +90 v STEP y)
+    row = int(round((bb.YMin + 3504.0) / 299.5))
     led = "led%d" % ((col * 7 + row * 11 + (col * row) % 5) % 5)
     seg = Part.makeBox(bb.XLength - 2 * LED_INSET, bb.YLength - 2 * LED_INSET,
                        LED_THICK,

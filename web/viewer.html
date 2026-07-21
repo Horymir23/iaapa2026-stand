@@ -281,6 +281,9 @@ let mbc = { n:3, W:600, H:1040, D:80, SW:600, SH:337.5, CY:1500 };
 // (vybrán Ø1520 — větší Ø3050 se dle IAAPA nad stánek nevejde; BOT = ODHAD výšky)
 // ROT = natočení středu grafiky od stěny B směrem k otevřené kratší straně (°)
 let ban = { D:1520, H:610, BOT:3300, CL:1000, CABLE:257, ROT:115 };
+// sestava kiosku (zmena 21.7.2026, zady k sobe + stul): GAPW = zapadni mezera
+// od lice steny A, TL = delka stolu (sync ze spec product_kiosk)
+let kio = { GAPW:1500, TL:600 };
 let opt = { spot:true, joint:true, mini:true, arc:true, kiosk:true, tv:true, mon:true, ban:true, num:false };
 let tex = { B:null, A:null, ban:null, arcTot:null };
 let scrTex = {}, scrName = {}; // nahrané grafiky obrazovek, klíč dle screenDefs()
@@ -389,6 +392,10 @@ fetch('../data/stand-spec.json')
       mbc = { n:d.wall_monitor_box.count_screens, W:m.box.width, H:m.box.height, D:m.box.depth,
               SW:m.screen.width, SH:m.screen.height, CY:p.center_height_mm };
     }
+    if(d.product_kiosk){
+      kio = { GAPW: d.product_kiosk.placement?.gap_from_wall_a_mm ?? kio.GAPW,
+              TL: d.product_kiosk.table?.dims_mm?.deska?.length ?? kio.TL };
+    }
     if(d.hanging_banner){
       const h = d.hanging_banner;
       ban = { D:h.dims_mm.diameter, H:h.dims_mm.height, BOT:h.placement.bottom_mm,
@@ -490,7 +497,7 @@ function meshGroup(data){
   });
   return grp;
 }
-let _mini = null, _arc = null, _kiosk = null;
+let _mini = null, _arc = null, _kiosk = null, _ktable = null;
 function miniGroup(){
   if(!_mini && typeof MINI_MESH !== 'undefined') _mini = meshGroup(MINI_MESH);
   return _mini;
@@ -503,6 +510,11 @@ function kioskGroup(){
   // mesh JEDNOHO kiosku — do scény se přidávají klony (sdílejí geometrii)
   if(!_kiosk && typeof KIOSK_MESH !== 'undefined') _kiosk = meshGroup(KIOSK_MESH);
   return _kiosk;
+}
+function tableGroup(){
+  // stůl s poličkou mezi zády kiosků (TABLE_MESH z kiosk-mesh.js, 21.7.2026)
+  if(!_ktable && typeof TABLE_MESH !== 'undefined') _ktable = meshGroup(TABLE_MESH);
+  return _ktable;
 }
 
 // Rozsah geometrie produktu zasahující nad danou výšku (lokální rámec meshe → mm),
@@ -660,8 +672,8 @@ function screenDefs(){
     {key:'miniTv',   n:6,  label:'Mini — monitor na věži (50″)',      mm:[1123,643],      px:[1920,1080]},
     {key:'miniPult', n:7,  label:'Mini — pult u vstupu (šikmý 30°)',  mm:[517.6,291.15],  px:[1920,1080]},
     {key:'arc',      n:8,  label:'Arcade — totem (na výšku)',         mm:[560,800],       px:[1080,1543]},
-    {key:'k1',       n:9,  label:'Kiosek 1 — blíž stěně A (šikmý)',   mm:[517.6,291.15],  px:[1920,1080]},
-    {key:'k2',       n:10, label:'Kiosek 2 — blíž arcade (šikmý)',    mm:[517.6,291.15],  px:[1920,1080]},
+    {key:'k1',       n:9,  label:'Kiosek 1 — čelem ke stěně A (šikmý)', mm:[517.6,291.15],  px:[1920,1080]},
+    {key:'k2',       n:10, label:'Kiosek 2 — čelem k arcade (šikmý)',   mm:[517.6,291.15],  px:[1920,1080]},
   ];
 }
 let SDEF = {}; // key -> def, plni se v build()
@@ -687,7 +699,9 @@ function numTex(n){
 // posMm = stred viditelne plochy vc. odsazeni pred lic (mm), rot = {x}|{y} rad
 // (kazdy slot ma jen JEDNU rotaci, poradi Euleru tak nehraje roli).
 // Grafika je MeshBasicMaterial — obrazovka sviti, stin ji neztmavi (jako LED segmenty).
-function screenSlot(def, posMm, rot, wMm, hMm){
+function screenSlot(def, posMm, rot, wMm, hMm, parent){
+  // parent = volitelny rodicovsky Group (posMm je pak v JEHO lokalnim ramci) —
+  // pouzivaji otocene kiosky, aby se slot otacel s telem
   if(!def || (!scrTex[def.key] && !opt.num)) return;
   const g = new THREE.Group();
   g.position.set(posMm[0]*S, posMm[1]*S, posMm[2]*S);
@@ -704,7 +718,7 @@ function screenSlot(def, posMm, rot, wMm, hMm){
     badge.position.z = .004; // 4 mm pred grafikou/sklem
     g.add(badge);
   }
-  root.add(g);
+  (parent || root).add(g);
 }
 
 // ---- helper: textura rozpocitana pres panely ----
@@ -871,42 +885,55 @@ function build(){
     }
   }
 
-  // ---- kiosky (pult + sikmy monitor) podel hrany do ulicky ----
-  // Predni lic v hrane stanku (y = A), sikmina s monitorem klesa do ulicky —
-  // lide pristupuji primo z ulicky. Rovnomerne ve volnem useku hrany mezi
-  // licem steny A a zacatkem arcade (spec product_kiosk).
-  const kg = kioskGroup();
-  let kioskFit = null, kioskGap = 0; // null = mesh chybi
+  // ---- kiosky + stul s polickou podel hrany do ulicky ----
+  // ZMENA 21.7.2026: kiosky otoceny OD SEBE, zady (580 mm) k sobe — kiosek 1
+  // monitorem ke stene A, kiosek 2 k arcade; lide u nich stoji UVNITR stanku.
+  // Mezi zady je stul (deska 600) s kryci deskou v hrane ulicky a sikmou
+  // polickou na brozury (TABLE_MESH; spec product_kiosk.table). Zapadni mezera
+  // kio.GAPW = clovek u krabice s monitory + clovek u kiosku 1 zady k sobe;
+  // zbytek useku k arcade = JEDINY pruchod k mini a arcade (koridor za stolem
+  // ma jen ~399 mm).
+  const kg = kioskGroup(), tg = tableGroup();
+  let kioskFit = null, kioskGapE = 0; // null = mesh chybi
   if(kg){
-    const kd = KIOSK_MESH.dims_mm, kn = KIOSK_MESH.count;
-    const kLo = T;
+    const kd = KIOSK_MESH.dims_mm;
     const kHi = T + CL + (typeof MINI_MESH !== 'undefined' ? MINI_MESH.dims_mm.delka : 4610) + ARC_GAP;
-    kioskGap = (kHi - kLo - kn*kd.sirka) / (kn+1);
-    const kz = A - kd.hloubka; // zadni hrana kiosku (predni lic na y = A)
-    kioskFit = kioskGap >= 0
-      && kz >= T + CL + (typeof MINI_MESH !== 'undefined' ? MINI_MESH.dims_mm.sirka : 1901);
+    const k1x = T + kio.GAPW;        // predni lic kiosku 1 (celem ke stene A)
+    const tx  = k1x + kd.hloubka;    // zada kiosku 1 = zacatek stolu
+    const k2x = tx + kio.TL;         // konec stolu = zada kiosku 2
+    kioskGapE = kHi - (k2x + kd.hloubka);  // pruchod mezi kioskem 2 a arcade
+    const kzB = A - kd.sirka;        // zadni hrana sestavy (sirka kiosku lezi podel hloubky stanku)
+    kioskFit = kioskGapE >= 0
+      && kzB >= T + CL + (typeof MINI_MESH !== 'undefined' ? MINI_MESH.dims_mm.sirka : 1901);
     if(opt.kiosk){
-      for(let i=0;i<kn;i++){
-        const kx = kLo + kioskGap*(i+1) + kd.sirka*i;
-        const inst = kg.clone();
-        inst.position.set(kx*S, 0, kz*S);
+      for(let i=0;i<2;i++){
+        // cely kiosek (mesh + obrazovka + potisk) se stavi v LOKALNIM ramci
+        // (x sirka, z hloubka, celo na +z) a otaci kolem Y: i=0 celem ke
+        // stene A (-X), i=1 celem k arcade (+X)
+        const inst = new THREE.Group();
+        inst.add(kg.clone());
+        inst.rotation.y = i === 0 ? -Math.PI/2 : Math.PI/2;
+        if(i === 0) inst.position.set((k1x + kd.hloubka)*S, 0, kzB*S);
+        else        inst.position.set(k2x*S, 0, A*S);
         root.add(inst);
-        // sikma obrazovka kiosku (30°, klesa k +z do ulicky) — bezrameckovy FHD
-        // panel zapusteny do sikminy (lic skla PRESNE v rovine sikminy, sklo
-        // pruhledne — export_kiosk.py). Stred lice (290, 1098.0, 170.0) ZMEREN
-        // z kiosk-mesh.js; grafika lezi 1,05 mm POD sklem na tmave vyplni
+        // sikma obrazovka kiosku (30°, klesa k celu) — bezrameckovy FHD panel
+        // zapusteny do sikminy (lic skla PRESNE v rovine sikminy, sklo pruhledne
+        // — export_kiosk.py). Stred lice (290, 1098.0, 170.0) ZMEREN z
+        // kiosk-mesh.js; grafika 1,05 mm POD sklem na tmave vyplni. Slot se
+        // stavi v lokalnim ramci inst, aby se otacel s telem.
         screenSlot(SDEF['k' + (i+1)],
-          [kx + 290, 1098.0 - 1.05*Math.cos(Math.PI/6), kz + 170.0 - 1.05*Math.sin(Math.PI/6)],
-          {x:-Math.PI/3}, 517.6, 291.15);
+          [290, 1098.0 - 1.05*Math.cos(Math.PI/6), 170.0 - 1.05*Math.sin(Math.PI/6)],
+          {x:-Math.PI/3}, 517.6, 291.15, inst);
         // ---- potisk tela pultu: logo + kostky (spec product_kiosk.graphics) ----
-        // roviny 2 mm pred licem jako ostatni potisky; predni lic na z = kz+hloubka
-        const fz = kz + kd.hloubka;
+        // roviny 2 mm pred licem jako ostatni potisky, v lokalnim ramci inst;
+        // po otoceni miri celo do kapsy (ke stene A / k arcade), potisk s nim
+        const fz = kd.hloubka;
         const dMat = t => new THREE.MeshStandardMaterial({map:t, roughness:.7, transparent:true});
         if(logoTex && logoTex.image){
           const lw = kd.sirka/1.618, lh = lw*logoTex.image.height/logoTex.image.width;
           const m = new THREE.Mesh(new THREE.PlaneGeometry(lw*S, lh*S), dMat(logoTex));
-          m.position.set((kx + kd.sirka/2)*S, KIOSK_LOGO.cy*S, (fz + 2)*S);
-          root.add(m);
+          m.position.set(kd.sirka/2*S, KIOSK_LOGO.cy*S, (fz + 2)*S);
+          inst.add(m);
         }
         // krajni kostky prechazeji pres svisly roh na bocni stenu: textura se
         // deli vyrezem pres repeat/offset (stejne jako grafika pres panely),
@@ -916,8 +943,8 @@ function build(){
           const h = d.w * t.image.height / t.image.width;
           if(!d.corner){
             const m = new THREE.Mesh(new THREE.PlaneGeometry(d.w*S, h*S), dMat(t));
-            m.position.set((kx + d.cx)*S, d.cy*S, (fz + 2)*S);
-            root.add(m);
+            m.position.set(d.cx*S, d.cy*S, (fz + 2)*S);
+            inst.add(m);
             return;
           }
           const slice = (u0,u1)=>{
@@ -935,17 +962,19 @@ function build(){
           front.position.z = (fz + 2)*S;
           side.position.z = (fz - fw/2)*S;
           if(d.corner==='R'){
-            front.position.x = (kx + kd.sirka - pw/2)*S;
+            front.position.x = (kd.sirka - pw/2)*S;
             side.rotation.y = Math.PI/2;  // normala +X, osa U textury bezi dozadu (-Z)
-            side.position.x = (kx + kd.sirka + 2)*S;
+            side.position.x = (kd.sirka + 2)*S;
           } else {
-            front.position.x = (kx + pw/2)*S;
+            front.position.x = (pw/2)*S;
             side.rotation.y = -Math.PI/2; // normala -X, osa U textury bezi k celu (+Z)
-            side.position.x = (kx - 2)*S;
+            side.position.x = -2*S;
           }
-          root.add(front, side);
+          inst.add(front, side);
         });
       }
+      // ---- stul s polickou mezi zady kiosku (kryci deska v hrane ulicky) ----
+      if(tg){ tg.position.set(tx*S, 0, kzB*S); root.add(tg); }
     }
   }
 
@@ -1079,7 +1108,7 @@ function build(){
     rK.textContent = KIOSK_MESH.count+'× '+(kd.sirka/1000).toFixed(2)+' × '+(kd.hloubka/1000).toFixed(2)+' × '+(kd.vyska/1000).toFixed(2)+' m';
     rK.className = 'hl';
     rKF.textContent = kioskFit
-      ? '✓ líc v hraně, mezery '+Math.round(kioskGap)+' mm'
+      ? '✓ zády k sobě + stůl '+kio.TL+' mm, průchod k arcade '+Math.round(kioskGapE)+' mm'
       : '✗ NEVEJDOU SE do volného úseku!';
     rKF.className = kioskFit ? 'hl' : '';
     rKF.style.color = kioskFit ? '' : 'var(--warn)';

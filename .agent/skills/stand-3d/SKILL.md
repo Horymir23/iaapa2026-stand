@@ -100,16 +100,26 @@ přes hranu stánku byl **vyřešen zkrácením mini na 4610 mm** (21. 7. 2026) 
 **přesně v hraně**, rezerva 0 (délka stěny B je ale pořád jen odhad, viz
 `product_arcade.fit_check`).
 
-**Třetí produkt „kiosky"** (`product_kiosk` ve spec souboru): 2× volně stojící pult se šikmým
-monitorem podél delší otevřené strany, přední líc v hraně stánku, monitor směrem do uličky —
-lidé přistupují přímo z uličky. Odvozeno z pultu u vstupní branky mini (šikmina 30° **změřena
-z mini.stp**; šířka pultu 580 mm = skříň + 2× menší rámeček 31,2 mm z původního pultu).
-Monitor je od 17. 7. 2026 **bezrámečkový FHD panel 16:9 zapuštěný do šikminy** — v šikmé
+**Třetí produkt „kiosky" + stůl** (`product_kiosk` ve spec souboru): 2× volně stojící pult se
+šikmým monitorem podél delší otevřené strany. Odvozeno z pultu u vstupní branky mini (šikmina
+30° **změřena z mini.stp**; šířka pultu 580 mm = skříň + 2× menší rámeček 31,2 mm z původního
+pultu). Monitor je od 17. 7. 2026 **bezrámečkový FHD panel 16:9 zapuštěný do šikminy** — v šikmé
 ploše je otvor, **líc průhledného skla 517,6 × 291,15 mm leží přesně v rovině šikminy**
 (žádný schod!) a pod sklem je tmavá výplň panelu (`monitor.screen` ve spec souboru).
-Tělo plné, bílé, až na zem. Rozmístění rovnoměrně
-ve volném úseku hrany mezi stěnou A a arcade — počítá ho `model/export_kiosk.py` (obyčejný
-python3) i `viewer.html` (`build()`), takže reaguje na posuvníky.
+Tělo plné, bílé, až na zem.
+
+**Od 21. 7. 2026 jsou kiosky OTOČENÉ OD SEBE** — zády (delší stranou 580 mm) proti sobě,
+kiosek 1 monitorem ke stěně A, kiosek 2 k arcade; lidé u nich stojí **uvnitř stánku**, ne
+v uličce (řeší open question „obsluha z uličky"). Mezi zády je **stůl s poličkou na tiskoviny**
+(spec → `product_kiosk.table`): deska 600 mm (zadáno), hloubka sestavy 580 = šířka kiosku,
+zepředu krycí deska v hraně uličky, nad ní **šikmá police 45°** s brožurami lícem do uličky,
+krycí deska přesahuje 60 mm nad spodní hranu police (zarážka na letáky). Výška desky 760 mm
+= regulační „nízký přístupový bod" pultu; výšky/tloušťky/úhel = návrh. Rozmístění: líc stěny A
+→ mezera 1500 (2 lidé zády k sobě: obrazovky stěny A + kiosek 1) → kiosek 1 (340) → stůl 600
+→ kiosek 2 (340) → průchod ~1880 k arcade = **jediný vstup do stánku** (koridor za stolem má
+jen 399 mm). Počítá `model/export_kiosk.py` (obyčejný python3, staví i mesh stolu TABLE_MESH)
+i `viewer.html` (`build()` — kiosky se stavějí v lokálním rámci jako `THREE.Group` a otáčejí
+kolem Y, obrazovka i potisk se otáčejí s tělem).
 
 **Potisk těla kiosků** (požadavek 19. 7. 2026, spec → `product_kiosk.graphics`): logo
 `Primary Pixel Floors logo.svg` centrované nahoře na přední stěně, **šířka = šířka pultu

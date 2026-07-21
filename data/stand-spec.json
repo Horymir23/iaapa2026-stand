@@ -209,15 +209,18 @@
         "deska": { "length": 600, "depth": 562, "thickness": 25, "top_height": 760, "note": "hloubka 562 = 580 minus krycí deska 18; celková hloubka sestavy 580 (zadáno: jako kiosek)" },
         "kryci_deska": { "thickness": 18, "bottom": 0, "top": 1060, "note": "AŽ NA ZEM (zadáno 21.7.2026 — původně návrh 700, uživatel chtěl protáhnout); vnější líc v hraně stánku (spolu s čely kiosků); horní hrana = zarážka 60 mm nad spodní hranou police" },
         "police": { "angle_deg": 45, "edge_low_mm": 1000, "edge_high_mm": 1196, "thickness": 18, "note": "stoupá od vnitřního líce krycí desky dovnitř stánku; brožury na ní leží lícem šikmo vzhůru do uličky" }
+      },
+      "graphics": {
+        "$comment": "Jedno VELKÉ logo na krycí desce stolu, lícem do uličky (ZADÁNO 21.7.2026 — nahrazuje loga odstraněná z čel kiosků, která po otočení mířila do kapes). Kreslí JEN web/viewer.html (konstanta TABLE_LOGO, rovina 2 mm před vnějším lícem desky v hraně stánku; do STL/DAE se nepropisuje). ŠÍŘKA 500 mm A VÝŠKA STŘEDU 640 mm = NÁVRH (uživatel zadal jen 'jedno velké'): 500 = délka desky 600 minus 2× okraj 50; logo je téměř čtvercové (SVG 177,4 × 187,9) → výška ≈ 529,7 mm, horní hrana ≈ 905 mm zůstává pod horní hranou krycí desky (1060) i pod spodní hranou police (1000).",
+        "logo": { "file": "Primary Pixel Floors logo.svg", "width_mm": 500, "center_x": "střed délky stolu", "center_y_mm": 640 }
       }
     },
     "graphics": {
-      "$comment": "Potisk těla pultu (zadání 19.7.2026) — kreslí ho JEN web/viewer.html (konstanty KIOSK_LOGO / KIOSK_DICE, roviny 2 mm před lícem jako ostatní potisky; do STL/DAE se nepropisuje, oba pulty stejně). Logo centrované nahoře na přední stěně (do uličky), šířka = šířka pultu / 1,618 (zlatý řez, ZADÁNO) = 358,5 mm. Kostky: 3 SVG s alfou z assets/grafika/kostky/ na každý pult, poměr velikostí uvnitř trojice 1,618 (300 → 185,4 → 114,6 mm; poměr platí mezi 3 kostkami jednoho pultu, ne přes všech 6 — ZADÁNO). Kostky jsou primárně na přední straně, krajní přecházejí přes svislé rohy na boční stěny (ZADÁNO); wrap = podíl šířky kostky na boční stěně, textura se dělí přes repeat/offset a na rohu přesně navazuje. Konkrétní POZICE (center_y/center_x), základní velikost 300 mm a wrap 0,35 jsou NÁVRH (odhad), ne zadání. POZN. 21.7.2026: po otočení kiosků míří potisk čel do kapes (ke stěně A / k arcade), ne do uličky; krycí deska stolu je zatím bez potisku.",
-      "logo": { "file": "Primary Pixel Floors logo.svg", "width_rule": "body.width / 1.618", "width_mm": 358.5, "center_x_mm": 290, "center_y_mm": 740 },
+      "$comment": "Potisk těla pultu (zadání 19.7.2026, ZMĚNA 21.7.2026) — kreslí ho JEN web/viewer.html (konstanta KIOSK_DICE, roviny 2 mm před lícem jako ostatní potisky; do STL/DAE se nepropisuje, oba pulty stejně). Na čelech UŽ NENÍ logo (ZADÁNO 21.7.2026: po otočení kiosků mířilo do kapes — odstraněno, místo něj jedno velké na krycí desce stolu, viz table.graphics). Kostky ZVĚTŠENY (ZADÁNO 21.7.2026 'kostky bych zvětšil'; faktor 1,4 je NÁVRH): 3 SVG s alfou z assets/grafika/kostky/ na každý pult, poměr velikostí uvnitř trojice 1,618 (420 → 259,6 → 160,4 mm; poměr platí mezi 3 kostkami jednoho pultu, ne přes všech 6 — ZADÁNO 19.7.2026). Kostky jsou primárně na přední straně, krajní přecházejí přes svislé rohy na boční stěny (ZADÁNO) — boční díly krajních kostek jsou po otočení kiosků vidět z uličky; wrap = podíl šířky kostky na boční stěně, textura se dělí přes repeat/offset a na rohu přesně navazuje. Konkrétní POZICE (center_y/center_x), základní velikost 420 mm a wrap 0,35 jsou NÁVRH (odhad), ne zadání.",
       "dice": [
-        { "file": "Datový zdroj 3.svg", "w_mm": 300, "center_y_mm": 350, "corner": "right", "wrap": 0.35, "note": "velká kostka, přechází přes pravý roh (při pohledu z uličky)" },
-        { "file": "Datový zdroj 1.svg", "w_mm": 185.4, "center_y_mm": 250, "corner": "left", "wrap": 0.35, "note": "střední kostka, přechází přes levý roh" },
-        { "file": "Datový zdroj 2.svg", "w_mm": 114.6, "center_y_mm": 140, "center_x_mm": 300, "note": "malá kostka celá na přední stěně" }
+        { "file": "Datový zdroj 3.svg", "w_mm": 420, "center_y_mm": 490, "corner": "right", "wrap": 0.35, "note": "velká kostka, přechází přes pravý roh (při pohledu na čelo)" },
+        { "file": "Datový zdroj 1.svg", "w_mm": 259.6, "center_y_mm": 350, "corner": "left", "wrap": 0.35, "note": "střední kostka, přechází přes levý roh" },
+        { "file": "Datový zdroj 2.svg", "w_mm": 160.4, "center_y_mm": 196, "center_x_mm": 300, "note": "malá kostka celá na přední stěně" }
       ]
     },
     "regenerate": "python3 model/export_kiosk.py  →  web/kiosk-mesh.js + model/kiosk_v_stanku.stl/.dae"
@@ -462,7 +465,7 @@
       "hanging_banner": "Poutač360v2.jpg",
       "arcade_totem_body": "Arcade.webp"
     },
-    "note_kiosk_body": "Tělo kiosků (logo Primary Pixel Floors + 3 kostky přes rohy) má vlastní sekci product_kiosk.graphics — ve vieweru konstanty KIOSK_LOGO / KIOSK_DICE, soubory jsou v bundlu gfx-default.js jako všechno ostatní.",
+    "note_kiosk_body": "Tělo kiosků (3 kostky přes rohy, od 21.7.2026 bez loga) má vlastní sekci product_kiosk.graphics — ve vieweru konstanta KIOSK_DICE; logo Primary Pixel Floors je jedno velké na krycí desce stolu (product_kiosk.table.graphics, konstanta TABLE_LOGO). Soubory jsou v bundlu gfx-default.js jako všechno ostatní.",
     "note_arcade_totem_body": "Arcade.webp = potisk těla totemu arcade (holografické kostky + slogan 'STEP INTO THE LIGHT.') pod obrazovkou, dle vizualizace dodané 17.7.2026. WebP s alfou → kreslí se jako průhledný decal na bílém těle. Zarovnání (zadal uživatel 17.7.2026): pravá hrana grafiky (oříznuté kostky) licuje s pravou hranou bedny, horní hrana se spodní hranou obrazovky (y=950); šířka = plná šířka bedny 700 mm, výška dle poměru stran (399×541 px → ~949 mm). Platební terminál zůstává před potiskem.",
     "screens": {
       "$comment": "Výchozí grafiky jednotlivých monitorů (zadal uživatel 17.7.2026). Klíč = číslo monitoru dle monitors.numbering, ve vieweru konstanta DEF_SCR (klíče dle screenDefs). Monitory 3–5 (krabice na stěně A) zatím výchozí grafiku nemají.",

@@ -318,16 +318,18 @@ const DEF_DECALS = [
   {file:'Datový zdroj 2.svg', w:210, y:677,  z:1345, rot:0},    // mala kostka vlevo
   {file:'Datový zdroj 1.svg', w:360, y:422,  z:1050, rot:0}     // spodni kostka uprostred
 ];
-// potisk tela kiosku (pozadavek 19.7.2026; spec -> product_kiosk.graphics):
-// logo centrovane nahore na predni stene, sirka = sirka pultu / 1,618 (zlaty
-// rez); 3 kostky s pomerem velikosti 1,618 uvnitr trojice (300/185,4/114,6),
-// krajni prechazeji pres svisle rohy na bocni steny (wrap = podil sirky na
-// boku). cy/cx = stred v mm v lokalnim ramci kiosku, oba pulty stejne.
-const KIOSK_LOGO = {file:'Primary Pixel Floors logo.svg', cy:740};
+// potisk tela kiosku (pozadavek 19.7.2026, zmena 21.7.2026; spec ->
+// product_kiosk.graphics): na celech uz NENI logo (po otoceni kiosku mirilo
+// do kapes) — misto nej je JEDNO VELKE na kryci desce stolu licem do ulicky
+// (TABLE_LOGO, spec -> product_kiosk.table.graphics). Kostky zvetseny 1,4x
+// (420/259,6/160,4 — pomer 1,618 uvnitr trojice zustava), krajni prechazeji
+// pres svisle rohy na bocni steny (wrap = podil sirky na boku). cy/cx =
+// stred v mm v lokalnim ramci kiosku, oba pulty stejne.
+const TABLE_LOGO = {file:'Primary Pixel Floors logo.svg', w:500, cy:640};
 const KIOSK_DICE = [
-  {file:'Datový zdroj 3.svg', w:300,   cy:350, corner:'R', wrap:.35}, // velka pres pravy roh
-  {file:'Datový zdroj 1.svg', w:185.4, cy:250, corner:'L', wrap:.35}, // stredni pres levy roh
-  {file:'Datový zdroj 2.svg', w:114.6, cy:140, cx:300}                // mala cela na cele
+  {file:'Datový zdroj 3.svg', w:420,   cy:490, corner:'R', wrap:.35}, // velka pres pravy roh
+  {file:'Datový zdroj 1.svg', w:259.6, cy:350, corner:'L', wrap:.35}, // stredni pres levy roh
+  {file:'Datový zdroj 2.svg', w:160.4, cy:196, cx:300}                // mala cela na cele
 ];
 let decTex = {}, logoTex = null; // klic = nazev souboru (kostky sdili vez i kiosky)
 // data URI z gfx-default.js ma prednost pred primou cestou: pres file:// Chrome
@@ -368,7 +370,7 @@ function loadDefaultGraphics(){
       decTex[f] = t; build();
     }, undefined, ()=>{});
   });
-  new THREE.TextureLoader().load(defGfxSrc('../assets/grafika/' + KIOSK_LOGO.file), t=>{
+  new THREE.TextureLoader().load(defGfxSrc('../assets/grafika/' + TABLE_LOGO.file), t=>{
     t.encoding = THREE.sRGBEncoding;
     logoTex = t; build();
   }, undefined, ()=>{});
@@ -924,17 +926,13 @@ function build(){
         screenSlot(SDEF['k' + (i+1)],
           [290, 1098.0 - 1.05*Math.cos(Math.PI/6), 170.0 - 1.05*Math.sin(Math.PI/6)],
           {x:-Math.PI/3}, 517.6, 291.15, inst);
-        // ---- potisk tela pultu: logo + kostky (spec product_kiosk.graphics) ----
+        // ---- potisk tela pultu: kostky (spec product_kiosk.graphics) ----
         // roviny 2 mm pred licem jako ostatni potisky, v lokalnim ramci inst;
-        // po otoceni miri celo do kapsy (ke stene A / k arcade), potisk s nim
+        // po otoceni miri celo do kapsy (ke stene A / k arcade), potisk s nim.
+        // Logo na celech NENI (zmena 21.7.2026) — je jedno velke na kryci
+        // desce stolu, viz niz.
         const fz = kd.hloubka;
         const dMat = t => new THREE.MeshStandardMaterial({map:t, roughness:.7, transparent:true});
-        if(logoTex && logoTex.image){
-          const lw = kd.sirka/1.618, lh = lw*logoTex.image.height/logoTex.image.width;
-          const m = new THREE.Mesh(new THREE.PlaneGeometry(lw*S, lh*S), dMat(logoTex));
-          m.position.set(kd.sirka/2*S, KIOSK_LOGO.cy*S, (fz + 2)*S);
-          inst.add(m);
-        }
         // krajni kostky prechazeji pres svisly roh na bocni stenu: textura se
         // deli vyrezem pres repeat/offset (stejne jako grafika pres panely),
         // predni a bocni cast na rohu presne navazuji
@@ -975,6 +973,17 @@ function build(){
       }
       // ---- stul s polickou mezi zady kiosku (kryci deska v hrane ulicky) ----
       if(tg){ tg.position.set(tx*S, 0, kzB*S); root.add(tg); }
+      // jedno velke logo na kryci desce stolu, licem do ulicky (zadani
+      // 21.7.2026 — nahrazuje loga z cel kiosku, ktera po otoceni mirila do
+      // kapes). Vnejsi lic desky je v hrane stanku z = A, rovina 2 mm pred
+      // nim jako ostatni potisky; stred = stred delky stolu.
+      if(tg && logoTex && logoTex.image){
+        const lw = TABLE_LOGO.w, lh = lw*logoTex.image.height/logoTex.image.width;
+        const m = new THREE.Mesh(new THREE.PlaneGeometry(lw*S, lh*S),
+          new THREE.MeshStandardMaterial({map:logoTex, roughness:.7, transparent:true}));
+        m.position.set((tx + kio.TL/2)*S, TABLE_LOGO.cy*S, (A + 2)*S);
+        root.add(m);
+      }
     }
   }
 

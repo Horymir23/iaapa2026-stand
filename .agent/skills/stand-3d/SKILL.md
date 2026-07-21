@@ -121,15 +121,18 @@ jen 399 mm). Počítá `model/export_kiosk.py` (obyčejný python3, staví i mes
 i `viewer.html` (`build()` — kiosky se stavějí v lokálním rámci jako `THREE.Group` a otáčejí
 kolem Y, obrazovka i potisk se otáčejí s tělem).
 
-**Potisk těla kiosků** (požadavek 19. 7. 2026, spec → `product_kiosk.graphics`): logo
-`Primary Pixel Floors logo.svg` centrované nahoře na přední stěně, **šířka = šířka pultu
-/ 1,618** (zadáno); pod ním **3 kostky** (SVG z `assets/grafika/kostky/`, sdílené s věží
-mini) s poměrem velikostí **1,618 uvnitř trojice** (300/185,4/114,6 mm — poměr platí mezi
-3 kostkami jednoho pultu, ne přes všech 6). Krajní kostky **přecházejí přes svislé rohy na
-boční stěny**: textura se dělí výřezem přes `repeat`/`offset` (stejná technika jako grafika
-přes panely) na přední a boční rovinu, které na rohu přesně navazují. Kreslí to jen viewer
-(konstanty `KIOSK_LOGO`/`KIOSK_DICE` v `build()`, roviny 2 mm před lícem; do STL/DAE se
-nepropisuje). Pozice a základní velikost 300 mm jsou návrh, poměry jsou zadání.
+**Potisk těla kiosků** (požadavek 19. 7. 2026, změna 21. 7. 2026, spec →
+`product_kiosk.graphics`): na čelech jsou **jen 3 kostky** (SVG z `assets/grafika/kostky/`,
+sdílené s věží mini) s poměrem velikostí **1,618 uvnitř trojice** (420/259,6/160,4 mm —
+zvětšeno 1,4× na žádost uživatele, faktor je návrh; poměr platí mezi 3 kostkami jednoho
+pultu, ne přes všech 6). Krajní kostky **přecházejí přes svislé rohy na boční stěny**:
+textura se dělí výřezem přes `repeat`/`offset` (stejná technika jako grafika přes panely)
+na přední a boční rovinu, které na rohu přesně navazují — boční díly jsou po otočení kiosků
+vidět z uličky. **Logo z čel je odstraněné** (po otočení mířilo do kapes) — místo něj je
+**jedno velké logo na krycí desce stolu lícem do uličky** (zadáno 21. 7. 2026, spec →
+`product_kiosk.table.graphics`): šířka 500 mm a střed ve výšce 640 mm jsou návrh, rovina
+2 mm před vnějším lícem desky (z = A + 2 mm). Kreslí to jen viewer (konstanty
+`KIOSK_DICE`/`TABLE_LOGO` v `build()`; do STL/DAE se nepropisuje).
 
 **Úpravy pro vizualizaci** (viz `product.modifications` ve spec souboru): vynechává se
 **jen nadpodlažní část** předního zábradlí (strana do uličky: sloupky, horní rám, plexi,
@@ -225,7 +228,7 @@ konstanta `DEF_GFX`) — uživatel nic nahrávat nemusí. Přiřazení je i ve s
 | `Poutač360v2.jpg` | poutač (360°) |
 | `Arcade.webp` | tělo totemu arcade — potisk (kostky + slogan) pod obrazovkou; pravá hrana licuje s pravou hranou bedny, horní se spodkem obrazovky |
 | `kostky/Datový zdroj 1–3.svg` | potisk kostek na čelní ploše věže mini pod TV (`DEF_DECALS`, pozice ve spec → `product.tower_decals`) **a** na tělech kiosků (`KIOSK_DICE`) |
-| `Primary Pixel Floors logo.svg` | logo na přední stěně obou kiosků (`KIOSK_LOGO`, spec → `product_kiosk.graphics`) |
+| `Primary Pixel Floors logo.svg` | jedno velké logo na krycí desce stolu lícem do uličky (`TABLE_LOGO`, spec → `product_kiosk.table.graphics`) |
 
 Bundler `export_gfx.py` bere i podsložky (klíč = holý název souboru, kolize hlásí) a SVG:
 bez width/height by se SVG rasterizovalo na 300×150, proto doplňuje rozměry z viewBoxu ×2.

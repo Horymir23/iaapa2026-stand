@@ -112,7 +112,7 @@ Tělo plné, bílé, až na zem.
 kiosek 1 monitorem ke stěně A, kiosek 2 k arcade; lidé u nich stojí **uvnitř stánku**, ne
 v uličce (řeší open question „obsluha z uličky"). Mezi zády je **stůl s poličkou na tiskoviny**
 (spec → `product_kiosk.table`): deska 600 mm (zadáno), hloubka sestavy 580 = šířka kiosku,
-zepředu krycí deska v hraně uličky, nad ní **šikmá police 45°** s brožurami lícem do uličky,
+zepředu krycí deska **až na zem** v hraně uličky (zadáno), nad ní **šikmá police 45°** s brožurami lícem do uličky,
 krycí deska přesahuje 60 mm nad spodní hranu police (zarážka na letáky). Výška desky 760 mm
 = regulační „nízký přístupový bod" pultu; výšky/tloušťky/úhel = návrh. Rozmístění: líc stěny A
 → mezera 1500 (2 lidé zády k sobě: obrazovky stěny A + kiosek 1) → kiosek 1 (340) → stůl 600

@@ -207,7 +207,7 @@
       "$comment": "Stůl s poličkou na tiskoviny mezi zády kiosků (zadání 21.7.2026 dle náčrtu uživatele; z náčrtu se rozměry NEODVOZUJÍ). ZADÁNO: délka desky 600 mm (z analýzy prostoru 21.7.2026, potvrdil uživatel), hloubka sestavy = šířka kiosku 580 mm, zepředu (pohled z uličky) krycí deska, nad ní šikmá police s brožurami viditelnými z uličky, krycí deska přesahuje nad spodní hranu police jako zarážka, ať letáky nespadnou. VÝŠKY, TLOUŠŤKY A ÚHEL = NÁVRH (uživatel nezadal): deska stolu v 760 mm = regulations.counter_low_access_point_max (nízký přístupový bod), police 45° od vodorovné, spodní hrana 1000 mm, horní hrana 1196 mm = výška zad kiosků, zarážka 60 mm. Staví model/export_kiosk.py (mesh TABLE_MESH ve web/kiosk-mesh.js + součást STL/DAE).",
       "dims_mm": {
         "deska": { "length": 600, "depth": 562, "thickness": 25, "top_height": 760, "note": "hloubka 562 = 580 minus krycí deska 18; celková hloubka sestavy 580 (zadáno: jako kiosek)" },
-        "kryci_deska": { "thickness": 18, "bottom": 700, "top": 1060, "note": "vnější líc v hraně stánku (spolu s čely kiosků); horní hrana = zarážka 60 mm nad spodní hranou police" },
+        "kryci_deska": { "thickness": 18, "bottom": 0, "top": 1060, "note": "AŽ NA ZEM (zadáno 21.7.2026 — původně návrh 700, uživatel chtěl protáhnout); vnější líc v hraně stánku (spolu s čely kiosků); horní hrana = zarážka 60 mm nad spodní hranou police" },
         "police": { "angle_deg": 45, "edge_low_mm": 1000, "edge_high_mm": 1196, "thickness": 18, "note": "stoupá od vnitřního líce krycí desky dovnitř stánku; brožury na ní leží lícem šikmo vzhůru do uličky" }
       }
     },

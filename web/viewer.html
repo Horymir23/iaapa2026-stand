@@ -216,6 +216,7 @@
     <button class="btn on" id="bBan">Poutač (baner) nad stánkem — zobrazen</button>
     <button class="btn on" id="bSpot">Spoty GES — zapnuté</button>
     <button class="btn on" id="bJoint">Spáry panelů — zvýrazněné</button>
+    <button class="btn" id="bDims">Kóty a rozteče (mm) — skryté</button>
   </div>
 
   <div class="grp">
@@ -284,7 +285,7 @@ let ban = { D:1520, H:610, BOT:3300, CL:1000, CABLE:257, ROT:115 };
 // sestava kiosku (zmena 21.7.2026, zady k sobe + stul): GAPW = zapadni mezera
 // od lice steny A, TL = delka stolu (sync ze spec product_kiosk)
 let kio = { GAPW:1500, TL:600 };
-let opt = { spot:true, joint:true, mini:true, arc:true, kiosk:true, tv:true, mon:true, ban:true, num:false };
+let opt = { spot:true, joint:true, mini:true, arc:true, kiosk:true, tv:true, mon:true, ban:true, num:false, dims:false };
 let tex = { B:null, A:null, ban:null, arcTot:null };
 let scrTex = {}, scrName = {}; // nahrané grafiky obrazovek, klíč dle screenDefs()
 
@@ -723,6 +724,61 @@ function screenSlot(def, posMm, rot, wMm, hMm, parent){
   (parent || root).add(g);
 }
 
+// ---- koty a roztece (tlacitko „Koty a roztece", opt.dims) ----
+// Vrstva popisku se kresli PRES geometrii (depthTest:false) — koty lezi v mezerach
+// mezi produkty a bez toho by je modely zakryvaly. Hodnoty se berou z tychz
+// promennych jako stavba sceny (dims_mm meshu, cfg, kio, ban), nic natvrdo.
+const matDim = new THREE.LineBasicMaterial({color:0xF0A138, depthTest:false, transparent:true, opacity:.95});
+function dimSprite(text, color, hMm){
+  const c = document.createElement('canvas');
+  const font = '600 96px "IBM Plex Mono",monospace';
+  let x = c.getContext('2d');
+  x.font = font;
+  c.width = Math.ceil(x.measureText(text).width) + 56; // zmena width resetuje kontext
+  c.height = 132;
+  x = c.getContext('2d');
+  x.font = font;
+  x.fillStyle = 'rgba(14,16,20,.85)';
+  x.fillRect(0, 0, c.width, c.height);
+  x.fillStyle = color;
+  x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.fillText(text, c.width/2, c.height/2 + 6);
+  const t = new THREE.CanvasTexture(c);
+  t.encoding = THREE.sRGBEncoding;
+  t.minFilter = THREE.LinearFilter; // NPOT canvas — bez mipmap, jinak three preskaluje
+  const spr = new THREE.Sprite(new THREE.SpriteMaterial({map:t, transparent:true, depthTest:false}));
+  spr.scale.set(hMm*S*c.width/c.height, hMm*S, 1);
+  spr.renderOrder = 10;
+  return spr;
+}
+// kota mezi body [x,y,z] v mm: cara + zakoncovaci carky + stitek s delkou v mm.
+// o.tick = smer carek (jednotkovy), o.labOff = posun stitku od stredu (mm),
+// o.text = prepis textu. Nulove mezery (arcade na doraz) se nekresli.
+function addDim(aMm, bMm, o){
+  const a = new THREE.Vector3(aMm[0]*S, aMm[1]*S, aMm[2]*S);
+  const b = new THREE.Vector3(bMm[0]*S, bMm[1]*S, bMm[2]*S);
+  const mm = Math.round(a.distanceTo(b)/S);
+  if(mm < 1) return;
+  const tk = new THREE.Vector3(o.tick[0], o.tick[1], o.tick[2]).multiplyScalar(45*S);
+  const geo = new THREE.BufferGeometry().setFromPoints([
+    a.clone().sub(tk), a.clone().add(tk), a, b,
+    b.clone().sub(tk), b.clone().add(tk)
+  ]);
+  const ln = new THREE.LineSegments(geo, matDim);
+  ln.renderOrder = 9;
+  root.add(ln);
+  const off = o.labOff || [0, 90, 0];
+  const spr = dimSprite(o.text || String(mm), '#FFC96B', 115);
+  spr.position.set((a.x+b.x)/2 + off[0]*S, (a.y+b.y)/2 + off[1]*S, (a.z+b.z)/2 + off[2]*S);
+  root.add(spr);
+}
+// plovouci stitek s rozmery modelu (stred v mm)
+function addTag(text, xMm, yMm, zMm){
+  const spr = dimSprite(text, '#7FE6F5', 130);
+  spr.position.set(xMm*S, yMm*S, zMm*S);
+  root.add(spr);
+}
+
 // ---- helper: textura rozpocitana pres panely ----
 function panelTex(src, i, count, wallLen, gap){
   const t = src.clone(); t.needsUpdate = true;
@@ -1078,6 +1134,60 @@ function build(){
     }
   }
 
+  // ---- koty a roztece (vsechny hodnoty v mm) ----
+  // rozmery modelu = tyrkysove stitky nad nimi, vzdalenosti (od sten, mezi
+  // produkty, pruchody) = oranzove kotovaci cary na podlaze / svisle u sten
+  if(opt.dims){
+    const dy = 25; // vyska kotovacich car nad kobercem
+    const md = (typeof MINI_MESH !== 'undefined') ? MINI_MESH.dims_mm : null;
+    const miniL = md ? md.delka : 4610, miniW = md ? md.sirka : 1901;
+    // pudorys stanku + vyska steny
+    addDim([0,dy,A+520], [B,dy,A+520], {tick:[0,0,1]});
+    addDim([B+520,dy,0], [B+520,dy,A], {tick:[1,0,0]});
+    addDim([B+140,0,T/2], [B+140,WALL_H,T/2], {tick:[0,0,1], labOff:[200,0,0]});
+    if(mg && opt.mini){
+      addTag('mini · '+miniL+' × '+miniW+' × v '+md.vyska, T+CL+miniL/2, md.vyska+340, T+CL+miniW/2);
+      addDim([T,dy,T+CL+miniW/2], [T+CL,dy,T+CL+miniW/2], {tick:[0,0,1]});  // vule od steny A
+      addDim([T+CL+miniL/2,dy,T], [T+CL+miniL/2,dy,T+CL], {tick:[1,0,0]});  // vule od steny B
+    }
+    if(ag && opt.arc){
+      const ad = ARCADE_MESH.dims_mm, ax0 = T + CL + miniL + ARC_GAP;
+      addTag('arcade · '+ad.sirka+' × '+ad.hloubka+' × v '+ad.vyska, ax0+ad.sirka/2, ad.vyska+340, T+CL+ad.hloubka/2);
+      addDim([T+CL+miniL,dy,T+CL+ad.hloubka/2], [ax0,dy,T+CL+ad.hloubka/2], {tick:[0,0,1]});   // mezera od mini
+      addDim([ax0+ad.sirka,dy,T+CL+ad.hloubka/2], [B,dy,T+CL+ad.hloubka/2], {tick:[0,0,1]});   // rezerva k hrane B
+      addDim([ax0+ad.sirka/2,dy,T], [ax0+ad.sirka/2,dy,T+CL], {tick:[1,0,0]});                 // vule od steny B
+    }
+    if(kg && opt.kiosk){
+      const kd = KIOSK_MESH.dims_mm;
+      const kHi2 = T + CL + miniL + ARC_GAP;
+      const k1x = T + kio.GAPW, ktx = k1x + kd.hloubka, k2x = ktx + kio.TL;
+      const kzB = A - kd.sirka, zc = A + 260;
+      // retezec podel ulicky: stena A -> kiosek 1 -> stul -> kiosek 2 -> pruchod k arcade
+      addDim([T,dy,zc], [k1x,dy,zc], {tick:[0,0,1]});
+      addDim([k1x,dy,zc], [ktx,dy,zc], {tick:[0,0,1], labOff:[0,230,0]});
+      addDim([ktx,dy,zc], [k2x,dy,zc], {tick:[0,0,1]});
+      addDim([k2x,dy,zc], [k2x+kd.hloubka,dy,zc], {tick:[0,0,1], labOff:[0,230,0]});
+      addDim([k2x+kd.hloubka,dy,zc], [kHi2,dy,zc], {tick:[0,0,1]});
+      if(md) addDim([ktx+kio.TL/2,dy,T+CL+miniW], [ktx+kio.TL/2,dy,kzB], {tick:[1,0,0]});      // koridor za stolem
+      const rowC = (k1x + k2x + kd.hloubka)/2;
+      addTag('2× kiosek · '+kd.sirka+' × '+kd.hloubka+' × v '+kd.vyska, rowC, kd.vyska+330, kzB+kd.sirka/2);
+      if(tg && typeof TABLE_MESH !== 'undefined'){
+        const td = TABLE_MESH.dims_mm;
+        // z posunuto do ulicky, aby se stitek v pohledu shora neprekryval s kioskovym
+        addTag('stůl · '+td.delka+' × '+td.hloubka+' × v '+td.vyska, rowC, kd.vyska+650, kzB+kd.sirka/2+380);
+      }
+    }
+    if(opt.tv && tvFit && tvPick.length)  // spodni hrana TV nad podlahou
+      addDim([tvPick[0]+tvc.W/2+140,0,T+60], [tvPick[0]+tvc.W/2+140,tvBot,T+60], {tick:[0,0,1], labOff:[0,0,200]});
+    if(opt.mon && mbFit)                  // spodni hrana krabice nad podlahou
+      addDim([T+60,0,mbCz+mbc.W/2+140], [T+60,mbBot,mbCz+mbc.W/2+140], {tick:[1,0,0], labOff:[200,0,0]});
+    if(opt.ban){
+      addTag('poutač · Ø'+ban.D+' × v '+ban.H, banCX, banTop+340, banCZ);
+      addDim([banCX,0,banCZ], [banCX,ban.BOT,banCZ], {tick:[1,0,0], labOff:[220,0,0]});        // spodni hrana nad podlahou
+      addDim([banCX,ban.BOT+ban.H/2,0], [banCX,ban.BOT+ban.H/2,banCZ-banR], {tick:[0,1,0], labOff:[0,160,0]}); // odstup od steny B
+    }
+  }
+
   // odecet
   document.getElementById('rB').textContent = nB+' ×';
   document.getElementById('rA').textContent = nA+' ×';
@@ -1307,6 +1417,7 @@ toggle('bBan','ban','Poutač (baner) nad stánkem — zobrazen','Poutač (baner)
 toggle('bNum','num','Čísla monitorů — zobrazena','Čísla monitorů — skrytá');
 toggle('bSpot','spot','Spoty GES — zapnuté','Spoty GES — odebrané');
 toggle('bJoint','joint','Spáry panelů — zvýrazněné','Spáry panelů — skryté');
+toggle('bDims','dims','Kóty a rozteče (mm) — zobrazené','Kóty a rozteče (mm) — skryté');
 
 document.querySelectorAll('[data-v]').forEach(b=>
   b.addEventListener('click', ()=>views(b.dataset.v))

@@ -291,6 +291,18 @@ Viewer zobrazuje prvky převzaté z oficiálního renderu shell scheme od pořad
   překážky měří přímo z meshů (`tallSpan()` ve viewer.html), takže změna produktů se propíše sama.
   Nosnost panelů pro TV je pořád `open_question` u GES.
 
+## Kóty a rozteče ve vieweru (přidáno 23. 7. 2026)
+
+Tlačítko „Kóty a rozteče (mm)" (`opt.dims`, výchozí vypnuto) kreslí přes geometrii
+(depthTest:false, aby kóty v mezerách nezakrývaly modely) vrstvu popisků: oranžové
+kótovací čáry pro vzdálenosti (vůle od stěn, řetězec stěna A → kiosek 1 → stůl →
+kiosek 2 → průchod k arcade, koridor za stolem, spodní hrany TV/krabice/poutače,
+odstup poutače od stěny B, půdorys B×A, výška stěny) a tyrkysové štítky s rozměry
+modelů (mini, arcade, kiosky, stůl, poutač). Helpery `addDim`/`addTag`/`dimSprite`
+ve `viewer.html`; hodnoty se berou z týchž proměnných jako stavba scény (`dims_mm`
+meshů, `cfg`, `kio`, `ban`) — nic natvrdo. Nulové mezery (arcade na doraz k mini
+i k hraně) se nekreslí; při změně sliderů se ukážou samy.
+
 ## Monitory — číslování a grafika (10 obrazovek)
 
 Stánek má **10 obrazovek**; číslování a viditelné plochy jsou ve spec souboru → `monitors.numbering`.

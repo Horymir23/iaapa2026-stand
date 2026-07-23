@@ -52,14 +52,15 @@ Sousedé: za 3m stěnou **S4242 Blacklight Attractions**, za 6m stěnou **S4345 
 3. Nosnost panelu pro TV
 4. Přesný rozměr jmenovky
 
-Na pořadateli (`OperationsEMEA@IAAPA.org`): **výška zavěšení poutače** (spodní hrana 3300 mm je
-zatím odhad) a rigging — věšet smí jen oficiální kontraktor, uzávěrka **9. 8. 2026**.
+Na pořadateli (`OperationsEMEA@IAAPA.org`): **rigging poutače** — výšku zadal klient
+(spodní hrana 4000 mm, rigging plán 23. 7. 2026), věšet smí jen oficiální kontraktor,
+uzávěrka **9. 8. 2026**.
 
 ## Závěsný poutač — vybráno 16. 7. 2026
 
 **Zip-up Round Ø1520 × 610 mm, 6,7 kg** — kruhový textil potištěný po celém obvodu (360°).
 
-- Spodní hrana **3300 mm**, horní hrana grafiky **3910 mm** — *výška zavěšení je ODHAD*
+- Spodní hrana **4000 mm**, horní hrana grafiky **4610 mm** — *výška zadána klientem (rigging plán 23. 7. 2026)*
 - Natočení grafiky **115°** od přední uličky směrem ke stěně A (šev vychází naproti středu grafiky)
 - Grafika: `assets/grafika/Poutač360v2.jpg`
 - Větší **Ø3050 zamítnut** — při povinném odstupu 1000 mm od obou stěn (branding míří 360°,

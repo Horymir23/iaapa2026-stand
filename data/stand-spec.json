@@ -64,7 +64,7 @@
       "source": "e-mail pořadatele IAAPA, 3.7.2026",
       "reason_given": "jedna strana stánku má 3 m",
       "applies_to": "volně stojící prvky — výslovně beach flagy a lightboxy",
-      "note_scope": "NETÝKÁ SE ZÁVĚSNÉHO POUTAČE. Odpověď sice říká 'build/ hang a FLAG to 2.5m', ale (1) dotaz zněl výslovně na 'freestanding elements', (2) předmětem je 'flag' = vlajka, ne kruhový hanging sign, (3) závěsné poutače mají vlastní sadu limitů v regulations.hanging_sign (truss 7000 / grafika 6000 mm), která by při plošném limitu 2,5 m nedávala smysl. hanging_banner (spodní hrana 3300, horní 3910 mm) tedy platí. Posouzeno 19.7.2026."
+      "note_scope": "NETÝKÁ SE ZÁVĚSNÉHO POUTAČE. Odpověď sice říká 'build/ hang a FLAG to 2.5m', ale (1) dotaz zněl výslovně na 'freestanding elements', (2) předmětem je 'flag' = vlajka, ne kruhový hanging sign, (3) závěsné poutače mají vlastní sadu limitů v regulations.hanging_sign (truss 7000 / grafika 6000 mm), která by při plošném limitu 2,5 m nedávala smysl. hanging_banner (spodní hrana 4000, horní 4610 mm) tedy platí. Posouzeno 19.7.2026, výšky aktualizovány 23.7.2026 dle rigging plánu klienta."
     }
   },
 
@@ -282,7 +282,7 @@
   },
 
   "hanging_banner": {
-    "$comment": "Kruhový závěsný poutač Zip-up Round (Showdown Displays / Jansen Display) NAD stánkem — vypínací látka potištěná po celém obvodu (360°). Zadání 16.7.2026: nahrát do něj grafiku. Uživatel chtěl co NEJVĚTŠÍ povolený průměr. VYBRÁN Ø1520 (menší z nabízených), protože větší Ø3050 se dle regulí IAAPA nad tento stánek NEVEJDE — viz size_choice. Rozměry produktu = z katalogu Showdown Displays (shop.showdowndisplays.eu) → fakt výrobku. VÝŠKA ZAVĚŠENÍ je ODHAD (uživatel nezadal). Model je syntetický válec — staví ho model/export_banner.py; viewer staví vlastní válec s UV pro nahranou grafiku.",
+    "$comment": "Kruhový závěsný poutač Zip-up Round (Showdown Displays / Jansen Display) NAD stánkem — vypínací látka potištěná po celém obvodu (360°). Zadání 16.7.2026: nahrát do něj grafiku. Uživatel chtěl co NEJVĚTŠÍ povolený průměr. VYBRÁN Ø1520 (menší z nabízených), protože větší Ø3050 se dle regulí IAAPA nad tento stánek NEVEJDE — viz size_choice. Rozměry produktu = z katalogu Showdown Displays (shop.showdowndisplays.eu) → fakt výrobku. VÝŠKA ZAVĚŠENÍ zadána klientem 23.7.2026 rigging plánem (spodní hrana 4000 mm) — viz client_rigging_plan. Model je syntetický válec — staví ho model/export_banner.py; viewer staví vlastní válec s UV pro nahranou grafiku.",
     "name": "banner",
     "product": "Zip-up Round (kruhový závěsný banner, 360° textil)",
     "source": "shop.showdowndisplays.eu/zip-up-round (S = Ø1520, L = Ø3050)",
@@ -306,11 +306,11 @@
       "decided": "2026-07-16 (uživatel potvrdil Ø1520)"
     },
     "placement": {
-      "$comment": "Zavěšen nad stánkem. VODOROVNĚ: střed podél stěny B = B/2; v užším směru (od líce stěny B, y=0) střed = (A+1000)/2, aby zůstal odstup ≥1000 mm od stěny B a poutač nepřesáhl přední hranu půdorysu. SVISLE: spodní hrana textilu = bottom_mm nad podlahou (ODHAD).",
+      "$comment": "Zavěšen nad stánkem. VODOROVNĚ: střed podél stěny B = B/2; v užším směru (od líce stěny B, y=0) střed = (A+1000)/2, aby zůstal odstup ≥1000 mm od stěny B a poutač nepřesáhl přední hranu půdorysu. SVISLE: spodní hrana textilu = bottom_mm nad podlahou (zadáno klientem, rigging plán 23.7.2026).",
       "center_x_along_b": "B/2",
       "center_y_from_wall_b": "(A+1000)/2",
-      "bottom_mm": 3300,
-      "bottom_mm_note": "ODHAD — výška zavěšení nezadána; zvoleno 800 mm nad horní hranou stěn (2500). Horní hrana textilu pak 3910 mm, k hornímu úchytu +257 mm lanka ≈ 4167 mm.",
+      "bottom_mm": 4000,
+      "bottom_mm_note": "ZADÁNO KLIENTEM 23.7.2026 (assets/Plans/RIGGING_PLAN_upraveny.pdf): spodní hrana textilu 4000 mm nad podlahou haly. Horní hrana textilu pak 4610 mm, k hornímu úchytu +257 mm lanka ≈ 4867 mm. Finální výšku a závěs potvrzuje oficiální rigging kontraktor (uzávěrka 2026-08-09).",
       "clearance_from_walls_mm": 1000
     },
     "graphic_rotation_deg": {
@@ -320,11 +320,20 @@
       "positive_toward": "otevřená kratší strana (x=B)"
     },
     "fit_check": {
-      "$comment": "Ø1520 → poloměr 760. PODÉL B: střed 2970, zásah 2210–3730 z 0–5940 → odstup od stěny A (x=0) i od dalekého konce 2210 mm ≥1000 OK. V UŽŠÍM SMĚRU: střed (2970+1000)/2 = 1985, zásah 1225–2745 → odstup od stěny B (y=0) 1225 mm ≥1000 OK, přední hrana 2745 < 2970 (uvnitř půdorysu, rezerva 225 mm). SVISLE: horní hrana textilu 3910 < grafika max 6000 a < truss max 7000. Závisí na assumed (wall_b_length). Přepočítává model/export_banner.py a web/viewer.html.",
+      "$comment": "Ø1520 → poloměr 760. PODÉL B: střed 2970, zásah 2210–3730 z 0–5940 → odstup od stěny A (x=0) i od dalekého konce 2210 mm ≥1000 OK. V UŽŠÍM SMĚRU: střed (2970+1000)/2 = 1985, zásah 1225–2745 → odstup od stěny B (y=0) 1225 mm ≥1000 OK, přední hrana 2745 < 2970 (uvnitř půdorysu, rezerva 225 mm). SVISLE: horní hrana textilu 4610 < grafika max 6000 a < truss max 7000. Závisí na assumed (wall_b_length). Přepočítává model/export_banner.py a web/viewer.html.",
       "fits": true,
       "clearance_from_wall_b_mm": 1225,
       "clearance_from_wall_a_mm": 2210,
-      "top_of_graphic_mm": 3910
+      "top_of_graphic_mm": 4610
+    },
+    "client_rigging_plan": {
+      "$comment": "Klient (HTDM) dodal 23.7.2026 vlastní rigging plán (assets/Plans/RIGGING_PLAN_upraveny.pdf, měřítko 1:50, nominální půdorys 6000×3000). PŘEVZATO: výška zavěšení (spodní hrana 4000 mm nad podlahou) a centrování podél stěny B (odpovídá našemu B/2). NEPŘEVZATO — poloha v užším směru a rozměry produktu, viz deviations. Opravená verze plánu: assets/Plans/RIGGING_PLAN_S4244_korekce.pdf.",
+      "client_values": { "diameter": 1500, "height": 800, "weight_kg": 6, "bottom_mm": 4000, "center_from_dividing_wall_b_mm": 1750, "edge_gap_to_wall_b_mm": 1000, "edge_gap_to_front_mm": 500 },
+      "deviations": [
+        "Rozměry produktu: klient kreslil Ø1500 × v800, 6 kg. Skutečný vybraný produkt (Zip-up Round S, katalog) je Ø1520 × v610, 6,7 kg — rigging plán pro halu musí uvádět skutečné hodnoty.",
+        "Poloha v užším směru: klientův střed 1750 mm od dělicí stěny B dává se skutečným Ø1520 odstup hrany jen 990 mm < 1000 mm (IAAPA minimum pro branding k dělicí stěně; poutač je 360°). Ponechán náš střed (A+1000)/2 = 1985 mm → odstup 1225 mm, rezerva 225 mm. Rezerva je důležitá i kvůli nevyřešenému rozporu 1 m vs. 3 m v regulacích (open_questions) a toleranci zavěšení."
+      ],
+      "received": "2026-07-23"
     },
     "regenerate": "python3 model/export_banner.py  →  model/banner_v_stanku.stl/.dae (viewer staví vlastní válec s UV pro grafiku)"
   },
@@ -334,7 +343,7 @@
     { "topic": "Počet a rozpal panelů pro S4244", "why": "spec list (data/Shell Scheme.pdf) je z příkladu 3×3 m; u 6m stěny navíc: textil má max. šířku 2970 mm → 2 kusy = svislý spoj cca uprostřed stěny B — kde přesně?", "owner": "GES", "email": "iaapaeu@ges.com" },
     { "topic": "Nosnost panelu pro TV a monitory", "why": "montáž TV je povolena, nosnost neuvedena; plánujeme 2× 55\" TV (cca 17–25 kg/ks vč. držáku) na stěnu B — viz wall_tvs — a krabici se 3× 27\" monitory (600×1040×80 mm) na stěnu A — viz wall_monitor_box", "owner": "GES", "email": "iaapaeu@ges.com" },
     { "topic": "Přesný rozměr jmenovky", "why": "chybí kóty", "owner": "GES", "email": "iaapaeu@ges.com" },
-    { "topic": "Závěsný poutač — výška zavěšení a rigging", "why": "Vybrán Zip-up Round Ø1520 × v610 mm, 6,7 kg (viz hanging_banner). Výška spodní hrany 3300 mm je ODHAD — potvrdit; poutač smí věšet jen oficiální rigging kontraktor (uzávěrka 2026-08-09).", "owner": "IAAPA Operations", "email": "OperationsEMEA@IAAPA.org" },
+    { "topic": "Závěsný poutač — rigging", "why": "Vybrán Zip-up Round Ø1520 × v610 mm, 6,7 kg (viz hanging_banner). Výška spodní hrany 4000 mm ZADÁNA KLIENTEM 23.7.2026 (rigging plán) — zbývá potvrdit proveditelnost závěsného bodu; poutač smí věšet jen oficiální rigging kontraktor (uzávěrka 2026-08-09).", "owner": "IAAPA Operations", "email": "OperationsEMEA@IAAPA.org" },
     { "topic": "ROZPOR v regulacích: odstup poutače od dělicí stěny 1 m, nebo 3 m?", "why": "PRIORITA — rozhoduje o tom, jestli poutač vůbec může viset. Regulace IAAPA si samy odporují: sekce 'Rigging' říká 'must be set back a minimum of 1m from the dividing wall' (branding ke stěně), ale sekce ke komplexním konstrukcím říká 'must be STEPPED IN AT LEAST 3M from the dividing wall'. Při 3 m poutač NELZE — stánek je 2970 mm široký, po odečtení 2× 3 m nezbude nic. Použili jsme 1 m. Viz regulations.hanging_sign.CONFLICT_3m.", "owner": "IAAPA Operations", "email": "OperationsEMEA@IAAPA.org" },
     { "topic": "Kiosky: nízký přístupový bod 760 mm a obsluha z uličky", "why": "(1) PŘÍSTUPNOST: regulace chtějí u obslužných pultů nízký přístupový bod ≤760 mm nebo podnos; kiosky mají 1000–1196 mm. ZMÍRNĚNO 21.7.2026: deska stolu mezi kiosky je navržena ve výšce 760 mm — ověřit u Operations, zda to požadavek naplňuje. (2) ULIČKA: VYŘEŠENO 21.7.2026 — kiosky otočeny od sebe (monitory ke stěně A / k arcade), lidé u nich stojí uvnitř stánku, design už netlačí návštěvníky do uličky. Viz product_kiosk.placement.", "owner": "IAAPA Operations", "email": "OperationsEMEA@IAAPA.org" },
     { "topic": "Construction Phase Plan + Public Liability Insurance — týkají se shell scheme s konstrukcí?", "why": "Bulletin je značí '(Space only exhibitors)', my jsme shell scheme. U Method Statement regulace výslovně říkají 'or shell scheme stands with construction' — u těchto dvou dokumentů taková věta CHYBÍ. Termín je ale stejný, 24.7.2026, takže se to musí vyjasnit hned.", "owner": "IAAPA Operations", "email": "OperationsEMEA@IAAPA.org" },

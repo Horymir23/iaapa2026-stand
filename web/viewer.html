@@ -279,9 +279,10 @@ let tvc = { n:2, W:1230, H:710, D:60, OFF:35, CY:1850, MIN_GAP:300 };
 // (rozměry zadané uživatelem 15.7.2026; výška středu 1500 mm = ODHAD, nezadáno)
 let mbc = { n:3, W:600, H:1040, D:80, SW:600, SH:337.5, CY:1500 };
 // kruhový závěsný poutač Zip-up Round nad stánkem, dle spec hanging_banner
-// (vybrán Ø1520 — větší Ø3050 se dle IAAPA nad stánek nevejde; BOT = ODHAD výšky)
+// (vybrán Ø1520 — větší Ø3050 se dle IAAPA nad stánek nevejde; BOT = zadání
+// klienta 23.7.2026, rigging plán — spodní hrana 4000 mm nad podlahou)
 // ROT = natočení středu grafiky od stěny B směrem k otevřené kratší straně (°)
-let ban = { D:1520, H:610, BOT:3300, CL:1000, CABLE:257, ROT:115 };
+let ban = { D:1520, H:610, BOT:4000, CL:1000, CABLE:257, ROT:115 };
 // sestava kiosku (zmena 21.7.2026, zady k sobe + stul): GAPW = zapadni mezera
 // od lice steny A, TL = delka stolu (sync ze spec product_kiosk)
 let kio = { GAPW:1500, TL:600 };

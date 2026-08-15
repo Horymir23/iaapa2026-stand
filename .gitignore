@@ -1,4 +1,8 @@
 assets/export/*
 !assets/export/.gitkeep
+# screenshoty pro web/tisk.html — soucast webu, musi byt v repu (Pages)
+!assets/export/tisk
 .DS_Store
 __pycache__/
+/kiosky-u-ulicky-izo.png
+/tisk

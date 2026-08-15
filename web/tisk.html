@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tisková data — IAAPA Expo Europe 2026 · S4244 Pixel Floors</title>
+<!--
+  NÁVOD PRO TVORBU TISKOVÝCH DAT grafiky stánku S4244.
+
+  Zdroj pravdy rozměrů je ../data/stand-spec.json — hodnoty v HTML jsou jen
+  STATICKÝ OTISK (stav k 15. 8. 2026) jako fallback pro file://. Skript dole
+  (syncFromSpec) spec načte, všechno přepočítá a otisk přepíše; při neshodě
+  hodnotu podbarví. Rozměry se tedy needitují tady, ale ve spec souboru.
+
+  Screenshoty: ../assets/export/tisk/*.jpg — generuje puppeteer skript nad
+  web/viewer.html (kamera přes globály tgt/sph + place()).
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F6F2; --paper-2:#FFFFFF;
+    --ink:#16171E; --ink-soft:#565761; --ink-faint:#8B8C94;
+    --line:#E3E0D7; --line-2:#D6D3C8;
+    --accent:#4B3FE4; --accent-soft:#EEECFD;
+    --cyan:#22B8CF; --magenta:#D6409F;
+    --ok:#1B7A4B; --ok-soft:#E3F2E9;
+    --pending:#A75E00; --pending-soft:#FBEEDA;
+    --past:#B23B2E; --past-soft:#F8E5E2;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px;}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;}
+
+  header.hero{padding:56px 0 40px;border-bottom:1px solid var(--line);}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin-bottom:22px;}
+  .eyebrow span.dot{color:var(--ink-faint);}
+  h1{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:clamp(30px,5vw,48px);line-height:1.05;letter-spacing:-.02em;margin:0 0 14px;}
+  .lede{font-size:17px;color:var(--ink-soft);max-width:66ch;margin:0 0 30px;}
+  .badges{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:0;}
+  .badge{font-family:"IBM Plex Mono",monospace;font-size:12.5px;font-weight:500;padding:6px 12px;border:1px solid var(--line-2);border-radius:2px;background:var(--paper-2);color:var(--ink);}
+  .badge.accent{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+  #syncBanner{margin-top:26px;font-family:"IBM Plex Mono",monospace;font-size:12px;padding:8px 12px;border-radius:2px;display:inline-block;background:var(--pending-soft);color:var(--pending);}
+  #syncBanner.ok{background:var(--ok-soft);color:var(--ok);}
+  #syncBanner.bad{background:var(--past-soft);color:var(--past);}
+  [data-k].desync{background:var(--past-soft);outline:2px solid var(--past);border-radius:2px;}
+
+  section{padding:44px 0;border-bottom:1px solid var(--line);}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:8px;}
+  .sec-num{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--accent);font-weight:600;padding-top:6px;}
+  h2{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:clamp(22px,3.2vw,29px);letter-spacing:-.015em;margin:0;}
+  .sec-intro{color:var(--ink-soft);max-width:66ch;margin:2px 0 26px 42px;}
+  @media(max-width:640px){.sec-intro{margin-left:0;}}
+
+  .tag{font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:4px 9px;border-radius:2px;white-space:nowrap;align-self:start;display:inline-block;}
+  .tag.ok{background:var(--ok-soft);color:var(--ok);}
+  .tag.pending{background:var(--pending-soft);color:var(--pending);}
+  .tag.order{background:var(--accent-soft);color:var(--accent);}
+  .tag.past{background:var(--past-soft);color:var(--past);}
+
+  figure.shot{margin:0 0 22px 42px;background:var(--paper-2);border:1px solid var(--line);border-radius:4px;padding:10px;}
+  @media(max-width:640px){figure.shot{margin-left:0;}}
+  figure.shot img{width:100%;height:auto;display:block;border-radius:2px;}
+  figure.shot figcaption{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-faint);padding:8px 4px 2px;}
+  .shot2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:0 0 22px 42px;}
+  @media(max-width:760px){.shot2{grid-template-columns:1fr;margin-left:0;}}
+  .shot2 figure.shot{margin:0;}
+
+  .spec{background:var(--paper-2);border:1px solid var(--line);border-radius:4px;overflow:hidden;margin-left:42px;}
+  @media(max-width:640px){.spec{margin-left:0;}}
+  .row{display:grid;grid-template-columns:230px 1fr auto;gap:18px;padding:15px 20px;border-bottom:1px solid var(--line);align-items:start;}
+  .row:last-child{border-bottom:none;}
+  .row .k{font-weight:600;font-size:14.5px;}
+  .row .v{color:var(--ink-soft);font-size:14.5px;}
+  .row .v strong{color:var(--ink);font-weight:600;}
+  .row .v .mono{font-size:13.5px;}
+  @media(max-width:640px){.row{grid-template-columns:1fr;gap:6px;}.row .tag{justify-self:start;}}
+
+  .callout{border:1px solid var(--line-2);border-left:3px solid var(--accent);background:var(--paper-2);border-radius:4px;padding:18px 22px;margin:22px 0 0 42px;font-size:14.5px;}
+  @media(max-width:640px){.callout{margin-left:0;}}
+  .callout b{font-weight:600;}
+  .callout.warn{border-left-color:var(--pending);}
+  .callout.err{border-left-color:var(--past);}
+  .callout ul{margin:8px 0 0;padding-left:20px;}
+  .callout li{margin:4px 0;}
+
+  table.grid{width:100%;border-collapse:collapse;background:var(--paper-2);font-size:13.5px;}
+  .tblwrap{margin-left:42px;border:1px solid var(--line);border-radius:4px;overflow-x:auto;background:var(--paper-2);}
+  @media(max-width:640px){.tblwrap{margin-left:0;}}
+  table.grid th{font-family:"IBM Plex Mono",monospace;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);text-align:left;padding:10px 14px;border-bottom:1px solid var(--line-2);white-space:nowrap;}
+  table.grid td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink-soft);}
+  table.grid tr:last-child td{border-bottom:none;}
+  table.grid td.num{font-family:"IBM Plex Mono",monospace;white-space:nowrap;color:var(--ink);}
+  table.grid td strong{color:var(--ink);}
+
+  pre.email{background:var(--paper-2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:4px;padding:20px 22px;margin:14px 0 0 42px;font-family:"IBM Plex Mono",monospace;font-size:12.8px;line-height:1.65;white-space:pre-wrap;color:var(--ink);}
+  @media(max-width:640px){pre.email{margin-left:0;}}
+  .email-head{margin:26px 0 0 42px;font-weight:600;font-size:15px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;}
+  @media(max-width:640px){.email-head{margin-left:0;}}
+  .email-head a{color:var(--accent);font-family:"IBM Plex Mono",monospace;font-size:13px;text-decoration:none;}
+  .email-head a:hover{text-decoration:underline;}
+
+  ul.clean{margin:6px 0 0;padding-left:20px;}
+  ul.clean li{margin:5px 0;color:var(--ink-soft);font-size:14.5px;}
+  ul.clean li b{color:var(--ink);}
+
+  .toc{margin:26px 0 0 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;}
+  .toc a{display:block;padding:10px 14px;background:var(--paper-2);border:1px solid var(--line);border-radius:3px;color:var(--ink);text-decoration:none;font-size:13.5px;font-weight:500;}
+  .toc a:hover{border-color:var(--accent);}
+  .toc a .mono{color:var(--accent);font-size:11.5px;margin-right:8px;}
+
+  footer{padding:36px 0 60px;color:var(--ink-faint);font-size:13px;}
+  footer a{color:var(--accent);text-decoration:none;}
+  footer a:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">IAAPA Expo Europe 2026 <span class="dot">·</span> Stánek S4244 <span class="dot">·</span> Pixel Floors <span class="dot">·</span> Tisková data</div>
+    <h1>Podklady pro tisk grafiky</h1>
+    <p class="lede">Návod pro přípravu tiskových dat. Každý tištěný prvek stánku má snímek z 3D modelu, finální rozměr tisku, odvození (z čeho rozměr vychází a nakolik je jistý) a potřebné rozlišení podkladu. Rozměry, které zatím odvodit nejdou, jsou označené <span class="tag order">dotaz</span> a sepsané v <a href="#dotazy">dotazech pro výrobce</a> na konci stránky.</p>
+    <div class="badges">
+      <span class="badge accent">7 tiskových prvků</span>
+      <span class="badge">půdorys 3 × 6 m</span>
+      <span class="badge">zdroj: data/stand-spec.json</span>
+      <span class="badge">otisk k 15.&nbsp;8.&nbsp;2026</span>
+    </div>
+    <div id="syncBanner">⏳ načítám živé hodnoty ze stand-spec.json…</div>
+    <nav class="toc">
+      <a href="#s1"><span class="mono">01</span>Stěna B — textil</a>
+      <a href="#s2"><span class="mono">02</span>Stěna A — textil</a>
+      <a href="#s3"><span class="mono">03</span>Varianta: po panelech</a>
+      <a href="#s4"><span class="mono">04</span>Závěsný poutač 360°</a>
+      <a href="#s5"><span class="mono">05</span>Totem arcade — tělo</a>
+      <a href="#s6"><span class="mono">06</span>Kiosky — kostky</a>
+      <a href="#s7"><span class="mono">07</span>Stůl — logo</a>
+      <a href="#s8"><span class="mono">08</span>Věž mini — kostky</a>
+      <a href="#s9"><span class="mono">09</span>Co se netiskne</a>
+      <a href="#dotazy"><span class="mono">10</span>Dotazy pro výrobce</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ 0 · JAK ČÍST ============ -->
+<section id="s0">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">00</span><h2>Jak číst tuhle stránku</h2></div>
+    <p class="sec-intro">U každého rozměru je štítek, který říká, jak moc se na něj dá spolehnout. Nikdy je nemíchat — na odhadu se nesmí stavět výroba.</p>
+    <div class="spec">
+      <div class="row"><div class="k"><span class="tag ok">potvrzeno</span></div><div class="v">Písemně od pořadatele nebo z GES spec listu. S hodnotou lze počítat do výroby.</div><div></div></div>
+      <div class="row"><div class="k"><span class="tag pending">odhad</span></div><div class="v">Odvozeno analogií nebo odečteno z fotky/renderu. Před výrobou <strong>musí potvrdit výrobce</strong>.</div><div></div></div>
+      <div class="row"><div class="k"><span class="tag pending">návrh</span></div><div class="v">Naše designové rozhodnutí (velikost, pozice). Před výrobou <strong>potvrdit interně</strong> — jde změnit.</div><div></div></div>
+      <div class="row"><div class="k"><span class="tag order">dotaz</span></div><div class="v">Nelze odvodit z dostupných podkladů. Otázka je připravená v sekci <a href="#dotazy">10 · Dotazy</a>.</div><div></div></div>
+    </div>
+
+    <div class="callout">
+      <b>Rozlišení (DPI):</b> potřebné pixely podkladu = <span class="mono">rozměr v mm ÷ 25,4 × DPI</span>. Doporučení podle vzdálenosti, ze které se grafika čte:
+      <ul>
+        <li><b>do 1 m</b> (kiosky, stůl, věž, totem) → <b>150–300 dpi</b> při finální velikosti,</li>
+        <li><b>1–3 m</b> (stěny) → <b>100–150 dpi</b>,</li>
+        <li><b>nad 3 m</b> (závěsný poutač) → <b>72–100 dpi</b>.</li>
+      </ul>
+      <b>Vektor (SVG/PDF) nemá rastr</b> — kostky a logo se z vektoru tisknou v libovolné velikosti beze ztráty; stačí dodržet finální mm. Velkoformát se běžně připravuje 1:1 při nižším DPI, nebo v měřítku (1:2, 1:4) s odpovídajícím násobkem DPI — přesný formát dodání určí tiskárna (<a href="#dotazy">dotaz č. 4</a>).
+    </div>
+
+    <div class="callout warn">
+      <b>Pozor: žádný ze současných souborů v <span class="mono">assets/grafika/</span> není tisková kvalita.</b> Jsou to náhledy pro 3D vizualizaci — při finální velikosti mají 14–30 dpi. Bitmapové motivy (stěny, poutač, tělo totemu) je potřeba znovu vyrobit v produkčním rozlišení podle hodnot níže; kostky a logo existují jako SVG, tam stačí vektor předat tiskárně.
+    </div>
+  </div>
+</section>
+
+<!-- ============ 1 · STĚNA B ============ -->
+<section id="s1">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">01</span><h2>Stěna B — textil přes celou stěnu (6m strana)</h2></div>
+    <p class="sec-intro">Hlavní grafická plocha stánku. Jeden souvislý motiv, který ale GES vyrobí jako <strong>dva kusy textilu</strong> se svislým spojem — textil má max. šířku 2970 mm.</p>
+
+    <figure class="shot">
+      <img src="../assets/export/tisk/stena-b.jpg" alt="Stěna B s grafikou — pohled z 3D modelu, produkty skryté" loading="lazy">
+      <figcaption>Stěna B v 3D modelu (produkty skryté, ať je vidět celý motiv). Svislé linky = spáry mezi panely.</figcaption>
+    </figure>
+
+    <div class="spec">
+      <div class="row"><div class="k">Finální rozměr tisku</div><div class="v"><strong><span data-k="bFull">5 940 × 2 474 mm</span></strong> (šířka × výška)</div><div><span class="tag pending">odhad</span></div></div>
+      <div class="row"><div class="k">Počet kusů</div><div class="v"><span data-k="bPieces">2</span>× textil à <strong><span data-k="fabPiece">2 970 × 2 474 mm</span></strong>; poloha svislého spoje zatím neznámá</div><div><span class="tag order">dotaz</span></div></div>
+      <div class="row"><div class="k">Rozlišení podkladu</div><div class="v">100–150 dpi při 1:1 → <strong class="mono"><span data-k="bPx100">23 386 × 9 740 px</span></strong> @ 100 dpi, <span class="mono" data-k="bPx150">35 079 × 14 610 px</span> @ 150 dpi</div><div></div></div>
+      <div class="row"><div class="k">Stávající podklad</div><div class="v"><span class="mono">Stěna B v3.jpg</span> — 3 402 × 1 417 px ≈ <strong>15 dpi</strong> při finální velikosti → jen náhled, na tisk nestačí</div><div><span class="tag past">nestačí</span></div></div>
+      <div class="row"><div class="k">Materiál / aplikace</div><div class="v">Závisí na povrchu panelů GES (řezaná fólie vs. celoplošný wrap vs. napínaný textil)</div><div><span class="tag order">dotaz</span></div></div>
+    </div>
+
+    <div class="callout">
+      <b>Z čeho rozměr vychází:</b>
+      <ul>
+        <li>Výška grafické plochy <b><span data-k="gh">2 474 mm</span></b> — GES spec list <span class="tag ok">potvrzeno</span></li>
+        <li>Délka stěny <b><span data-k="bLen">5 940 mm</span></b> = 2 × 2 970 (analogie potvrzené stěny A) <span class="tag pending">odhad</span> — při stejné spáře jako na stěně A by vyšla <b><span data-k="bAlt">5 946 mm</span></b>. Rozdíl 6 mm posouvá spáry i spoj textilu, pro tisk je potřeba přesná hodnota od GES (<a href="#dotazy">dotaz č. 2</a>).</li>
+        <li>Max. šířka kusu textilu <b><span data-k="fabW">2 970 mm</span></b> — GES spec list <span class="tag ok">potvrzeno</span> → 6m stěna = 2 kusy, <b>kde přesně padne spoj, ví jen GES</b> (<a href="#dotazy">dotaz č. 3</a>).</li>
+      </ul>
+    </div>
+
+    <div class="callout warn">
+      <b>Zákryty:</b> před stěnou B stojí věž produktu mini (výška 1 803 mm, u rohu) a bedna totemu arcade (1 800 mm, u volného konce), na stěně visí 2× TV 55″ (spodní hrana ≈ 1 495 mm). Klíčové motivy a texty umisťovat do volných zón — rozložení je vidět na <a href="viewer.html">3D modelu</a> (tlačítko „Kóty a rozteče“).
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2 · STĚNA A ============ -->
+<section id="s2">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">02</span><h2>Stěna A — textil (3m strana)</h2></div>
+    <p class="sec-intro">Kratší stěna, jeden kus textilu. Oba rozměry jsou potvrzené — tady se dá jít do výroby hned po potvrzení materiálu.</p>
+
+    <figure class="shot">
+      <img src="../assets/export/tisk/stena-a.jpg" alt="Stěna A s grafikou — pohled z 3D modelu, produkty skryté" loading="lazy">
+      <figcaption>Stěna A v 3D modelu (produkty skryté). Tři panely, dvě spáry po 6 mm.</figcaption>
+    </figure>
+
+    <div class="spec">
+      <div class="row"><div class="k">Finální rozměr tisku</div><div class="v"><strong><span data-k="aFull">2 970 × 2 474 mm</span></strong> (šířka × výška)</div><div><span class="tag ok">potvrzeno</span></div></div>
+      <div class="row"><div class="k">Počet kusů</div><div class="v">1× textil (přesně limit šířky textilu)</div><div><span class="tag ok">potvrzeno</span></div></div>
+      <div class="row"><div class="k">Rozlišení podkladu</div><div class="v">100–150 dpi při 1:1 → <strong class="mono"><span data-k="aPx100">11 693 × 9 740 px</span></strong> @ 100 dpi, <span class="mono" data-k="aPx150">17 539 × 14 610 px</span> @ 150 dpi</div><div></div></div>
+      <div class="row"><div class="k">Stávající podklad</div><div class="v"><span class="mono">Stěna A v1.jpg</span> — 3 543 × 2 953 px ≈ <strong>30 dpi</strong> → jen náhled</div><div><span class="tag past">nestačí</span></div></div>
+      <div class="row"><div class="k">Materiál / aplikace</div><div class="v">Stejně jako stěna B — čeká na potvrzení povrchu panelů</div><div><span class="tag order">dotaz</span></div></div>
+    </div>
+
+    <div class="callout">
+      <b>Z čeho rozměr vychází:</b> stavební délka stěny A <b><span data-k="aLen">2 970 mm</span></b> i výška grafiky <b>2 474 mm</b> jsou písemně potvrzené (GES spec list, pořadatel 3.&nbsp;7.&nbsp;2026). <span class="tag ok">potvrzeno</span>
+    </div>
+
+    <div class="callout warn">
+      <b>Zákryty:</b> většinu spodních ~1,8 m stěny zakrývá věž produktu mini (stojí 90 mm před stěnou); na krajním panelu u uličky visí bílá krabice s 3× 27″ monitory (600 × 1 040 mm, střed ve výšce 1 500 mm). Viditelný zůstává hlavně pruh nad věží a krajní panel — motiv tomu přizpůsobit.
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3 · VARIANTA PO PANELECH ============ -->
+<section id="s3">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">03</span><h2>Varianta: grafika po panelech (986 × 2 474 mm)</h2></div>
+    <p class="sec-intro">Pokud GES potvrdí, že se místo textilu polepují jednotlivé panely, dělí se celostěnový motiv na výřezy. <strong>Jestli tahle varianta nastane, rozhodne odpověď na dotaz č. 1 (povrch panelů).</strong></p>
+
+    <div class="spec">
+      <div class="row"><div class="k">Rozměr 1 panelu</div><div class="v"><strong><span data-k="panel">986 × 2 474 mm</span></strong> (grafická plocha rigidního panelu)</div><div><span class="tag ok">potvrzeno</span></div></div>
+      <div class="row"><div class="k">Stěna A</div><div class="v"><strong>3 panely</strong>, spára <strong><span data-k="gapA">6,0 mm</span></strong> — výřezy z motivu 2 970 mm: <span class="mono" data-k="cropsA">0–986 · 992–1 978 · 1 984–2 970</span></div><div><span class="tag ok">potvrzeno</span></div></div>
+      <div class="row"><div class="k">Stěna B</div><div class="v"><strong>6 panelů</strong>, spára <strong><span data-k="gapB">4,8 mm</span></strong> (z odhadované délky 5 940) — výřezy: <span class="mono" data-k="cropsB">0–986 · 990,8–1 976,8 · 1 981,6–2 967,6 · 2 972,4–3 958,4 · 3 963,2–4 949,2 · 4 954–5 940</span></div><div><span class="tag pending">odhad</span></div></div>
+      <div class="row"><div class="k">Rozlišení podkladu</div><div class="v">100–150 dpi → <strong class="mono"><span data-k="pPx100">3 882 × 9 740 px</span></strong> @ 100 dpi na panel</div><div></div></div>
+    </div>
+
+    <div class="callout">
+      <b>Jak dělení funguje:</b> motiv se připraví jako jedna celostěnová grafika a rozřeže se na pruhy široké 986 mm. Pruhy motivu, které připadnou na spáry (4,8–6 mm mezi panely), <b>ve výsledku zaniknou</b> — spára je dopočítaná tak, aby panely přesně vyplnily stěnu (<span class="mono">spára = (délka stěny − n × 986) ÷ (n − 1)</span>). Proto nesmí přes spáru procházet drobný text nebo detail loga. Rozdělení je vidět na <a href="viewer.html">3D modelu</a> — přesně tohle ukazuje.
+    </div>
+    <div class="callout warn">
+      <b>Výřezy pro stěnu B jsou zatím jen orientační</b> — závisí na skutečné stavební délce (5 940 vs. 5 946 mm) a šířce spáry. Kdyby platila spára 6,0 mm jako na stěně A, výřezy jsou: <span class="mono" data-k="cropsBAlt">0–986 · 992–1 978 · 1 984–2 970 · 2 976–3 962 · 3 968–4 954 · 4 960–5 946</span>. Bez odpovědi GES (<a href="#dotazy">dotaz č. 2</a>) tisk nedělit.
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4 · POUTAČ ============ -->
+<section id="s4">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">04</span><h2>Závěsný poutač 360° (Zip-up Round S)</h2></div>
+    <p class="sec-intro">Kruhový textilní poutač zavěšený nad stánkem, potištěný po celém obvodu. Katalogový produkt Showdown Displays / Jansen Display — finální tiskovou šablonu dodá jeho výrobce, ne GES.</p>
+
+    <figure class="shot">
+      <img src="../assets/export/tisk/poutac.jpg" alt="Závěsný poutač 360° nad stánkem — pohled z 3D modelu" loading="lazy">
+      <figcaption>Poutač Ø 1 520 × 610 mm, spodní hrana 4 000 mm nad podlahou, natočení motivu 115°.</figcaption>
+    </figure>
+
+    <div class="spec">
+      <div class="row"><div class="k">Finální rozměr tisku</div><div class="v"><strong><span data-k="banFlat">≈ 4 775 × 610 mm</span></strong> (rozvin obvodu × výška) — obvod = π × Ø <span data-k="banD">1 520</span> mm</div><div><span class="tag ok">produkt</span></div></div>
+      <div class="row"><div class="k">Počet kusů</div><div class="v">1× souvislý 360° motiv — <strong>levá a pravá hrana na sebe navazují ve švu</strong></div><div></div></div>
+      <div class="row"><div class="k">Rozlišení podkladu</div><div class="v">72–100 dpi (čte se z dálky, visí 4 m nad zemí) → <strong class="mono"><span data-k="banPx72">13 536 × 1 729 px</span></strong> @ 72 dpi, <span class="mono" data-k="banPx100">18 800 × 2 402 px</span> @ 100 dpi</div><div></div></div>
+      <div class="row"><div class="k">Stávající podklad</div><div class="v"><span class="mono">Poutač360v2.jpg</span> — 5 640 × 720 px ≈ <strong>30 dpi</strong>; poměr stran sedí (7,83 : 1) → stačí přegenerovat ve vyšším rozlišení</div><div><span class="tag past">nestačí</span></div></div>
+      <div class="row"><div class="k">Přesná šablona (spadávky, zip, šev)</div><div class="v">Musí dodat výrobce poutače — náš rozvin je geometrický výpočet bez výrobních přídavků</div><div><span class="tag order">dotaz</span></div></div>
+    </div>
+
+    <div class="callout">
+      <b>Z čeho rozměr vychází:</b> Ø 1 520 × v 610 mm je katalogový rozměr vybraného produktu Zip-up Round vel. S (shop.showdowndisplays.eu) — fakt výrobku. Obvod π × 1 520 = <b>4 775,2 mm</b>. Větší velikost L (Ø 3 050) se nad stánek nevejde kvůli regulím IAAPA (odstup brandingu 1 m od obou dělicích stěn).
+    </div>
+    <div class="callout">
+      <b>Pro montáž a tiskárnu:</b> motiv se věší natočený o <b><span data-k="banRot">115°</span></b> — střed motivu míří 115° od kolmice na stěnu B směrem k otevřené kratší straně; <b>šev textilu vychází naproti středu motivu</b>. Spodní hrana textilu <b><span data-k="banBot">4 000 mm</span></b> nad podlahou (rigging plán klienta, 23.&nbsp;7.&nbsp;2026); závěs realizuje výhradně oficiální rigging kontraktor.
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5 · ARCADE ============ -->
+<section id="s5">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Totem arcade — potisk těla</h2></div>
+    <p class="sec-intro">Potisk (kostky + slogan „STEP INTO THE LIGHT.“) na bílém těle totemu pod obrazovkou. Grafika s průhledným pozadím, vlastní produkt — aplikuje se mimo GES.</p>
+
+    <figure class="shot">
+      <img src="../assets/export/tisk/arcade-telo.jpg" alt="Totem arcade s potiskem těla — pohled z 3D modelu" loading="lazy">
+      <figcaption>Bedna totemu 700 × 1 800 mm, potisk pod obrazovkou v plné šířce bedny.</figcaption>
+    </figure>
+
+    <div class="spec">
+      <div class="row"><div class="k">Finální rozměr tisku</div><div class="v"><strong><span data-k="arcSize">700 × ≈ 949 mm</span></strong> — šířka = plná šířka bedny; výška plyne z poměru stran podkladu</div><div><span class="tag pending">odvozeno</span></div></div>
+      <div class="row"><div class="k">Umístění</div><div class="v">Pravá hrana grafiky licuje s pravou hranou bedny, <strong>horní hrana = spodní hrana obrazovky (950 mm nad zemí)</strong>; platební terminál zůstává před potiskem</div><div></div></div>
+      <div class="row"><div class="k">Rozlišení podkladu</div><div class="v">150–200 dpi (čte se z ~1 m) → <strong class="mono"><span data-k="arcPx150">4 134 × 5 605 px</span></strong> @ 150 dpi; ideálně ale rovnou vektor</div><div></div></div>
+      <div class="row"><div class="k">Stávající podklad</div><div class="v"><span class="mono">Arcade.webp</span> — 399 × 541 px ≈ <strong>14,5 dpi</strong> → jen náhled; pro tisk je nutný zdrojový soubor (vektor / vysoké rozlišení, s alfou)</div><div><span class="tag past">nestačí</span></div></div>
+    </div>
+
+    <div class="callout">
+      <b>Z čeho rozměr vychází:</b> šířka bedny totemu <b>700 mm</b> je zadaná (13.&nbsp;7.&nbsp;2026, vlastní produkt). Výška potisku <b>≈ 949 mm</b> = 700 × poměr stran současného podkladu (399 × 541 px) — <b>s finálním podkladem se přepočítá</b>. Kotví se horní hranou ke spodní hraně obrazovky, doběhne do výšky ~1 mm nad zem.
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6 · KIOSKY ============ -->
+<section id="s6">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">06</span><h2>Kiosky — kostky přes rohy (2× sada)</h2></div>
+    <p class="sec-intro">Dva pulty se stejným potiskem: tři kostky na čele, krajní dvě se lepí <strong>přes svislý roh</strong> na boční stěnu. Podklady jsou SVG (vektor) — tisknout / řezat lze v libovolné kvalitě, rozhodující jsou finální mm.</p>
+
+    <div class="shot2">
+      <figure class="shot">
+        <img src="../assets/export/tisk/kiosek-celo.jpg" alt="Čelo kiosku s kostkami, přechod přes roh — pohled z 3D modelu" loading="lazy">
+        <figcaption>Kiosek 1 — kostky na čele, krajní přecházejí na boky.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="../assets/export/tisk/kiosky-sestava.jpg" alt="Sestava kiosek–stůl–kiosek z uličky — pohled z 3D modelu" loading="lazy">
+        <figcaption>Sestava kiosek · stůl · kiosek na hraně uličky.</figcaption>
+      </figure>
+    </div>
+
+    <div class="tblwrap">
+    <table class="grid">
+      <thead><tr><th>Kostka</th><th>Soubor (SVG)</th><th>Tisk š × v</th><th>Střed výšky nad zemí</th><th>Umístění na těle</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Velká</strong></td><td class="num">Datový zdroj 3.svg</td><td class="num" data-k="kd1">420 × 359 mm</td><td class="num" data-k="kd1y">490 mm</td><td>přes <strong>pravý</strong> roh: <span data-k="kd1w">273 mm na čele + 147 mm na pravém boku</span></td></tr>
+        <tr><td><strong>Střední</strong></td><td class="num">Datový zdroj 1.svg</td><td class="num" data-k="kd2">259,6 × 221 mm</td><td class="num" data-k="kd2y">350 mm</td><td>přes <strong>levý</strong> roh: <span data-k="kd2w">168,7 mm na čele + 90,9 mm na levém boku</span></td></tr>
+        <tr><td><strong>Malá</strong></td><td class="num">Datový zdroj 2.svg</td><td class="num" data-k="kd3">160,4 × 146 mm</td><td class="num" data-k="kd3y">196 mm</td><td>celá na čele, <span data-k="kd3x">střed 300 mm od levé hrany</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="spec" style="margin-top:16px;">
+      <div class="row"><div class="k">Počet sad</div><div class="v"><strong>2×</strong> (oba pulty stejně)</div><div></div></div>
+      <div class="row"><div class="k">Podklad (lepená plocha)</div><div class="v">Čelo <strong><span data-k="kioFace">580 × 1 000 mm</span></strong> (šířka × výška přední hrany; vzadu 1 196 mm, horní plocha šikmá 30°), boky hluboké <span data-k="kioSide">340 mm</span></div><div><span class="tag ok">produkt</span></div></div>
+      <div class="row"><div class="k">Velikosti a pozice kostek</div><div class="v">Poměr velikostí 1,618 uvnitř trojice je zadaný; celková velikost (zvětšení 1,4×) a pozice jsou návrh</div><div><span class="tag pending">návrh</span></div></div>
+      <div class="row"><div class="k">Rozlišení</div><div class="v">Vektor — bez limitu. Při rastrování 300 dpi při finální velikosti.</div><div></div></div>
+    </div>
+
+    <div class="callout">
+      <b>Z čeho rozměry vycházejí:</b> šířka kiosku 580 mm a výšky těla jsou změřené z CAD modelu pultu (mini.stp) — fakt produktu. Velikost kostek: základ 420 mm = původních 300 mm × 1,4 (zvětšení na žádost, <b>faktor je návrh</b>); další dvě = ÷ 1,618 (zadaný poměr). Výšky středů 490 / 350 / 196 mm = návrh. Krajní kostky dělí roh v poměru 65 : 35 (<span class="mono">wrap 0,35</span>) — <b>na rohu musí obě části přesně navazovat</b>, tisknout jako jeden kus a ohnout, nebo řezat se společnou hranou.
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7 · STŮL ============ -->
+<section id="s7">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">07</span><h2>Stůl mezi kiosky — logo na krycí desce</h2></div>
+    <p class="sec-intro">Jedno velké logo Pixel Floors lícem do uličky — jediné logo v sestavě kiosků. Lepí se na krycí desku stolu, která jde až na zem.</p>
+
+    <figure class="shot">
+      <img src="../assets/export/tisk/stul-logo.jpg" alt="Krycí deska stolu s logem — pohled z uličky, 3D model" loading="lazy">
+      <figcaption>Krycí deska stolu s logem, pohled z uličky. Nad logem šikmá police na tiskoviny.</figcaption>
+    </figure>
+
+    <div class="spec">
+      <div class="row"><div class="k">Finální rozměr tisku</div><div class="v"><strong><span data-k="tblLogo">500 × ≈ 530 mm</span></strong> (logo je téměř čtvercové, výška dle poměru SVG)</div><div><span class="tag pending">návrh</span></div></div>
+      <div class="row"><div class="k">Lepí se na díl</div><div class="v">Krycí deska <strong><span data-k="tblBoard">600 × 1 060 mm</span></strong> (šířka × výška; šířka = délka desky stolu — zadáno, výška je návrh)</div><div><span class="tag pending">návrh</span></div></div>
+      <div class="row"><div class="k">Pozice</div><div class="v">Vodorovně na střed desky; <strong>střed loga <span data-k="tblLogoCy">640 mm</span> nad zemí</strong> → spodní hrana ≈ <span data-k="tblLogoBot">375</span> mm, horní ≈ <span data-k="tblLogoTop">905</span> mm (zůstává pod policí, jejíž spodní hrana je 1 000 mm)</div><div><span class="tag pending">návrh</span></div></div>
+      <div class="row"><div class="k">Podklad</div><div class="v"><span class="mono">Primary Pixel Floors logo.svg</span> — vektor, bez limitu rozlišení</div><div><span class="tag ok">k dispozici</span></div></div>
+    </div>
+
+    <div class="callout">
+      <b>Z čeho rozměr vychází:</b> deska stolu mezi kiosky má zadaných <b>600 mm</b> (analýza prostoru 21.&nbsp;7.&nbsp;2026, potvrzeno uživatelem) → šířka loga <b>500 mm = 600 − 2 × 50 mm okraj (návrh)</b>. Výška loga 530 mm plyne z poměru stran SVG (177,4 × 187,9). Výška krycí desky 1 060 mm a střed loga 640 mm jsou návrh — kdyby se sestava stolu měnila, logo se přepočítá.
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8 · VĚŽ MINI ============ -->
+<section id="s8">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">08</span><h2>Věž produktu mini — kostky pod monitorem</h2></div>
+    <p class="sec-intro">Tři kostky na čelní ploše věže s 50″ monitorem, mezi/pod dvěma vypouklými reproduktory. Stejné SVG jako na kioscích, jiné velikosti. Pozice jsou odečtené z fotky skutečného produktu — před výrobou přeměřit na kusu.</p>
+
+    <figure class="shot">
+      <img src="../assets/export/tisk/vez-mini.jpg" alt="Věž produktu mini s kostkami pod monitorem — pohled z 3D modelu" loading="lazy">
+      <figcaption>Věž mini (celková šířka 1 901 mm, výška 1 803 mm): monitor nahoře, 2 reproduktory Ø 250, kostky mezi nimi.</figcaption>
+    </figure>
+
+    <div class="tblwrap">
+    <table class="grid">
+      <thead><tr><th>Kostka</th><th>Soubor (SVG)</th><th>Tisk š × v</th><th>Střed: výška nad zemí</th><th>Střed: vodorovně*</th><th>Natočení</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Velká vpravo</strong></td><td class="num">Datový zdroj 3.svg</td><td class="num" data-k="td1">440 × 376 mm</td><td class="num" data-k="td1y">800 mm</td><td class="num" data-k="td1z">704 mm</td><td class="num" data-k="td1r">−18°</td></tr>
+        <tr><td><strong>Malá vlevo</strong></td><td class="num">Datový zdroj 2.svg</td><td class="num" data-k="td2">210 × 192 mm</td><td class="num" data-k="td2y">677 mm</td><td class="num" data-k="td2z">1 345 mm</td><td class="num" data-k="td2r">0°</td></tr>
+        <tr><td><strong>Spodní uprostřed</strong></td><td class="num">Datový zdroj 1.svg</td><td class="num" data-k="td3">360 × 307 mm</td><td class="num" data-k="td3y">422 mm</td><td class="num" data-k="td3z">1 050 mm</td><td class="num" data-k="td3r">0°</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="sec-intro" style="margin-top:10px;">* měřeno v šířce věže (1 901 mm) od kraje na straně stěny B — při pohledu na věž zevnitř stánku je to pravý kraj.</p>
+
+    <div class="spec">
+      <div class="row"><div class="k">Počet sad</div><div class="v">1×</div><div></div></div>
+      <div class="row"><div class="k">Velikosti a pozice</div><div class="v">Odečtené z fotky produktu (škálováno přes šířku obrazovky 1 123 mm) — <strong>před výrobou ověřit přeměřením na skutečném kusu</strong></div><div><span class="tag pending">odhad</span></div></div>
+      <div class="row"><div class="k">Rozlišení</div><div class="v">Vektor — bez limitu. Kostky nesmí překrýt reproduktory (kupole Ø 250 mm, středy ve výšce 910 mm).</div><div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9 · CO SE NETISKNE ============ -->
+<section id="s9">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">09</span><h2>Co se netiskne (ale grafika je to taky)</h2></div>
+    <p class="sec-intro">Pro úplnost — zbytek grafiky stánku jsou obrazovky a prvky, které tiskne někdo jiný.</p>
+
+    <figure class="shot">
+      <img src="../assets/export/tisk/prehled.jpg" alt="Celkový pohled na stánek z 3D modelu" loading="lazy">
+      <figcaption>Celkový pohled: stěny, poutač, mini + arcade, kiosky se stolem, TV a krabice s monitory.</figcaption>
+    </figure>
+
+    <div class="tblwrap">
+    <table class="grid">
+      <thead><tr><th>#</th><th>Obrazovka</th><th>Viditelná plocha</th><th>Podklad (px)</th></tr></thead>
+      <tbody id="scrRows">
+        <tr><td class="num">1</td><td>TV 55″ — stěna B, blíž rohu</td><td class="num">1 194 × 674 mm</td><td class="num">1920 × 1080</td></tr>
+        <tr><td class="num">2</td><td>TV 55″ — stěna B, dál od rohu</td><td class="num">1 194 × 674 mm</td><td class="num">1920 × 1080</td></tr>
+        <tr><td class="num">3</td><td>Krabice na stěně A — horní</td><td class="num">600 × 337,5 mm</td><td class="num">1920 × 1080</td></tr>
+        <tr><td class="num">4</td><td>Krabice na stěně A — prostřední</td><td class="num">600 × 337,5 mm</td><td class="num">1920 × 1080</td></tr>
+        <tr><td class="num">5</td><td>Krabice na stěně A — spodní</td><td class="num">600 × 337,5 mm</td><td class="num">1920 × 1080</td></tr>
+        <tr><td class="num">6</td><td>Mini — monitor na věži (50″)</td><td class="num">1 123 × 643 mm</td><td class="num">1920 × 1080</td></tr>
+        <tr><td class="num">7</td><td>Mini — šikmý pult u vstupu</td><td class="num">517,6 × 291,15 mm</td><td class="num">1920 × 1080</td></tr>
+        <tr><td class="num">8</td><td>Arcade — totem (na výšku)</td><td class="num">560 × 800 mm</td><td class="num">1080 × 1543</td></tr>
+        <tr><td class="num">9</td><td>Kiosek 1 (šikmý 30°)</td><td class="num">517,6 × 291,15 mm</td><td class="num">1920 × 1080</td></tr>
+        <tr><td class="num">10</td><td>Kiosek 2 (šikmý 30°)</td><td class="num">517,6 × 291,15 mm</td><td class="num">1920 × 1080</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="callout" style="margin-top:16px;">
+      <ul style="margin-top:0;">
+        <li><b>Jmenovka stánku</b> — tiskne GES, obsah je pevně daný (logo IAAPA + název + číslo stánku); přesný rozměr neznáme (<a href="#dotazy">dotaz č. 5</a>).</li>
+        <li><b>LED podlahy</b> (aréna mini, hrací plocha arcade) — svítí samy, obsah je digitální. Pozor: <b>žádné blikání</b> (regulace IAAPA).</li>
+        <li><b>Koberce</b> — šedý na stánku a modrý v uličkách jsou z balíčku pořadatele.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10 · DOTAZY ============ -->
+<section id="dotazy">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">10</span><h2>Dotazy pro výrobce</h2></div>
+    <p class="sec-intro">Rozměry, které z podkladů odvodit nejdou. Texty jsou připravené v angličtině ke zkopírování do e-mailu — bez odpovědí na č. 1–3 nelze finalizovat produkci grafiky stěn.</p>
+
+    <div class="email-head">GES — stavba stánku, panely, textil <a href="mailto:iaapaeu@ges.com?subject=Stand%20S4244%20(Pixel%20Floors%20%2F%20HTDM)%20%E2%80%94%20graphics%20production%20questions">iaapaeu@ges.com ↗</a></div>
+    <pre class="email">Subject: Stand S4244 (Pixel Floors / HTDM) — graphics production questions
+
+Hello,
+
+we are preparing print artwork for stand S4244 (Pixel Floors / HTDM,
+corner shell scheme 3 × 6 m, GES AMP system) and need to confirm
+a few production details:
+
+1) PANEL SURFACE — What is the surface/material of the AMP panels,
+   and which graphic applications do you support (cut vinyl /
+   full-coverage wrap / printed infill panels / stretched fabric)?
+   This decides our whole production route.
+
+2) BUILD DIMENSIONS OF THE 6 M WALL — Wall on the 3 m side is
+   confirmed at 2970 mm (3 × 986 mm modules). For the 6 m wall,
+   please confirm: exact build length, number of panels, and the
+   gap width between panels. (Our estimate is 6 × 986 mm modules
+   and a total of 5940 mm or 5946 mm, depending on whether the gap
+   is 4.8 or 6.0 mm — we need exact values to align the artwork
+   across the panel gaps.)
+
+3) FABRIC GRAPHICS JOIN — Fabric graphics are max. 2970 mm wide,
+   so the 6 m wall needs two pieces with a vertical join. Where
+   exactly will the join fall, and how do the pieces meet
+   (butt joint / overlap)? Any bleed required at the join?
+
+4) ARTWORK SPECIFICATION — Please send your artwork spec for both
+   fabric (2970 × 2474 mm) and rigid panel (986 × 2474 mm) graphics:
+   file format and scale, bleed, colour profile (CMYK / ICC),
+   minimum resolution (dpi), and the artwork submission deadline
+   for IAAPA Expo Europe 2026.
+
+5) NAMEBOARD — What are the exact dimensions of the nameboard for
+   a corner stand? (Content and colours are known.)
+
+Thank you,
+</pre>
+
+    <div class="email-head">Výrobce poutače — Showdown Displays / Jansen Display <span class="mono" style="color:var(--ink-faint);font-size:12px;">(objednávkový kanál dle nákupu Zip-up Round)</span></div>
+    <pre class="email">Subject: Zip-up Round size S (Ø 1520 × 610 mm) — print template
+
+Hello,
+
+we are preparing a 360° wrap artwork for the Zip-up Round hanging
+banner, size S (Ø 1520 × 610 mm). Could you please send:
+
+- the print template / flat artwork dimensions including bleed and
+  seam/zip allowance (our geometric calculation: circumference
+  ≈ 4775 × 610 mm),
+- where the seam falls relative to the template edges (the artwork
+  is one continuous 360° image — the left and right edges must
+  meet cleanly at the seam),
+- required file format, colour profile and minimum resolution.
+
+Thank you,
+</pre>
+
+    <div class="email-head">Interně potvrdit (HTDM) — návrhy, ne fakta</div>
+    <div class="callout" style="margin-top:14px;">
+      <ul style="margin-top:0;">
+        <li>Velikost kostek na kioscích (základ 420 mm = zvětšení 1,4×) a jejich pozice — <b>návrh</b>.</li>
+        <li>Šířka loga na stole 500 mm a střed ve výšce 640 mm — <b>návrh</b>; výška krycí desky 1 060 mm — <b>návrh</b>.</li>
+        <li>Pozice a velikosti kostek na věži mini — <b>odečteno z fotky</b>, přeměřit na skutečném kusu.</li>
+        <li>Výška potisku arcade (≈ 949 mm) se odvíjí od poměru stran finálního podkladu — po jeho dodání přepočítat.</li>
+        <li>Rozměry TV 55″ (1 230 × 710 mm) = odhad běžného modelu — motiv stěny B neplánovat natěsno kolem TV.</li>
+        <li>Výška zavěšení poutače (spodní hrana 4 000 mm) — proveditelnost potvrzuje oficiální rigging kontraktor (uzávěrka byla 9.&nbsp;8.&nbsp;2026).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Zdroj pravdy rozměrů: <span class="mono">data/stand-spec.json</span> — hodnoty na téhle stránce se z něj načítají živě (statický otisk k 15.&nbsp;8.&nbsp;2026 jako záloha).<br>
+    Snímky: <span class="mono">assets/export/tisk/</span>, generované z <a href="viewer.html">3D editoru</a>. Další podklady: <a href="index.html">datová stránka</a> · <a href="audit.html">audit souladu</a>.
+  </div>
+</footer>
+
+<script>
+// ============ ŽIVÁ SYNCHRONIZACE SE ZDROJEM PRAVDY ============
+// Načte ../data/stand-spec.json, přepočítá všechny hodnoty a přepíše statický
+// otisk v HTML. Když se otisk liší (spec se mezitím změnil), hodnotu podbarví
+// (.desync) — stránka tak nikdy tiše nelže. Přes file:// fetch selže a zůstane
+// otisk (banner to ohlásí). Poměry stran SVG/WebP jsou konstanty z podkladů:
+const AR = {
+  'Datový zdroj 1.svg': 511.44/600.5,   // viewBox
+  'Datový zdroj 2.svg': 318.42/348.97,
+  'Datový zdroj 3.svg': 605.32/708.4,
+  logo: 187.94/177.38,                  // Primary Pixel Floors logo.svg
+  arc: 541/399                          // Arcade.webp (px)
+};
+const fmt = (n, dec=0) => n.toLocaleString('cs-CZ', {minimumFractionDigits:0, maximumFractionDigits:dec}).replace(/ ?%/,'');
+const fmt1 = n => n.toLocaleString('cs-CZ', {minimumFractionDigits:1, maximumFractionDigits:1}); // vždy 1 desetinné (spáry)
+const deg = n => String(n).replace('-', '−') + '°'; // typografické minus
+const px = (wmm, hmm, dpi) => fmt(Math.round(wmm/25.4*dpi)) + ' × ' + fmt(Math.round(hmm/25.4*dpi)) + ' px';
+const crops = (L, n, pw) => {
+  const gap = (L - n*pw) / (n-1), out = [];
+  for (let i = 0; i < n; i++) {
+    const x0 = i*(pw+gap);
+    out.push(fmt(Math.round(x0*10)/10, 1) + '–' + fmt(Math.round((x0+pw)*10)/10, 1));
+  }
+  return out.join(' · ');
+};
+
+fetch('../data/stand-spec.json').then(r => r.json()).then(s => {
+  const gh = s.confirmed.graphic_height, aLen = s.confirmed.wall_a_length,
+        bLen = s.assumed.wall_b_length.value, pw = s.confirmed.panel_module_width,
+        fab = s.confirmed.graphic_fabric,
+        nA = s.assumed.panel_counts.wall_a_panels, nB = s.assumed.panel_counts.wall_b_panels,
+        gapA = (aLen - nA*pw)/(nA-1), bAlt = nB*pw + (nB-1)*gapA,
+        ban = s.hanging_banner, circ = Math.PI * ban.dims_mm.diameter,
+        kio = s.product_kiosk, dice = kio.graphics.dice,
+        tbl = kio.table, lg = tbl.graphics.logo,
+        lgH = lg.width_mm * AR.logo,
+        arcW = s.product_arcade.dims_mm.bedna.width, arcH = arcW * AR.arc,
+        td = s.product.tower_decals.decals;
+  const diceRow = d => fmt(d.w_mm,1) + ' × ' + fmt(Math.round(d.w_mm*AR[d.file])) + ' mm';
+  const map = {
+    gh: fmt(gh)+' mm', aLen: fmt(aLen)+' mm', bLen: fmt(bLen)+' mm',
+    bAlt: fmt(Math.round(bAlt))+' mm', fabW: fmt(fab.w)+' mm',
+    bFull: fmt(bLen)+' × '+fmt(gh)+' mm', aFull: fmt(aLen)+' × '+fmt(gh)+' mm',
+    fabPiece: fmt(fab.w)+' × '+fmt(fab.h)+' mm',
+    bPieces: String(s.assumed.panel_counts.wall_b_fabric_pieces),
+    bPx100: px(bLen, gh, 100), bPx150: px(bLen, gh, 150),
+    aPx100: px(aLen, gh, 100), aPx150: px(aLen, gh, 150),
+    panel: fmt(pw)+' × '+fmt(gh)+' mm',
+    gapA: fmt1(Math.round(gapA*10)/10)+' mm',
+    gapB: fmt1(Math.round((bLen-nB*pw)/(nB-1)*10)/10)+' mm',
+    cropsA: crops(aLen, nA, pw), cropsB: crops(bLen, nB, pw),
+    cropsBAlt: crops(bAlt, nB, pw),
+    pPx100: px(pw, gh, 100),
+    banD: fmt(ban.dims_mm.diameter),
+    banFlat: '≈ '+fmt(Math.round(circ))+' × '+fmt(ban.dims_mm.height)+' mm',
+    banPx72: px(circ, ban.dims_mm.height, 72), banPx100: px(circ, ban.dims_mm.height, 100),
+    banRot: ban.graphic_rotation_deg.value+'°', banBot: fmt(ban.placement.bottom_mm)+' mm',
+    arcSize: fmt(arcW)+' × ≈ '+fmt(Math.round(arcH))+' mm',
+    arcPx150: px(arcW, arcH, 150),
+    kd1: diceRow(dice[0]), kd2: diceRow(dice[1]), kd3: diceRow(dice[2]),
+    kd1y: fmt(dice[0].center_y_mm)+' mm', kd2y: fmt(dice[1].center_y_mm)+' mm', kd3y: fmt(dice[2].center_y_mm)+' mm',
+    kd1w: fmt(Math.round(dice[0].w_mm*(1-dice[0].wrap)*10)/10,1)+' mm na čele + '+fmt(Math.round(dice[0].w_mm*dice[0].wrap*10)/10,1)+' mm na pravém boku',
+    kd2w: fmt(Math.round(dice[1].w_mm*(1-dice[1].wrap)*10)/10,1)+' mm na čele + '+fmt(Math.round(dice[1].w_mm*dice[1].wrap*10)/10,1)+' mm na levém boku',
+    kd3x: 'střed '+fmt(dice[2].center_x_mm)+' mm od levé hrany',
+    kioFace: fmt(kio.dims_mm.body.width)+' × '+fmt(kio.dims_mm.body.height_front)+' mm',
+    kioSide: fmt(kio.dims_mm.body.depth)+' mm',
+    tblLogo: fmt(lg.width_mm)+' × ≈ '+fmt(Math.round(lgH))+' mm',
+    tblBoard: fmt(tbl.dims_mm.deska.length)+' × '+fmt(tbl.dims_mm.kryci_deska.top)+' mm',
+    tblLogoCy: fmt(lg.center_y_mm)+' mm',
+    tblLogoBot: fmt(Math.round(lg.center_y_mm - lgH/2)),
+    tblLogoTop: fmt(Math.round(lg.center_y_mm + lgH/2)),
+    td1: fmt(td[0].w_mm)+' × '+fmt(Math.round(td[0].w_mm*AR[td[0].file]))+' mm',
+    td2: fmt(td[1].w_mm)+' × '+fmt(Math.round(td[1].w_mm*AR[td[1].file]))+' mm',
+    td3: fmt(td[2].w_mm)+' × '+fmt(Math.round(td[2].w_mm*AR[td[2].file]))+' mm',
+    td1y: fmt(td[0].y_mm)+' mm', td2y: fmt(td[1].y_mm)+' mm', td3y: fmt(td[2].y_mm)+' mm',
+    td1z: fmt(td[0].z_mm)+' mm', td2z: fmt(td[1].z_mm)+' mm', td3z: fmt(td[2].z_mm)+' mm',
+    td1r: deg(td[0].rot_deg||0), td2r: deg(td[1].rot_deg||0), td3r: deg(td[2].rot_deg||0)
+  };
+  let changed = 0;
+  document.querySelectorAll('[data-k]').forEach(el => {
+    const v = map[el.dataset.k];
+    if (v === undefined) return;
+    const norm = t => t.replace(/[\s ]+/g, ' ').trim();
+    if (norm(el.textContent) !== norm(v)) { el.classList.add('desync'); changed++; }
+    el.textContent = v;
+  });
+  // obrazovky ze spec.monitors.numbering
+  const rows = s.monitors.numbering.map(m =>
+    '<tr><td class="num">'+m.n+'</td><td>'+m.where+'</td><td class="num">'+
+    fmt(m.screen_mm[0],2)+' × '+fmt(m.screen_mm[1],2)+' mm</td><td class="num">'+
+    m.recommended_px[0]+' × '+m.recommended_px[1]+'</td></tr>').join('');
+  document.getElementById('scrRows').innerHTML = rows;
+  const b = document.getElementById('syncBanner');
+  if (changed) {
+    b.className = 'bad';
+    b.textContent = '⚠ Spec soubor se od otisku stránky liší v ' + changed + ' hodnotách (podbarvené) — otisk je zastaralý, platí zobrazené (živé) hodnoty.';
+  } else {
+    b.className = 'ok';
+    b.textContent = '✓ Hodnoty načtené živě ze stand-spec.json (stav spec: ' + (s.meta.stav_k || '—') + ') — shodují se s otiskem stránky.';
+  }
+}).catch(() => {
+  const b = document.getElementById('syncBanner');
+  b.textContent = 'ℹ Nepodařilo se načíst stand-spec.json (stránka běží z file://?) — zobrazen statický otisk k 15. 8. 2026.';
+});
+</script>
+</body>
+</html>

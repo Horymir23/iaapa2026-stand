@@ -62,6 +62,8 @@ data/stand-spec.json   zdroj pravdy — rozměry, regulace, termíny, kontakty, 
 data/specifikace.md    čitelné shrnutí pro člověka
 web/index.html         datová stránka (podklad pro branding)
 web/viewer.html        3D editor v prohlížeči
+web/tisk.html          návod pro tisková data — rozměry, odvození, DPI, dotazy na výrobce
+                       (hodnoty čte živě ze stand-spec.json; screenshoty v assets/export/tisk/)
 web/mini-mesh.js       mesh produktu mini pro viewer (GENEROVANÝ — needitovat ručně)
 web/arcade-mesh.js     mesh produktu arcade pro viewer (GENEROVANÝ — needitovat ručně)
 web/kiosk-mesh.js      mesh kiosku „pult + monitor" pro viewer (GENEROVANÝ — needitovat ručně)

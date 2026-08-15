@@ -133,9 +133,9 @@
     </div>
     <div id="syncBanner">⏳ načítám živé hodnoty ze stand-spec.json…</div>
     <nav class="toc">
-      <a href="#s1"><span class="mono">01</span>Stěna B — textil</a>
-      <a href="#s2"><span class="mono">02</span>Stěna A — textil</a>
-      <a href="#s3"><span class="mono">03</span>Varianta: po panelech</a>
+      <a href="#s1"><span class="mono">01</span>Stěna B (6 m)</a>
+      <a href="#s2"><span class="mono">02</span>Stěna A (3 m)</a>
+      <a href="#s3"><span class="mono">03</span>Dělení po panelech</a>
       <a href="#s4"><span class="mono">04</span>Závěsný poutač 360°</a>
       <a href="#s5"><span class="mono">05</span>Totem arcade — tělo</a>
       <a href="#s6"><span class="mono">06</span>Kiosky — kostky</a>
@@ -172,14 +172,24 @@
     <div class="callout warn">
       <b>Pozor: žádný ze současných souborů v <span class="mono">assets/grafika/</span> není tisková kvalita.</b> Jsou to náhledy pro 3D vizualizaci — při finální velikosti mají 14–30 dpi. Bitmapové motivy (stěny, poutač, tělo totemu) je potřeba znovu vyrobit v produkčním rozlišení podle hodnot níže; kostky a logo existují jako SVG, tam stačí vektor předat tiskárně.
     </div>
+
+    <div class="callout">
+      <b>Postup výroby (zadáno 15. 8. 2026):</b> stěny staví pořadatel (GES) — <b>grafiku na ně vyrábíme a aplikujeme sami</b> a panely se <b>nesmí nijak poškodit</b> (žádné vrtání, vruty ani lepidla zanechávající stopy). Navržené tiskové řešení stěn:
+      <ul>
+        <li><b>1 · Removable fólie po panelech</b> — nízkoadhezní (clean-removal) samolepicí fólie, matný laminát, řez 986 × 2 474 mm na panel; nejlehčí a nejlevnější cesta, vyžaduje souhlas GES s lepením.</li>
+        <li><b>2 · Zavěšené desky (bez lepidla)</b> — potištěný lehčený sendvič / foam PVC 5 mm, 986 × 2 474 mm, háčky přes horní hranu panelu (~2,7–4,8 kg na panel); nulové riziko poškození, opakovaně použitelné.</li>
+        <li><b>3 · Celistvý textil jen od GES</b> — placená služba v jejich systému; jediná cesta k motivu bez přiznaných spár.</li>
+      </ul>
+      Co z toho GES povolí, je <a href="#dotazy">dotaz č. 1</a>. V obou vlastních cestách (1 i 2) je výrobní formát <b>po panelech</b> — výřezy viz <a href="#s3">sekce 03</a>.
+    </div>
   </div>
 </section>
 
 <!-- ============ 1 · STĚNA B ============ -->
 <section id="s1">
   <div class="wrap">
-    <div class="sec-head"><span class="sec-num">01</span><h2>Stěna B — textil přes celou stěnu (6m strana)</h2></div>
-    <p class="sec-intro">Hlavní grafická plocha stánku. Jeden souvislý motiv, který ale GES vyrobí jako <strong>dva kusy textilu</strong> se svislým spojem — textil má max. šířku 2970 mm.</p>
+    <div class="sec-head"><span class="sec-num">01</span><h2>Stěna B — celostěnový motiv (6m strana)</h2></div>
+    <p class="sec-intro">Hlavní grafická plocha stánku. Motiv se navrhuje jako jeden celek přes celou stěnu; vyrábět se bude po panelech (fólie / zavěšené desky, <a href="#s3">sekce 03</a>) — celistvý textil je jen placená alternativa od GES.</p>
 
     <figure class="shot">
       <img src="../assets/export/tisk/stena-b.jpg" alt="Stěna B s grafikou — pohled z 3D modelu, produkty skryté" loading="lazy">
@@ -188,10 +198,10 @@
 
     <div class="spec">
       <div class="row"><div class="k">Finální rozměr tisku</div><div class="v"><strong><span data-k="bFull">5 940 × 2 474 mm</span></strong> (šířka × výška)</div><div><span class="tag pending">odhad</span></div></div>
-      <div class="row"><div class="k">Počet kusů</div><div class="v"><span data-k="bPieces">2</span>× textil à <strong><span data-k="fabPiece">2 970 × 2 474 mm</span></strong>; poloha svislého spoje zatím neznámá</div><div><span class="tag order">dotaz</span></div></div>
+      <div class="row"><div class="k">Výrobní dělení</div><div class="v">Vlastní aplikace: <strong>6 dílů po panelech</strong> (výřezy v <a href="#s3">sekci 03</a> — čeká na rozpal od GES) · textil GES: <span data-k="bPieces">2</span> kusy à <strong><span data-k="fabPiece">2 970 × 2 474 mm</span></strong>, poloha spoje neznámá</div><div><span class="tag order">dotaz</span></div></div>
       <div class="row"><div class="k">Rozlišení podkladu</div><div class="v">100–150 dpi při 1:1 → <strong class="mono"><span data-k="bPx100">23 386 × 9 740 px</span></strong> @ 100 dpi, <span class="mono" data-k="bPx150">35 079 × 14 610 px</span> @ 150 dpi</div><div></div></div>
       <div class="row"><div class="k">Stávající podklad</div><div class="v"><span class="mono">Stěna B v3.jpg</span> — 3 402 × 1 417 px ≈ <strong>15 dpi</strong> při finální velikosti → jen náhled, na tisk nestačí</div><div><span class="tag past">nestačí</span></div></div>
-      <div class="row"><div class="k">Materiál / aplikace</div><div class="v">Závisí na povrchu panelů GES (řezaná fólie vs. celoplošný wrap vs. napínaný textil)</div><div><span class="tag order">dotaz</span></div></div>
+      <div class="row"><div class="k">Materiál / aplikace</div><div class="v">Vyrábíme a aplikujeme sami, <strong>panely se nesmí poškodit</strong> → removable fólie po panelech, nebo desky na háčcích přes horní hranu — co GES povolí, řeší <a href="#dotazy">dotaz č. 1</a></div><div><span class="tag order">dotaz</span></div></div>
     </div>
 
     <div class="callout">
@@ -199,7 +209,7 @@
       <ul>
         <li>Výška grafické plochy <b><span data-k="gh">2 474 mm</span></b> — GES spec list <span class="tag ok">potvrzeno</span></li>
         <li>Délka stěny <b><span data-k="bLen">5 940 mm</span></b> = 2 × 2 970 (analogie potvrzené stěny A) <span class="tag pending">odhad</span> — při stejné spáře jako na stěně A by vyšla <b><span data-k="bAlt">5 946 mm</span></b>. Rozdíl 6 mm posouvá spáry i spoj textilu, pro tisk je potřeba přesná hodnota od GES (<a href="#dotazy">dotaz č. 2</a>).</li>
-        <li>Max. šířka kusu textilu <b><span data-k="fabW">2 970 mm</span></b> — GES spec list <span class="tag ok">potvrzeno</span> → 6m stěna = 2 kusy, <b>kde přesně padne spoj, ví jen GES</b> (<a href="#dotazy">dotaz č. 3</a>).</li>
+        <li>Max. šířka kusu textilu <b><span data-k="fabW">2 970 mm</span></b> — GES spec list <span class="tag ok">potvrzeno</span> → u textilu od GES je 6m stěna 2 kusy a <b>kde přesně padne spoj, ví jen GES</b> (<a href="#dotazy">dotaz č. 3</a>).</li>
       </ul>
     </div>
 
@@ -212,8 +222,8 @@
 <!-- ============ 2 · STĚNA A ============ -->
 <section id="s2">
   <div class="wrap">
-    <div class="sec-head"><span class="sec-num">02</span><h2>Stěna A — textil (3m strana)</h2></div>
-    <p class="sec-intro">Kratší stěna, jeden kus textilu. Oba rozměry jsou potvrzené — tady se dá jít do výroby hned po potvrzení materiálu.</p>
+    <div class="sec-head"><span class="sec-num">02</span><h2>Stěna A — celostěnový motiv (3m strana)</h2></div>
+    <p class="sec-intro">Kratší stěna. Rozměry i rozpal panelů jsou potvrzené — do výroby se dá jít hned, jak GES potvrdí způsob aplikace.</p>
 
     <figure class="shot">
       <img src="../assets/export/tisk/stena-a.jpg" alt="Stěna A s grafikou — pohled z 3D modelu, produkty skryté" loading="lazy">
@@ -222,10 +232,10 @@
 
     <div class="spec">
       <div class="row"><div class="k">Finální rozměr tisku</div><div class="v"><strong><span data-k="aFull">2 970 × 2 474 mm</span></strong> (šířka × výška)</div><div><span class="tag ok">potvrzeno</span></div></div>
-      <div class="row"><div class="k">Počet kusů</div><div class="v">1× textil (přesně limit šířky textilu)</div><div><span class="tag ok">potvrzeno</span></div></div>
+      <div class="row"><div class="k">Výrobní dělení</div><div class="v">Vlastní aplikace: <strong>3 díly po panelech</strong> (výřezy v <a href="#s3">sekci 03</a> — rozpal stěny A je potvrzený) · textil GES: 1 kus (přesně limit šířky textilu)</div><div><span class="tag ok">potvrzeno</span></div></div>
       <div class="row"><div class="k">Rozlišení podkladu</div><div class="v">100–150 dpi při 1:1 → <strong class="mono"><span data-k="aPx100">11 693 × 9 740 px</span></strong> @ 100 dpi, <span class="mono" data-k="aPx150">17 539 × 14 610 px</span> @ 150 dpi</div><div></div></div>
       <div class="row"><div class="k">Stávající podklad</div><div class="v"><span class="mono">Stěna A v1.jpg</span> — 3 543 × 2 953 px ≈ <strong>30 dpi</strong> → jen náhled</div><div><span class="tag past">nestačí</span></div></div>
-      <div class="row"><div class="k">Materiál / aplikace</div><div class="v">Stejně jako stěna B — čeká na potvrzení povrchu panelů</div><div><span class="tag order">dotaz</span></div></div>
+      <div class="row"><div class="k">Materiál / aplikace</div><div class="v">Stejně jako stěna B — removable fólie, nebo zavěšené desky; čeká na povolení od GES (<a href="#dotazy">dotaz č. 1</a>)</div><div><span class="tag order">dotaz</span></div></div>
     </div>
 
     <div class="callout">
@@ -241,8 +251,8 @@
 <!-- ============ 3 · VARIANTA PO PANELECH ============ -->
 <section id="s3">
   <div class="wrap">
-    <div class="sec-head"><span class="sec-num">03</span><h2>Varianta: grafika po panelech (986 × 2 474 mm)</h2></div>
-    <p class="sec-intro">Pokud GES potvrdí, že se místo textilu polepují jednotlivé panely, dělí se celostěnový motiv na výřezy. <strong>Jestli tahle varianta nastane, rozhodne odpověď na dotaz č. 1 (povrch panelů).</strong></p>
+    <div class="sec-head"><span class="sec-num">03</span><h2>Dělení po panelech (986 × 2 474 mm) — výrobní formát</h2></div>
+    <p class="sec-intro">Fólie i zavěšené desky se vyrábějí <strong>po jednotlivých panelech</strong> — celostěnový motiv ze sekcí 01–02 se rozřeže na výřezy níže. Pro stěnu A je dělení potvrzené; pro stěnu B ho blokuje neznámý rozpal (<a href="#dotazy">dotaz č. 2</a>).</p>
 
     <div class="spec">
       <div class="row"><div class="k">Rozměr 1 panelu</div><div class="v"><strong><span data-k="panel">986 × 2 474 mm</span></strong> (grafická plocha rigidního panelu)</div><div><span class="tag ok">potvrzeno</span></div></div>
@@ -462,9 +472,16 @@ we are preparing print artwork for stand S4244 (Pixel Floors / HTDM,
 corner shell scheme 3 × 6 m, GES AMP system) and need to confirm
 a few production details:
 
-1) PANEL SURFACE — What is the surface/material of the AMP panels,
-   and which graphic applications do you support (cut vinyl /
-   full-coverage wrap / printed infill panels / stretched fabric)?
+1) PANEL SURFACE & PERMITTED APPLICATION — We will produce and
+   apply the wall graphics ourselves, and the panels must not be
+   damaged in any way. Please confirm:
+   a) the surface/material of the AMP panels,
+   b) whether low-tack removable self-adhesive film may be applied
+      directly to the panel surface,
+   c) whether over-panel graphic hangers (hooked over the top edge
+      of the panel) are permitted, and the max. weight per panel,
+   d) whether you offer graphic rails or another approved fixing
+      system for the AMP walls.
    This decides our whole production route.
 
 2) BUILD DIMENSIONS OF THE 6 M WALL — Wall on the 3 m side is
@@ -475,10 +492,11 @@ a few production details:
    is 4.8 or 6.0 mm — we need exact values to align the artwork
    across the panel gaps.)
 
-3) FABRIC GRAPHICS JOIN — Fabric graphics are max. 2970 mm wide,
-   so the 6 m wall needs two pieces with a vertical join. Where
-   exactly will the join fall, and how do the pieces meet
-   (butt joint / overlap)? Any bleed required at the join?
+3) FABRIC GRAPHICS (alternative) — If we order your AMP fabric
+   graphics for the 6 m wall instead (max. width 2970 mm = two
+   pieces with a vertical join): where exactly does the join fall,
+   how do the pieces meet (butt joint / overlap), and is any bleed
+   required at the join?
 
 4) ARTWORK SPECIFICATION — Please send your artwork spec for both
    fabric (2970 × 2474 mm) and rigid panel (986 × 2474 mm) graphics:

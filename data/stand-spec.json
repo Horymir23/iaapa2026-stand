@@ -338,8 +338,23 @@
     "regenerate": "python3 model/export_banner.py  →  model/banner_v_stanku.stl/.dae (viewer staví vlastní válec s UV pro grafiku)"
   },
 
+  "graphics_production": {
+    "$comment": "PROCES ZADÁN UŽIVATELEM 15.8.2026: pořadatel (GES) staví stěny, grafiku VYRÁBÍ A APLIKUJE HTDM sám. Jediná podmínka: panely se NESMÍ nijak poškodit (žádné vrtání, vruty, lepidla zanechávající rezidua nebo strhávající povrch). Důsledek: celostěnový textil (confirmed.graphic_fabric) je dosažitelný jen jako placená služba GES v jejich systému AMP — vlastními silami celostěnový kus nepoškozivě neuchytíme → VÝROBNÍ FORMÁT OBOU VLASTNÍCH CEST JE PO PANELECH 986 × 2474 (výřezy počítá web/tisk.html, sekce 03; pro stěnu B blokováno neznámým rozpalem — viz open_questions).",
+    "walls_built_by": "GES / pořadatel (shell scheme v ceně plochy)",
+    "graphics_by": "HTDM — vlastní výroba i aplikace",
+    "constraint": "panely GES nijak nepoškodit (bez vrtání, vrutů, reziduí lepidel)",
+    "routes": [
+      { "id": "folie", "priority": 1, "name": "Removable nízkoadhezní samolepicí fólie po panelech", "spec": "PVC/PET fólie s odstranitelným (low-tack, clean-removal) lepidlem, UV/latex tisk, MATNÝ laminát (tlumené osvětlení + spoty — lesk by odrážel), řez přesně 986 × 2474 na panel, aplikace po panelech, spáry zůstávají přiznané (5–6 mm)", "quantity": "9 panelů (3 stěna A + 6 stěna B) ≈ 22 m²", "conditions": ["GES musí povolit lepení na panel", "hladký povrch panelu", "test adheze na 1 panelu na místě před celoplošnou aplikací"], "risk": "povrch panelů neznámý; při zákazu lepení → route desky" },
+      { "id": "desky", "priority": 2, "name": "Lehké potištěné desky zavěšené přes horní hranu panelu", "spec": "foam PVC 5 mm (~2 kg/m² → panel ≈ 4,8 kg) nebo lehčená deska typu KAPA 5 mm (~1,1 kg/m² → panel ≈ 2,7 kg), přímý UV tisk, formát 986 × 2474, zavěšení over-panel háčky přes horní hranu — bez lepidla, bez zásahu do panelu", "conditions": ["GES musí potvrdit háčky přes hranu + nosnost panelu"], "advantage": "nulové riziko poškození, desky jsou opakovaně použitelné na dalších akcích" },
+      { "id": "ges_textil", "priority": 3, "name": "Textil 2970 × 2474 od GES (placená služba)", "spec": "celostěnový napínaný textil v systému AMP — jen pokud ho vyrobí a nainstaluje GES; stěna B = 2 kusy se svislým spojem (poloha = open_question)", "note": "jediná cesta k celistvému motivu bez přiznaných spár" },
+      { "id": "freestanding", "priority": 4, "name": "Vlastní napínací textilové rámy PŘED stěnou (fallback)", "spec": "SEG rámy do výšky 2500, volně stojící s vlastní stabilitou — o panely se NESMÍ opírat (nesou jen samy sebe)", "note": "nezávislé na GES, ale zabírá hloubku, dražší a komplikuje TV na stěně B — až kdyby GES zakázal fólii i háčky" }
+    ],
+    "decided": null,
+    "decision_blocked_by": ["povrch panelů + povolené aplikace (GES)", "rozpal panelů stěny B (GES)"]
+  },
+
   "open_questions": [
-    { "topic": "Povrch a materiál panelů", "why": "rozhoduje řezaná fólie vs. celoplošný wrap", "owner": "GES", "email": "iaapaeu@ges.com" },
+    { "topic": "Povrch panelů + povolené způsoby aplikace grafiky", "why": "ZPŘESNĚNO 15.8.2026 (viz graphics_production): stěny staví GES, grafiku vyrábí a aplikuje HTDM a panely se nesmí poškodit. Potřebujeme: (a) povrch/materiál panelů AMP, (b) zda je povolena nízkoadhezní removable fólie přímo na panel, (c) zda jsou povoleny závěsné háčky přes horní hranu panelu a jakou zátěž panel unese, (d) zda GES nabízí grafické lišty / schválený úchytný systém pro AMP. Rozhoduje mezi fólií a zavěšenými deskami.", "owner": "GES", "email": "iaapaeu@ges.com" },
     { "topic": "Počet a rozpal panelů pro S4244", "why": "spec list (data/Shell Scheme.pdf) je z příkladu 3×3 m; u 6m stěny navíc: textil má max. šířku 2970 mm → 2 kusy = svislý spoj cca uprostřed stěny B — kde přesně?", "owner": "GES", "email": "iaapaeu@ges.com" },
     { "topic": "Nosnost panelu pro TV a monitory", "why": "montáž TV je povolena, nosnost neuvedena; plánujeme 2× 55\" TV (cca 17–25 kg/ks vč. držáku) na stěnu B — viz wall_tvs — a krabici se 3× 27\" monitory (600×1040×80 mm) na stěnu A — viz wall_monitor_box", "owner": "GES", "email": "iaapaeu@ges.com" },
     { "topic": "Přesný rozměr jmenovky", "why": "chybí kóty", "owner": "GES", "email": "iaapaeu@ges.com" },

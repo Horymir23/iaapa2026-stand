@@ -11,6 +11,10 @@ Stánek je **rohový shell scheme** systému **GES AMP** — dvě bílé stěny 
 do uliček. Úkolem je přetvořit ho do vizuální podoby značky. Klíčovým prvkem je **LED podlaha**,
 proto se počítá s tlumeným osvětlením.
 
+**Proces grafiky (zadáno 15. 8. 2026):** stěny staví pořadatel (GES), grafiku **vyrábí a aplikuje
+HTDM sám** — jediná podmínka je **nijak nepoškodit panely**. Navržené cesty a jejich stav jsou
+v `data/stand-spec.json` → `graphics_production`; tiskové podklady shrnuje `web/tisk.html`.
+
 ## Zlaté pravidlo
 
 **`data/stand-spec.json` je jediný zdroj pravdy.** Žádný rozměr nepiš natvrdo nikam jinam.

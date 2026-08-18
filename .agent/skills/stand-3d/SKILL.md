@@ -37,21 +37,26 @@ Jednotky: **generator i spec = milimetry**. Three.js scéna pracuje v metrech �
 |---|---|
 | Výška panelu | 2500 mm |
 | Grafická plocha (výška) | 2474 mm |
-| Modul panelu (šířka) | 986 mm |
-| Textil přes celou stěnu | 2970 × 2474 mm |
+| Modul panelu (šířka) | 986 mm (půlpanel 489 mm) |
+| Spára mezi panely | **7 mm** (příloha GES „AMP Dos and don'ts", v repu od 18. 8. 2026) |
+| Textil — visual | 2976 mm (3m stěna) / 5952 mm (6m stěna), jedním kusem až do 10 m |
 | Stěna A | 2970 mm = 3 panely |
 
 ## Dopočet spár — dělá se to takhle
 
-Panely musí **přesně** vyplnit délku stěny. Spára se dopočítává, není konstanta:
+Panely musí **přesně** vyplnit délku stěny. Ve vieweru/generatoru se spára dopočítává:
 
 ```python
 n = round(wall_length / PANEL_W)          # počet panelů
 gap = (wall_length - n * PANEL_W) / (n-1) # zbytek rozdělený mezi spáry
 ```
 
-Pro stěnu 2970 mm → 3 panely, spára 6,0 mm. Pro 5940 mm → 6 panelů, spára 4,8 mm.
-Když to uděláš s pevnou spárou, stěna přeteče — to už se jednou stalo, nedělej to znovu.
+Pro stěnu B 5951 mm (od 18. 8. 2026) → 6 panelů, spára 7,0 mm. Pro stěnu A 2970 mm → 3 panely,
+spára vychází 6,0 mm — **pozor**: GES příloha přitom říká spáru 7 mm (3×986 + 2×7 = 2972 ≠ 2970).
+Zdroje GES si v rozteči odporují o 0–3 mm (rozteče 990/992/993, viz spec
+`confirmed.amp_file_guide.gap_note`) — pro 3D vizualizaci je to jedno, **pro tisk** platí
+web/tisk.html: díly max. 986 mm na panel, prvky přes spáru s tolerancí ±3 mm.
+Když to uděláš s pevnou spárou bez dopočtu, stěna přeteče — to už se jednou stalo, nedělej to znovu.
 
 ## Mapování grafiky přes panely — nejdůležitější věc
 

@@ -11,14 +11,27 @@ do uliček. Stánek na plánu vystupuje jako „Pixel Floors".
 Výměra dle půdorysu haly (`preview.webp`): **3 × 6 m = 18 m²** — dvě spojená místa 3×3 m.
 Sousedé: za 3m stěnou **S4242 Blacklight Attractions**, za 6m stěnou **S4345 House of Play (Europe)**.
 
-## Potvrzeno pořadatelem (3. 7. 2026) a GES spec listem
+## Potvrzeno pořadatelem (3. 7. 2026), GES spec listem a přílohou GES (24. 7. 2026)
 
 **Panely**
-- Výška **2500 mm**, barva **bílá** (systém AMP)
-- Grafický modul **986 mm**, grafická výška **2474 mm**
-- Textil přes celou stěnu: **2970 × 2474 mm** (bez spár)
+- Výška **2500 mm**, barva **bílá** (systém AMP), materiál **Foamex, hladký povrch** (e-mail GES 24. 7.)
+- Grafický modul **986 mm** (půlpanel 489 mm), grafická výška **2474 mm**
+- **Spára mezi panely 7 mm** — příloha GES „AMP Dos and don'ts" (v repu: `AMP_Dos and donts + dims updated.pdf`)
 - Kratší stěna **2970 mm** = 3 panely
 - TV **lze montovat** (nosnost neuvedena)
+
+**Vlastní grafika (příloha GES + e-maily 24.–25. 7., originály v `RE_ Shell Scheme…eml`)**
+- **Samolepicí vinyl povolen** přímo na panel — nepoškodit, žádná rezidua lepidla; GES neručí za rozměry
+- **Rozhodnuto 18. 8. 2026:** na panely jde **řezaná / kiss-cut grafika** (to bylo předmětem dotazu
+  a GES to povolil); **celoplošný polep panelu se přímo na panel dělat nebude** — dotaz ho stavěl do
+  kontrastu s potištěnými panely, riziko poškození měkkého Foamexu nese HTDM. Plná plocha → **tištěná
+  deska 3 mm na suchý zip**
+- Tištěné desky: libovolný **rigidní materiál 3 mm** (Foamex, Dibond, Correx…), formát 986 × 2474
+- Uchycení: **suchý zip** (strana loop po celém obvodu desky, na panelu **min. 24 h před otevřením show**)
+  nebo oboustranné podložky od GES
+- **Zakázáno:** hřebíky/špendlíky, vruty/díry, sponky, malování stěn
+- Textil: **jedním kusem až do šířky 10 m** — visual 2976 mm (3m stěna) / **5952 mm (6m stěna, bez spoje)**;
+  GES dodá jen visual rozměr, fyzický určuje látka (blockout doporučen)
 
 **Jmenovka** — pevně daná, branding přes ni nejde
 - Bílé pozadí, černé písmo
@@ -42,13 +55,13 @@ Sousedé: za 3m stěnou **S4242 Blacklight Attractions**, za 6m stěnou **S4345 
 
 | Co | Hodnota | Proč odhad |
 |---|---|---|
-| **Stavební** délka delší stěny | 5940 mm | nominálních 6 m je potvrzeno půdorysem; stěny ale stojí uvnitř plochy — 5940 = 2 × 2970 analogicky ke kratší stěně, rozpal panelů potvrdí GES |
+| **Stavební** délka delší stěny | 5951 mm (od 18. 8. 2026) | 6 × 986 + 5 × spára 7 mm z přílohy GES; počet panelů je ale dopočet z nominálních 6 m a zdroje GES si v rozteči mírně odporují (rozpětí 5940–5952) |
 | Tloušťka panelu | 40 mm | GES ji v spec listu neuvádí |
 
 ## Čeká na GES — `iaapaeu@ges.com`
 
-1. **Povrch a materiál panelů** ← bez toho nelze rozhodnout řezaná fólie vs. celoplošný wrap
-2. Počet a rozpal panelů konkrétně pro S4244 (spec list je z příkladu 3 × 3 m); u 6m stěny navíc: textil má max. 2970 mm → 2 kusy = svislý spoj cca uprostřed stěny — kde přesně?
+1. **Celková stavební délka obou stěn + potvrzení 6 panelů na stěně B** pro S4244 — podklady GES dávají rozteč 990/992/993 mm (2970 vs 2972, resp. 5940–5952); blokuje jen dělení grafiky přes spáry
+2. U textilu potvrdit **1 kus** na 6m stěnu (visual 5952) a možnost instalace vlastního textilu do systému AMP
 3. Nosnost panelu pro TV
 4. Přesný rozměr jmenovky
 

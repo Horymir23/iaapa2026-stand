@@ -4,5 +4,13 @@ assets/export/*
 !assets/export/tisk
 .DS_Store
 __pycache__/
+
+# POZOR: repozitar je VEREJNY (GitHub Pages na free planu).
+# E-mailova korespondence obsahuje jmena, telefony a adresy -> nikdy necommitovat.
+# Podstatny obsah (doslovne citace odpovedi GES) je prepsany v data/stand-spec.json.
+data/*.eml
+# Priloha GES "AMP Dos and don'ts" je cizi dokument ((c) GES 2021) -> jen lokalne;
+# jeji obsah je taky v stand-spec.json -> confirmed.amp_file_guide
+data/AMP_Dos and donts*.pdf
 /kiosky-u-ulicky-izo.png
 /tisk

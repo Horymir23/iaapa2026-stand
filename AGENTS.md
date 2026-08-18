@@ -11,12 +11,23 @@ Stánek je **rohový shell scheme** systému **GES AMP** — dvě bílé stěny 
 do uliček. Úkolem je přetvořit ho do vizuální podoby značky. Klíčovým prvkem je **LED podlaha**,
 proto se počítá s tlumeným osvětlením.
 
-**Proces grafiky (potvrzeno GES 24.–25. 7. 2026):** stěny staví pořadatel (GES), grafiku **vyrábí
-a aplikuje HTDM sám**. Panely jsou **Foamex s hladkým povrchem** a **vlastní samolepicí vinyl je
-povolen** přímo na panel — podmínkou je panely nepoškodit a nenechat rezidua lepidla; GES u vlastní
-grafiky **neručí** za poškození ani sednutí rozměrů. Detail v `data/stand-spec.json` →
-`confirmed.own_graphics` a `graphics_production`; tiskové podklady shrnuje `web/tisk.html`.
-GES navíc poslal **přílohu s přesnými rozměry panelů** — zatím není v repu (viz `open_questions`).
+**Proces grafiky (potvrzeno GES 24.–25. 7. 2026, originály e-mailů v `data/RE_ Shell Scheme…eml`):**
+stěny staví pořadatel (GES), grafiku **vyrábí a aplikuje HTDM sám**. Panely jsou **Foamex s hladkým
+povrchem** a **vlastní samolepicí vinyl je povolen** přímo na panel — podmínkou je panely nepoškodit
+a nenechat rezidua lepidla; GES u vlastní grafiky **neručí** za poškození ani sednutí rozměrů.
+
+**Rozhodnuto 18. 8. 2026 (`graphics_production.full_wrap_decision`):** na panely jde **řezaná /
+kiss-cut grafika** — přesně na to se dotaz ptal a GES ji povolil. **Celoplošný polep celého panelu
+se přímo na panel dělat nebude**: dotaz ho výslovně stavěl do kontrastu s potištěnými panely
+(„*instead of* using fully printed wall panels"), takže povolení na něj nesedí, a riziko poškození
+měkkého Foamexu nese HTDM. Pro plnou plochu se použije **tištěná deska 3 mm na suchý zip**.
+Detail v `data/stand-spec.json` → `confirmed.own_graphics.exchange_verbatim` (doslovné znění celé
+výměny) a `graphics_production`; tiskové podklady shrnuje `web/tisk.html`.
+Příloha GES **„AMP Dos and don'ts"** je od 18. 8. 2026 v repu
+(`data/AMP_Dos and donts + dims updated.pdf` → spec `confirmed.amp_file_guide`): potvrzuje
+panel **986 × 2474**, půlpanel 489 × 2474, **spáru 7 mm**, tištěné desky z rigidního materiálu
+3 mm na suchý zip (velcro po obvodu, min. 24 h před otevřením show), zákaz hřebíků/vrutů/sponek/
+malování a textil **jedním kusem až do 10 m** (visual 2976 / 5952 mm — svislý spoj na stěně B odpadá).
 
 ## Zlaté pravidlo
 
@@ -32,12 +43,14 @@ Nominální výměra plochy je potvrzená půdorysem haly (`data/preview.webp`):
 dvě spojená místa 3×3 m. Pozor ale — nominální plocha ≠ stavební délka stěn (stěny stojí uvnitř
 plochy: potvrzená stěna A má 2970 mm na nominální 3 m). Dvě věci v modelu proto zůstávají
 **odhady**, ne fakta:
-- **stavební délka delší stěny B** (5940 mm) — analogie ke stěně A: 2 × 2970 mm; přesný rozpal panelů musí potvrdit GES
+- **stavební délka delší stěny B** (5951 mm od 18. 8. 2026) — 6 × 986 + 5 × spára 7 mm z přílohy GES;
+  počet panelů je ale pořád dopočet a zdroje GES si v rozteči mírně odporují (990/992/993 mm →
+  rozpětí 5940–5952, viz spec `confirmed.amp_file_guide.gap_note`) — celkovou délku musí potvrdit GES
 - **tloušťka panelu** (40 mm) — GES ji v spec listu neuvádí
 
-A pět otázek visí na GES / pořadateli (viz `open_questions` v spec souboru). Nejdůležitější je
-**povrch panelů** — rozhoduje mezi řezanou fólií a celoplošným wrapem, takže bez něj nejde
-finalizovat produkci grafiky.
+Otázky na GES / pořadatele jsou v `open_questions` v spec souboru. Pro grafiku je nejdůležitější
+**potvrzení celkových stavebních délek stěn** — blokuje jen dělení prvků procházejících přes spáry;
+prvky celé uvnitř jednoho panelu (≤ 986 mm) lze vyrábět hned.
 
 ## Skills
 
@@ -71,6 +84,9 @@ web/index.html         datová stránka (podklad pro branding)
 web/viewer.html        3D editor v prohlížeči
 web/tisk.html          návod pro tisková data — rozměry, odvození, DPI, dotazy na výrobce
                        (hodnoty čte živě ze stand-spec.json; screenshoty v assets/export/tisk/)
+web/tiskarna.html      POPTÁVKA PRO TISKÁRNU (posílá se ven) — co tiskneme, rozměry, vizualizace,
+                       dotaz na odstranitelnost fólie z Foamexu. Rozměry NEčte živě ze spec
+                       (musí odpovídat tomu, co tiskárna dostala) → při změně přepsat ručně
 web/mini-mesh.js       mesh produktu mini pro viewer (GENEROVANÝ — needitovat ručně)
 web/arcade-mesh.js     mesh produktu arcade pro viewer (GENEROVANÝ — needitovat ručně)
 web/kiosk-mesh.js      mesh kiosku „pult + monitor" pro viewer (GENEROVANÝ — needitovat ručně)

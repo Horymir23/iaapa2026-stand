@@ -7,12 +7,12 @@ Vsechny rozmery v MILIMETRECH.
 
 # ---------------- PARAMETRY (uprav podle skutecne vymery) ----------------
 WALL_A_LEN   = 2970   # kratsi stena - potvrzeno 3 m
-WALL_B_LEN   = 5940   # delsi stena - PREDPOKLAD 6 m (6 panelu)
+WALL_B_LEN   = 5951   # delsi stena - ODHAD: 6x986 + 5x7 (spara 7 mm dle prilohy GES, 18.8.2026)
 WALL_HEIGHT  = 2500   # potvrzeno GES
 PANEL_W      = 986    # graficky modul AMP
 PANEL_H      = 2474   # graficka vyska AMP
 WALL_THICK   = 40     # odhad tloustky AMP systemu
-GAP          = 6      # spara mezi panely (dopocet do delky steny)
+GAP          = 7      # spara mezi panely (priloha GES: 7 mm; realne se dopocitava do delky steny)
 FLOOR_THICK  = 10     # referencni deska LED podlahy
 # -----------------------------------------------------------------------
 

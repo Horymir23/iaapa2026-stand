@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Polepy stánku Pixel Floors</title>
+<!--
+  DOTAZ PRO TISKÁRNU — řezaná fólie na panely z Foamexu, stánek S4244 (IAAPA Expo Europe 2026).
+
+  Záměrně KRÁTKÝ dokument: jediný cíl je rychlá a jasná odpověď na to, jaká fólie
+  půjde z panelů beze zbytku dolů. Zkráceno na žádost uživatele 18. 8. 2026 —
+  původní verze obsahovala i potisky vlastních konstrukcí, poutač, přehled položek
+  a soupis požadavků; to všechno je vyhozené. Nepřidávat zpět bez zadání.
+  Tři dotazy (fólie / měkké přechody / matný laminát) jsou finální stav zadaný uživatelem.
+
+  Rozměry vycházejí z ../data/stand-spec.json (stav k 18. 8. 2026), ale NEsynchronizují
+  se živě — dokument se posílá ven a musí odpovídat tomu, co tiskárna dostala.
+  Při změně rozměrů přepiš ručně.
+
+  Tahle verze je STRÁNKA NA WEBU (GitHub Pages, odkaz z kořenového index.html):
+  plná HTML struktura, obrázky relativní cestou z ../assets/export/tisk/ (rendery
+  z web/viewer.html). Pro tiskárnu stačí poslat URL.
+
+  SAMOSTATNOU verzi (jeden soubor do e-mailu / Artifact na claude.ai) vyrobíš takto:
+    1. obrázky zmenši: sips -Z 1080 <soubor>.jpg --setProperty formatOptions 68
+    2. <img src> nahraď data URI (base64)
+    3. odstraň tenhle komentář, <!DOCTYPE>/<html>/<head>/<body> obálku
+       a odkaz „ostatní podklady“ v patičce (relativní cesty tam nefungují)
+-->
+<style>
+  :root{
+    --paper:#F7F6F2; --card:#FFFFFF; --card-2:#FCFBF8;
+    --ink:#16171E; --ink-soft:#565761; --ink-faint:#8B8C94;
+    --line:#E3E0D7; --line-2:#D6D3C8;
+    --accent:#4B3FE4;
+    --warn-soft:#FBEEDA; --warn-line:#E8C88A;
+    --alert:#B23B2E; --alert-soft:#F8E5E2;
+    --shadow:0 1px 2px rgba(22,23,30,.04), 0 8px 24px rgba(22,23,30,.05);
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#15171B; --card:#1D2026; --card-2:#22262D;
+      --ink:#ECEAE3; --ink-soft:#A9A8A0; --ink-faint:#7B7A73;
+      --line:#2B2F37; --line-2:#3A3F49;
+      --accent:#9E97FF;
+      --warn-soft:#382A12; --warn-line:#5C4520;
+      --alert:#E87E6F; --alert-soft:#381C17;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#15171B; --card:#1D2026; --card-2:#22262D;
+    --ink:#ECEAE3; --ink-soft:#A9A8A0; --ink-faint:#7B7A73;
+    --line:#2B2F37; --line-2:#3A3F49;
+    --accent:#9E97FF;
+    --warn-soft:#382A12; --warn-line:#5C4520;
+    --alert:#E87E6F; --alert-soft:#381C17;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--sans); font-size:16px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:860px; margin:0 auto; padding:0 24px;}
+  .mono{font-family:var(--mono); font-variant-numeric:tabular-nums;}
+
+  header{padding:48px 0 32px;}
+  .kicker{
+    font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--accent); font-weight:600; margin-bottom:16px;
+    display:flex; flex-wrap:wrap; gap:6px 12px; align-items:center;
+  }
+  .kicker .sep{color:var(--ink-faint);}
+  h1{
+    font-size:clamp(28px,4.4vw,40px); line-height:1.1; letter-spacing:-.022em;
+    font-weight:650; margin:0 0 14px; text-wrap:balance;
+  }
+  .lede{font-size:17px; color:var(--ink-soft); max-width:62ch; margin:0;}
+  .facts{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1px;
+    margin-top:28px; background:var(--line); border:1px solid var(--line); border-radius:6px; overflow:hidden;
+  }
+  .fact{background:var(--card); padding:13px 15px;}
+  .fact dt{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.09em; text-transform:uppercase;
+    color:var(--ink-faint); margin:0 0 4px;
+  }
+  .fact dd{margin:0; font-size:14.5px; font-weight:600;}
+
+  section{padding:36px 0; border-top:1px solid var(--line);}
+  h2{font-size:clamp(20px,2.8vw,25px); letter-spacing:-.015em; font-weight:640; margin:0 0 6px; text-wrap:balance;}
+  .sintro{color:var(--ink-soft); max-width:62ch; margin:0 0 22px;}
+
+  .tag{
+    font-family:var(--mono); font-size:10.5px; font-weight:650; letter-spacing:.06em;
+    text-transform:uppercase; padding:4px 9px; border-radius:3px; white-space:nowrap;
+    background:var(--alert-soft); color:var(--alert);
+  }
+
+  .ask{background:var(--warn-soft); border:1px solid var(--warn-line); border-radius:8px; padding:22px 24px;}
+  .ask h3{margin:0 0 12px; font-size:19px; letter-spacing:-.01em; font-weight:650; text-wrap:balance;}
+  .ask p{margin:0 0 10px; font-size:15px;}
+  .ask p:last-child{margin-bottom:0;}
+  .ask ul{margin:0 0 12px; padding-left:20px; font-size:15px;}
+  .ask li{margin:5px 0;}
+  .note{
+    background:var(--card); border:1px solid var(--line-2); border-left:3px solid var(--accent);
+    border-radius:6px; padding:17px 20px; font-size:15px; box-shadow:var(--shadow);
+  }
+  .note b{font-weight:650;}
+  .stack{display:flex; flex-direction:column; gap:14px;}
+
+  .item{background:var(--card); border:1px solid var(--line); border-radius:8px; overflow:hidden; box-shadow:var(--shadow);}
+  .item + .item{margin-top:18px;}
+  .item-grid{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+  @media(max-width:720px){.item-grid{grid-template-columns:1fr;}}
+  .item figure{margin:0; background:var(--card-2); border-right:1px solid var(--line);}
+  @media(max-width:720px){.item figure{border-right:none; border-bottom:1px solid var(--line);}}
+  .item figure img{width:100%; height:auto; display:block;}
+  .item figcaption{font-family:var(--mono); font-size:11.5px; color:var(--ink-faint); padding:8px 14px; border-top:1px solid var(--line);}
+  .item-body{padding:19px 21px;}
+  .item-title{display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; margin-bottom:14px;}
+  .item-title h3{margin:0; font-size:17.5px; font-weight:650; letter-spacing:-.01em;}
+  dl.specs{margin:0; display:grid; grid-template-columns:auto 1fr; gap:8px 16px; font-size:14px;}
+  dl.specs dt{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.07em; text-transform:uppercase;
+    color:var(--ink-faint); padding-top:3px; white-space:nowrap;
+  }
+  dl.specs dd{margin:0;}
+  dl.specs dd .mono{font-size:13.5px;}
+  dl.specs dd b{font-weight:650;}
+
+  footer{padding:30px 0 56px; border-top:1px solid var(--line); color:var(--ink-faint); font-size:13.5px;}
+  footer strong{color:var(--ink);}
+  footer p{margin:0 0 7px;}
+  footer p:last-child{margin-bottom:0;}
+  a{color:var(--accent);}
+  a:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:2px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="kicker">
+      Dotaz pro tiskárnu <span class="sep">·</span> IAAPA Expo Europe 2026 <span class="sep">·</span> ExCeL London <span class="sep">·</span> stánek S4244
+    </div>
+    <h1>Řezaná fólie na panely z Foamexu</h1>
+    <p class="lede">
+      Chceme polepit dvě stěny výstavního stánku řezanou samolepicí fólií. Panely nám ale
+      <strong>jen půjčuje pořadatel</strong> — proto potřebujeme hlavně vědět, jaká fólie z nich
+      půjde po akci beze zbytku dolů.
+    </p>
+
+    <dl class="facts">
+      <div class="fact"><dt>Podklad</dt><dd>Foamex, hladký</dd></div>
+      <div class="fact"><dt>Nalepeno</dt><dd>6–8 dní</dd></div>
+      <div class="fact"><dt>Demontáž</dt><dd>24. 9. 2026</dd></div>
+      <div class="fact"><dt>Aplikace</dt><dd>vlastními silami</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="stack">
+      <div class="ask">
+        <h3>Jakou fólii doporučíte, aby po odlepení nezůstalo nic?</h3>
+        <p>
+          Panely jsou z <b>Foamexu (pěněné PVC) s hladkým povrchem</b>. Nejsou naše — pořadatel
+          si je po akci přebírá zpět a dal nám dvě podmínky: <b>panely nepoškodit</b> a po odlepení
+          <b>nenechat žádné reziduum lepidla</b>. Odpovědnost nese naše firma.
+        </p>
+        <p>Podmínky, ve kterých bude fólie pracovat:</p>
+        <ul>
+          <li>nalepená <b>6–8 dní</b> (stavba, čtyři dny provozu, demontáž),</li>
+          <li>vytápěná hala a <b>bodová LED světla míří přímo na panely</b> — lokální ohřev,</li>
+          <li>lepí i odlepuje <b>náš tým, ne profesionální aplikátor</b>.</li>
+        </ul>
+        <p>
+          Zajímá nás i váš odhad rizika: hrozí u pěněného PVC, že fólie po několika dnech pod světly
+          přilne natolik, že <b>při stahování vezme s sebou vrchní vrstvu panelu</b>? A je v tom
+          rozdíl mezi malými řezanými prvky a velkými plochami?
+        </p>
+      </div>
+
+      <div class="note">
+        <b>Druhý dotaz — měkké přechody.</b> Část prvků má světelnou záři a prolnuté okraje, což
+        čistě řezanou fólií udělat nejde. Doporučíte je jako <b>kiss-cut samolepky</b> s tiskem
+        bílého pozadí, nebo jinak?
+      </div>
+
+      <div class="note">
+        <b>Třetí dotaz — matný laminát.</b> Světla míří přímo na panely, lesk by odrážel, takže
+        počítáme s <b>matným laminátem</b>. Potvrdíte to? A <b>nezhorší laminace odstranitelnost</b>
+        fólie?
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Co se na panely lepí</h2>
+    <p class="sintro">
+      Bílé panely <strong>zůstávají bílé</strong>, je to součást designu — lepí se jen vybrané prvky:
+      logotypy, texty, „kostky“ a postavy. <strong>Celoplošný polep panelu neplánujeme.</strong>
+    </p>
+
+    <div class="item">
+      <div class="item-grid">
+        <figure>
+          <img src="../assets/export/tisk/stena-b.jpg" alt="Vizualizace delší stěny stánku s grafikou, svislé linky ukazují spáry mezi panely" loading="lazy">
+          <figcaption>Delší stěna — svislé linky jsou spáry mezi panely</figcaption>
+        </figure>
+        <div class="item-body">
+          <div class="item-title"><h3>Delší stěna</h3><span class="tag">6 panelů</span></div>
+          <dl class="specs">
+            <dt>Plocha</dt><dd><b class="mono">5 951 × 2 474 mm</b></dd>
+            <dt>Dělení</dt><dd><span class="mono">6 × 986 × 2 474 mm</span>, spára <b class="mono">7 mm</b></dd>
+            <dt>Přes spáru</dt><dd>prvek přesahující spáru se <b>dělí na dva díly</b></dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="item-grid">
+        <figure>
+          <img src="../assets/export/tisk/stena-a.jpg" alt="Vizualizace kratší stěny stánku s grafikou a třemi panely" loading="lazy">
+          <figcaption>Kratší stěna — tři panely, dvě spáry</figcaption>
+        </figure>
+        <div class="item-body">
+          <div class="item-title"><h3>Kratší stěna</h3><span class="tag">3 panely</span></div>
+          <dl class="specs">
+            <dt>Plocha</dt><dd><b class="mono">2 972 × 2 474 mm</b></dd>
+            <dt>Dělení</dt><dd><span class="mono">3 × 986 × 2 474 mm</span>, spára <b class="mono">7 mm</b></dd>
+            <dt>Pozn.</dt><dd>spodní část zakrývá exponát, grafika míří do horní poloviny</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>
+      <strong>Kontakt</strong> — HTDM s.r.o. · Jan Sopuch ·
+      <a href="mailto:jan.sopuch@htdm.cz">jan.sopuch@htdm.cz</a>
+    </p>
+    <p>
+      Rozměry odpovídají stavu k <strong>18. 8. 2026</strong>; délka delší stěny čeká na finální
+      potvrzení pořadatelem a může se změnit o několik milimetrů. Grafiku potřebujeme mít u sebe
+      v první polovině září.
+    </p>
+    <p style="margin-top:12px;">
+      <a href="../index.html">← ostatní podklady k stánku</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

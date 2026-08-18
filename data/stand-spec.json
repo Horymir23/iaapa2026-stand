@@ -9,7 +9,7 @@
     "termin_show": "2026-09",
     "typ_stanku": "shell scheme (GES AMP), rohový",
     "system": "GES AMP",
-    "stav_k": "2026-07-15"
+    "stav_k": "2026-08-18"
   },
 
   "units": "mm",
@@ -24,18 +24,62 @@
     "wall_a_length": 2970,
     "panel_color": "bílá",
     "panel_material": {
-      "$comment": "POTVRZENO e-mailem GES (Paulina, iaapaeu@ges.com) 24.7.2026 — odpověď na dotaz Jana Sopucha (HTDM). GES zároveň poslal PŘÍLOHU s přesnými rozměry panelů + do's/don'ts pro aplikaci grafiky — příloha ZATÍM NENÍ V REPU (viz open_questions), může potvrdit rozpal stěny B.",
+      "$comment": "POTVRZENO e-mailem GES (Paulina, iaapaeu@ges.com) 24.7.2026 — odpověď na dotaz Jana Sopucha (HTDM). Příloha e-mailu (přesné rozměry panelů + do's/don'ts) je OD 18.8.2026 V REPU: data/AMP_Dos and donts + dims updated.pdf — obsah viz confirmed.amp_file_guide.",
       "material": "Foamex (pěněné PVC)",
       "surface": "hladký (smooth finish)",
-      "source": "e-mail GES 24.7.2026 10:42"
+      "source": "e-mail GES 24.7.2026 10:42",
+      "answer_verbatim": "I can confirm that our white shell scheme panels are made from Foamex and have a smooth finish.",
+      "question_verbatim": "What material are the standard white panels made from? / Is the surface smooth or textured?",
+      "$verified_2026-08-18": "OVĚŘENO z originálu e-mailu (data/RE_ Shell Scheme – White Panel Specification & Own Vinyl Graphics […_ref].eml, dodán 18.8.2026). Odpověď se výslovně týká 'white SHELL SCHEME panels', tj. STĚNOVÝCH panelů — ne tištěných desek. Dřívější pochybnost (guide mluví o 'melamine / vinyl panels') je tím VYVRÁCENA: guide je generický dokument systému AMP z roku 2021, e-mail je konkrétní odpověď pro tuto show na přímý dotaz. Platí Foamex.",
+      "photo_not_supplied": "Jan Sopuch o foto skutečného panelu žádal ('could you also please send us a photo of the standard white shell scheme panel'); GES v odpovědi napsal 'Example image of the standard shell scheme below-', ale připojený obrázek je jen podpisové logo IAAPA Member 2026 — FOTO POVRCHU JSME NEDOSTALI. O to důležitější je test adheze na jednom panelu na místě."
+    },
+    "amp_file_guide": {
+      "$comment": "PŘÍLOHA e-mailu GES 24.7.2026 — 'File set up guides — AMP Dos and don'ts' (© GES 2021, GENERICKÝ návod systému AMP, ne spec konkrétně pro S4244). V repu od 18.8.2026: data/AMP_Dos and donts + dims updated.pdf. Řeší bývalou open_question č. 1 (příloha dohledána). POZOR: zdroje GES si v rozteči panelů mírně odporují — viz gap_note.",
+      "source_file": "data/AMP_Dos and donts + dims updated.pdf",
+      "printed_panel_sizes": {
+        "full_metre": { "w": 986, "h": 2474 },
+        "half_metre": { "w": 489, "h": 2474 }
+      },
+      "panel_gap_mm": 7,
+      "panel_gap_verbatim": "Each printed panel has a 7mm gap between to allow for the system.",
+      "gap_note": "TŘI zdroje GES → TŘI rozteče: (1) tento guide: spára 7 mm → rozteč 993 → stěna A (3 panely) 2972, stěna B (6 panelů) 5951; (2) tabulka textilu v témže PDF: visual 2976 (3m) / 5952 (6m) → rozteč 992 → spára 6; (3) dříve potvrzená stavební délka stěny A 2970 → rozteč 990 → spára 6,0 dopočtem. Rozptyl 0–3 mm na spáru, až ~12 mm na celkové délce 6m stěny. DŮSLEDEK PRO TISK: díly ≤986 mm celé uvnitř jednoho panelu jsou bezpečné vždy; prvky přes spáru počítat se 7 mm polykáním ±3 mm tolerance a neumisťovat na spáru kritický detail; celkové stavební délky nechat potvrdit GES (open_questions).",
+      "printed_panel_materials": "libovolný RIGIDNÍ materiál 3 mm — foamex, correx, dibond, forex apod. (přímý tisk na desku)",
+      "fixings_forbidden": ["hřebíky / špendlíky", "vruty / díry", "sponky (stapled fixings)", "malování stěn"],
+      "fixings_permitted": ["oboustranné podložky (tabs) — podmínka 'provided by GES' je v naší kopii RUČNĚ VYŠKRTNUTÁ, viz ink_annotation", "suchý zip (hook & loop velcro)"],
+      "fixings_permitted_verbatim": "Fixing on melamine / vinyl panels is permitted by: • Double sided tabs provided by GES • Hook and loop velcro",
+      "ink_annotation": {
+        "$comment": "ZJIŠTĚNO 18.8.2026 rozborem PDF. V našem exempláři je přes slova 'provided by GES' (u bodu 'Double sided tabs') RUČNĚ PŘEŠKRTNUTÁ černá linka — PDF anotace typu /Ink, barva [0 0 0], šířka pera 12, /Rect [581,5 214,4 708,2 238,2], což se přesně kryje s bboxem slov 'provided' (587–646) až 'GES' (669–697) na řádku y 222–241. CreationDate D:20260724082832 = 24.7.2026 08:28:32, tj. cca 14 min před odesláním e-mailu (10:42 CEST = 08:42 UTC). VÝKLAD: GES vyškrtnutí udělal ZÁMĚRNĚ těsně před odesláním — rozvolnil vlastní pravidlo, že oboustranné podložky musí být od nich, čímž písemně podložil povolení vlastních lepicích prostředků z e-mailu (confirmed.own_graphics). Není to tedy omyl v e-mailu, ale vědomá výjimka. POZOR: samolepicí vinyl LEPENÝ CELOU PLOCHOU na tomto seznamu ani po vyškrtnutí není — ten povoluje jen text e-mailu, mít ho na místě vytištěný.",
+        "annotation_type": "/Ink",
+        "created": "2026-07-24T08:28:32Z",
+        "struck_text": "provided by GES",
+        "meaning": "oboustranné podložky NEMUSÍ být od GES"
+      },
+      "velcro_rules": [
+        "velcro strana LOOP se lepí po CELÉM OBVODU tištěné desky (všechny hrany)",
+        "velcro musí být na panelech min. 24 h před otevřením show — jinak hrozí selhání lepidla kvůli změnám klimatu v hale mezi instalací a otevřením"
+      ],
+      "fabric": {
+        "note": "GES dodá 'visual area' stěny, ale NE fyzický výrobní rozměr textilu — ten závisí na zvolené látce dodavatele (protažení/sražení při výrobě). Doporučen black-backed / blockout textil proti prosvítání. GES důrazně doporučuje výrobu textilu u nich ('drum tight tension').",
+        "visual_size_by_wall_width_mm": { "2500": 2480, "3000": 2976, "3500": 3472, "4000": 3968, "4500": 4464, "5000": 4960, "5500": 5456, "6000": 5952, "6500": 6448, "7000": 6944, "9000": 8928, "9500": 9424, "10000": 9920 },
+        "implication_wall_b": "Textil na 6m stěnu = JEDEN kus (visual 5952 × 2474) — dřívější předpoklad 2 kusů se svislým spojem (odvozený z '2× 2970' v příkladu 3×3, což byly DVĚ STĚNY, ne max. šířka kusu) NEPLATÍ; tabulka jde až do šířky 10 000 mm."
+      }
     },
     "own_graphics": {
-      "$comment": "POTVRZENO e-maily GES (Paulina) 24.7.2026 10:42 a 24.7.2026 16:47 (přeposláno Janem Sopuchem 25.7., uživatel dodal 15.8.2026): vlastní samolepicí vinylovou grafiku SMÍME lepit přímo na panely. Podmínky: panely nepoškodit a po odstranění nesmí zůstat žádné reziduum lepidla. První odpověď povolila i oboustrannou velcro pásku. GES doporučuje objednat grafiku u nich; u vlastní grafiky NENESE ODPOVĚDNOST za poškození ani za špatné sednutí na panely → rozměry ověřit proti rozpalu od GES. Katalog grafiky GES: https://ordering.ges.com/000033886/OrderYourGraphicsHere",
+      "$comment": "POTVRZENO e-maily GES (Paulina) 24.7.2026 10:42 a 16:47. ORIGINÁLY OVĚŘENY 18.8.2026 — celý řetěz je v repu: data/RE_ Shell Scheme – White Panel Specification & Own Vinyl Graphics […_ref].eml (dotaz 22.7. + odpověď 10:42 + příloha AMP guide) a […_re […_ref]].eml (doptání 24.7. 10:45 + odpověď 16:47). Vlastní samolepicí vinylovou grafiku SMÍME lepit přímo na panely. Podmínky: panely nepoškodit a po odstranění nesmí zůstat žádné reziduum lepidla. GES doporučuje objednat grafiku u nich; u vlastní grafiky NENESE ODPOVĚDNOST za poškození ani za špatné sednutí na panely. Katalog grafiky GES: https://ordering.ges.com/000033886/OrderYourGraphicsHere",
       "self_adhesive_vinyl_allowed": true,
       "velcro_tape_allowed": true,
       "conditions": ["nepoškodit panely", "žádné reziduum lepidla po odstranění"],
       "ges_liability": "GES neručí za vlastní grafiku (poškození, špatné rozměry)",
-      "source": "e-maily GES 24.7.2026"
+      "source": "e-maily GES 24.7.2026 (originály v data/*.eml)",
+      "exchange_verbatim": {
+        "$comment": "DOSLOVNÉ ZNĚNÍ — rozhoduje o tom, CO přesně je povolené. Pozor na rozsah: oba dotazy se ptaly na ŘEZANOU / vybranou grafiku na zachovaných bílých panelech, výslovně jako ALTERNATIVU k plně potištěným panelům. Celoplošný polep panelu předmětem dotazu NEBYL — viz graphics_production.full_wrap_decision.",
+        "1_question_2026-07-22_14:12": "The white walls work very well with our brand design, so we would prefer to keep the standard white finish. INSTEAD OF USING FULLY PRINTED WALL PANELS, we are considering applying only our own CUT VINYL GRAPHICS – logos, text and simple graphic elements directly onto the white panels. … Can we apply our own self-adhesive cut vinyl graphics directly to these panels? Are there any restrictions regarding the type of adhesive or removal of the graphics after the show?",
+        "2_answer_2026-07-24_10:42": "You are welcome to apply your own graphics to the stand USING DOUBLE-SIDED VELCRO TAPE. Please ensure that all graphics and adhesive are removed after the show and that no residue is left on the panels. However, we do recommend ordering your graphics through GES. If you choose to supply your own graphics, we cannot accept liability if they are damaged or if they do not fit our shell scheme panels correctly.",
+        "2_note": "První odpověď na dotaz o SAMOLEPICÍ fólii nabídla velcro pásku — tj. přímo na fólii neodpověděla. Proto se Jan Sopuch doptal ještě týž den.",
+        "3_question_2026-07-24_10:45": "We would like to keep the original white Foamex panels and apply only selected cut/self-adhesive vinyl graphics directly onto their surface. Can REMOVABLE SELF-ADHESIVE VINYL be applied DIRECTLY to the white Foamex panels, provided that it is completely removed after the show without leaving any residue?",
+        "4_answer_2026-07-24_16:47": "You may use self-adhesive vinyl graphics. However, you will need to ensure that they do not damage the panels and that no adhesive residue is left behind when they are removed.",
+        "4_note": "TOHLE je nosné povolení: dotaz byl formulován jednoznačně (removable self-adhesive vinyl DIRECTLY na bílé Foamex panely) a odpověď je souhlas s podmínkami. Fólie přímo na panel tedy NENÍ jen náš výklad."
+      }
     },
     "walls_count": 2,
     "open_sides": 2,
@@ -85,28 +129,23 @@
   "assumed": {
     "$comment": "ODHADY – nutno potvrdit u GES než půjde cokoli do výroby.",
     "wall_b_length": {
-      "value": 5940,
-      "reason": "Nominální hloubka 6000 mm je POTVRZENÁ půdorysem (confirmed.floor_nominal) — odhad je jen STAVEBNÍ délka stěny. Analogie s potvrzenou stěnou A (2970 mm na nominální 3 m): 2 × 2970 = 5940 mm = 6 modulů 986 mm + 5 spár 4,8 mm. Přesný počet a rozpal panelů musí potvrdit GES.",
-      "INCONSISTENCY_found_2026-07-19": {
-        "$comment": "Odhad 5940 NENÍ vnitřně konzistentní s potvrzenou stěnou A. Není to chyba ve výpočtu spár (gap_for() v generator.py počítá správně), ale chyba v ODVOZENÍ délky 5940.",
-        "problem": "Stěna A (2970, POTVRZENO) = 3×986 + 2 spáry → spára vychází 6,0 mm. Stěna B jako 2×2970 = 5940 → 6×986 + 5 spár → spára vychází 4,8 mm. Stejný panelový systém by měl mít stejně širokou spáru; 6,0 vs 4,8 mm si odporuje.",
-        "cause": "2 × 2970 = 6 panelů + 4 spáry. Spojitá šestipanelová stěna má ale 5 spár. Sečtením dvou samostatných stěn se JEDNA SPÁRA ZTRATÍ.",
-        "alternative_value": 5946,
-        "alternative_reason": "6 × 986 + 5 × 6,0 mm = 5946 mm — drží stejnou spáru 6,0 mm jako potvrzená stěna A.",
-        "impact": "Rozdíl 6 mm. Na umístění produktů zanedbatelné, ALE posouvá polohy spár na stěně B — a mapování grafiky přes spáry je hlavní účel celého nástroje. Pro tisk grafiky to potřebuje přesnou hodnotu.",
-        "action": "Nechávám 5940 (needitovat bez podkladu od GES), ale při dotazu na rozpal panelů se ptát PŘÍMO na šířku spáry a celkovou stavební délku — viz open_questions."
+      "value": 5951,
+      "reason": "AKTUALIZOVÁNO 18.8.2026 dle přílohy GES (confirmed.amp_file_guide): 6 modulů 986 mm + 5 spár 7 mm = 5951 mm. Ladí s tabulkou textilu v témže PDF (visual 6m stěny 5952, rozdíl 1 mm). Počet panelů 6 je stále DOPOČET z nominálních 6 m (guide je generický) — celkovou stavební délku pro S4244 musí potvrdit GES.",
+      "uncertainty": "Zdroje GES dávají rozteč 990/992/993 mm (viz confirmed.amp_file_guide.gap_note) → 6 panelů = 5940 až 5952 mm. Hodnota 5951 = nejnovější podklad (spára 7 mm).",
+      "history": {
+        "5940_do_2026-08-18": "původní odhad 2 × 2970 (analogie stěny A) — audit 19.7.2026 odhalil, že sečtením dvou stěn se ZTRÁCÍ JEDNA SPÁRA (2×2970 = 6 panelů + jen 4 spáry) a spára vycházela 4,8 mm proti 6,0 mm na stěně A; alternativa 5946 (spára 6,0) byla 18.8.2026 překonána potvrzenou spárou 7 mm z přílohy GES"
       },
       "verify_with": "iaapaeu@ges.com"
     },
     "panel_counts": {
-      "$comment": "PŘIDÁNO 19.7.2026. Počty panelů v data/Shell Scheme.pdf ('AMP Panels: 6 x 986mm', 'AMP Fabric: 2 x 2970mm') platí pro PŘÍKLAD 3×3 m, NE pro náš stánek — PDF to samo říká v patičce: 'IMAGE IS AN EXAMPLE OF A 3M X 3M SHELL SCHEME STAND WITH 2 OPEN SIDES ... SUBJECT TO CHANGE BASED ON YOUR STAND SIZE AND CONFIGURATION.' Náš stánek 3×6 m má delší stěnu → víc panelů. Hodnoty níže jsou DOPOČET, ne údaj od GES.",
+      "$comment": "PŘIDÁNO 19.7.2026, AKTUALIZOVÁNO 18.8.2026. Počty panelů v data/Shell Scheme.pdf ('AMP Panels: 6 x 986mm', 'AMP Fabric: 2 x 2970mm') platí pro PŘÍKLAD 3×3 m, NE pro náš stánek — PDF to samo říká v patičce: 'IMAGE IS AN EXAMPLE OF A 3M X 3M SHELL SCHEME STAND WITH 2 OPEN SIDES ... SUBJECT TO CHANGE BASED ON YOUR STAND SIZE AND CONFIGURATION.' Náš stánek 3×6 m má delší stěnu → víc panelů. Hodnoty níže jsou DOPOČET, ne údaj od GES.",
       "wall_a_panels": 3,
       "wall_b_panels": 6,
       "total_panels": 9,
       "wall_a_fabric_pieces": 1,
-      "wall_b_fabric_pieces": 2,
-      "total_fabric_pieces": 3,
-      "note_fabric": "Textil má max. šířku 2970 mm, takže stěna B potřebuje 2 kusy = svislý spoj. KDE přesně spoj padne, není známo — pro grafiku zásadní. Viz open_questions.",
+      "wall_b_fabric_pieces": 1,
+      "total_fabric_pieces": 2,
+      "note_fabric": "OPRAVENO 18.8.2026 dle přílohy GES (confirmed.amp_file_guide.fabric): textil se vyrábí až do šířky 10 000 mm → 6m stěna = JEDEN kus (visual 5952 × 2474), ŽÁDNÝ svislý spoj. Původní předpoklad 2 kusů vycházel z chybného čtení '2× 2970' v příkladu 3×3 (byly to dvě stěny, ne max. šířka kusu).",
       "verify_with": "iaapaeu@ges.com"
     },
     "panel_thickness": {
@@ -177,10 +216,10 @@
       "clearance_from_wall_b_mm": 50
     },
     "fit_check": {
-      "$comment": "VYŘEŠENO 21.7.2026 zkrácením mini na 4610 mm: potřeba 40+50+4610+0+1240 = 5940 z 5940 mm → přesah 0, arcade končí PŘESNĚ v hraně stánku (NULOVÁ rezerva). Hloubka OK: 40+50+2690 = 2780 z 2970 mm. ⚠️ Délka stěny B 5940 je ASSUMED — pokud GES potvrdí kratší stěnu, přesah se vrátí (při 5946 dle konzistentní spáry 6 mm by naopak přibyla rezerva 6 mm). Lícování s hranou bez rezervy je rizikové i milimetrově — po potvrzení délky B zvážit pár mm vůle. Historie přesahu: 187 mm (šikminy) → 67 mm (předělání arcade na profil 20 mm, 21.7.2026) → 0 mm (zkrácení mini 4677→4610, 21.7.2026). Sankce za přesah viz regulations.penalties ('Awning/Overhang Beyond Stand Boundaries' €300 + 1 rok seniority).",
+      "$comment": "VYŘEŠENO 21.7.2026 zkrácením mini na 4610 mm; PŘEPOČTENO 18.8.2026 po aktualizaci délky B na 5951 (spára 7 mm z přílohy GES): potřeba 40+50+4610+0+1240 = 5940 z 5951 mm → rezerva 11 mm. Hloubka OK: 40+50+2690 = 2780 z 2970 mm. ⚠️ Délka stěny B 5951 je pořád ASSUMED (rozptyl zdrojů GES 5940–5952, viz confirmed.amp_file_guide.gap_note) — v nejhorším případě (5940) arcade končí PŘESNĚ v hraně s nulovou rezervou. Historie přesahu: 187 mm (šikminy) → 67 mm (profil 20 mm, 21.7.2026) → 0 mm (zkrácení mini 4677→4610, 21.7.2026) → rezerva 11 mm (B=5951, 18.8.2026). Sankce za přesah viz regulations.penalties ('Awning/Overhang Beyond Stand Boundaries' €300 + 1 rok seniority).",
       "fits": true,
       "overhang_along_b_mm": 0,
-      "margin_along_b_mm": 0,
+      "margin_along_b_mm": 11,
       "depends_on_assumed": ["wall_b_length", "panel_thickness"]
     },
     "regenerate": "python3 model/export_arcade.py  →  web/arcade-mesh.js + model/arcade_v_stanku.stl/.dae"
@@ -334,10 +373,10 @@
       "positive_toward": "otevřená kratší strana (x=B)"
     },
     "fit_check": {
-      "$comment": "Ø1520 → poloměr 760. PODÉL B: střed 2970, zásah 2210–3730 z 0–5940 → odstup od stěny A (x=0) i od dalekého konce 2210 mm ≥1000 OK. V UŽŠÍM SMĚRU: střed (2970+1000)/2 = 1985, zásah 1225–2745 → odstup od stěny B (y=0) 1225 mm ≥1000 OK, přední hrana 2745 < 2970 (uvnitř půdorysu, rezerva 225 mm). SVISLE: horní hrana textilu 4610 < grafika max 6000 a < truss max 7000. Závisí na assumed (wall_b_length). Přepočítává model/export_banner.py a web/viewer.html.",
+      "$comment": "Ø1520 → poloměr 760. PODÉL B (B=5951 od 18.8.2026): střed 2975,5, zásah 2215,5–3735,5 z 0–5951 → odstup od stěny A (x=0) i od dalekého konce 2215,5 mm ≥1000 OK. V UŽŠÍM SMĚRU: střed (2970+1000)/2 = 1985, zásah 1225–2745 → odstup od stěny B (y=0) 1225 mm ≥1000 OK, přední hrana 2745 < 2970 (uvnitř půdorysu, rezerva 225 mm). SVISLE: horní hrana textilu 4610 < grafika max 6000 a < truss max 7000. Závisí na assumed (wall_b_length). Přepočítává model/export_banner.py a web/viewer.html.",
       "fits": true,
       "clearance_from_wall_b_mm": 1225,
-      "clearance_from_wall_a_mm": 2210,
+      "clearance_from_wall_a_mm": 2216,
       "top_of_graphic_mm": 4610
     },
     "client_rigging_plan": {
@@ -358,18 +397,36 @@
     "graphics_by": "HTDM — vlastní výroba i aplikace",
     "constraint": "panely GES nijak nepoškodit (bez vrtání, vrutů, reziduí lepidel)",
     "routes": [
-      { "id": "folie", "priority": 1, "name": "Removable nízkoadhezní samolepicí fólie po panelech", "spec": "PVC/PET fólie s odstranitelným (low-tack, clean-removal) lepidlem, UV/latex tisk, MATNÝ laminát (tlumené osvětlení + spoty — lesk by odrážel), řez přesně 986 × 2474 na panel (nebo jednotlivé řezané/kiss-cut prvky), aplikace po panelech, spáry zůstávají přiznané (5–6 mm)", "quantity": "celoplošně: 9 panelů (3 stěna A + 6 stěna B) ≈ 22 m²; při řezaných prvcích méně", "conditions": ["POVOLENO GES 24.7.2026 (viz confirmed.own_graphics) — bez poškození, bez reziduí", "test adheze na 1 panelu na místě před celoplošnou aplikací"], "risk": "GES u vlastní grafiky neručí za poškození ani sednutí rozměrů → dělení stěny B nedělat bez potvrzeného rozpalu" },
-      { "id": "desky", "priority": 2, "name": "Lehké potištěné desky zavěšené přes horní hranu panelu", "spec": "foam PVC 5 mm (~2 kg/m² → panel ≈ 4,8 kg) nebo lehčená deska typu KAPA 5 mm (~1,1 kg/m² → panel ≈ 2,7 kg), přímý UV tisk, formát 986 × 2474, zavěšení over-panel háčky přes horní hranu — bez lepidla, bez zásahu do panelu", "conditions": ["GES musí potvrdit háčky přes hranu + nosnost panelu"], "advantage": "nulové riziko poškození, desky jsou opakovaně použitelné na dalších akcích" },
-      { "id": "ges_textil", "priority": 3, "name": "Textil 2970 × 2474 od GES (placená služba)", "spec": "celostěnový napínaný textil v systému AMP — jen pokud ho vyrobí a nainstaluje GES; stěna B = 2 kusy se svislým spojem (poloha = open_question)", "note": "jediná cesta k celistvému motivu bez přiznaných spár" },
+      { "id": "folie", "priority": 1, "name": "Removable nízkoadhezní ŘEZANÁ / kiss-cut fólie přímo na panel", "spec": "PVC/PET fólie s odstranitelným (low-tack, clean-removal) lepidlem, UV/latex tisk, MATNÝ laminát (tlumené osvětlení + spoty — lesk by odrážel), jednotlivé řezané / kiss-cut prvky (loga, texty, kostky, postavy), aplikace po panelech, spáry zůstávají přiznané (7 mm dle přílohy GES — confirmed.amp_file_guide). CELOPLOŠNÝ výřez 986 × 2474 na panel touto cestou NEDĚLAT — viz full_wrap_decision, pro plnou plochu je route 'desky'.", "quantity": "jen plocha řezaných prvků (výrazně méně než 22 m² celoplošně)", "conditions": ["POVOLENO GES 24.7.2026 písemně (confirmed.own_graphics.exchange_verbatim) — bez poškození, bez reziduí", "test adheze A STAŽENÍ na 1 panelu na místě, než se aplikuje zbytek", "e-maily GES mít na stavbě vytištěné"], "risk": "GES u vlastní grafiky neručí za poškození ani sednutí rozměrů → prvky přes spáru nedělit bez potvrzené celkové délky stěny B (rozptyl zdrojů GES 5940–5952)" },
+      { "id": "desky", "priority": 2, "name": "Tištěné rigidní desky 3 mm na suchý zip (oficiální cesta dle AMP guide)", "spec": "AKTUALIZOVÁNO 18.8.2026 dle přílohy GES (confirmed.amp_file_guide): libovolný rigidní materiál 3 mm — Foamex, Correx, Dibond, Forex — přímý UV tisk, formát 986 × 2474 (existuje i půlpanel 489 × 2474), uchycení SUCHÝM ZIPEM: strana LOOP po celém obvodu desky, protikus na panel; povolené jsou i oboustranné podložky (tabs) dodané GES; mezi deskami zůstává 7mm systémová spára", "conditions": ["velcro na panelech min. 24 h před otevřením show (jinak riziko selhání lepidla při změně klimatu v hale)", "žádné hřebíky, vruty/díry, sponky, malování — výslovně zakázáno"], "advantage": "oficiálně zdokumentovaná cesta GES (žádné dohadování na místě), desky jsou opakovaně použitelné na dalších akcích" },
+      { "id": "ges_textil", "priority": 3, "status": "MIMO HRU — uživatel 18.8.2026: 'látka nás nezajímá'. Ponecháno jen jako referenční informace z přílohy GES, nepracovat s tím dál.", "name": "Celostěnový napínaný textil v systému AMP", "spec": "AKTUALIZOVÁNO 18.8.2026: textil se vyrábí až do šířky 10 m → stěna B = JEDEN kus (visual 5952 × 2474), stěna A visual 2976 × 2474 — svislý spoj ODPADÁ. GES dodá visual area, ale NE fyzický výrobní rozměr (závisí na protažení/sražení konkrétní látky) → vlastní výroba textilu je dle guide možná, ale rozměr musí spočítat výrobce látky; doporučen blockout/black-backed textil; GES důrazně doporučuje výrobu u nich", "note": "jediná cesta k celistvému motivu bez přiznaných spár; instalaci vlastního textilu do systému AMP potvrdit s GES (open_questions)" },
       { "id": "freestanding", "priority": 4, "name": "Vlastní napínací textilové rámy PŘED stěnou (fallback)", "spec": "SEG rámy do výšky 2500, volně stojící s vlastní stabilitou — o panely se NESMÍ opírat (nesou jen samy sebe)", "note": "nezávislé na GES, ale zabírá hloubku, dražší a komplikuje TV na stěně B — až kdyby GES zakázal fólii i háčky" }
     ],
-    "decided": "folie — POVOLENO GES 24.7.2026 (confirmed.own_graphics): vlastní samolepicí vinyl přímo na panely Foamex. Koncept HTDM (e-mail Jana Sopucha GES 22.7.2026): bílé panely ZACHOVAT (jsou součást designu) a lepit jen vybrané řezané/kiss-cut prvky — loga, texty, kostky, postavy. POZOR: čistě řezaná fólie sedí na loga/text; prvky s měkkými přechody do bílé (záře kostek, postavy) tisknout jako kiss-cut samolepky nebo celoplošný polep — bílá tisku se nemusí potkat s bílou Foamexu, ověřit nátiskem na místě. Prvek přes spáru se dělí stejně jako celoplošný výřez.",
-    "decision_blocked_by": ["rozpal panelů stěny B (GES) — nutný pro dělení grafiky; MOŽNÁ je v příloze e-mailu GES 24.7.2026, která zatím není v repu (viz open_questions)"]
+    "full_wrap_decision": {
+      "$comment": "ROZHODNUTO 18.8.2026 po ověření originálů e-mailů GES (confirmed.own_graphics.exchange_verbatim). Otázka byla: smíme na panely celoplošný polep, nebo jen řezanou nálepku?",
+      "cut_vinyl_directly_on_panel": {
+        "verdict": "ANO — jdeme do toho",
+        "why": "Přesně na tohle se dotaz ptal (dvakrát, podruhé jednoznačně 'removable self-adhesive vinyl DIRECTLY to the white Foamex panels') a GES odpověděl souhlasem s podmínkami. Malá lepená plocha = nejmenší riziko poškození i rezidua; sedí i na koncept 'bílé panely zůstávají'.",
+        "conditions": ["removable / low-tack lepidlo s clean-removal certifikací", "matný laminát (tlumené osvětlení + spoty)", "test adheze a stažení na JEDNOM panelu na místě před zbytkem aplikace", "e-maily GES 24.7. mít vytištěné na stavbě"]
+      },
+      "full_panel_wrap_directly_on_panel": {
+        "verdict": "NE — nedělat přímo na panel",
+        "why": [
+          "Povolení není formálně vyloučené ('You may use self-adhesive vinyl graphics' bez omezení), ALE celý dotaz byl postavený jako alternativa k plně potištěným panelům ('INSTEAD OF using fully printed wall panels … only our own cut vinyl graphics') — GES tedy odpovídal na řezané prvky, ne na wrap celé stěny. Opírat 22 m² polepu o odpověď na jinou otázku je riziko.",
+          "Riziko je asymetrické: podmínku 'nepoškodit, žádné reziduum' nese HTDM a GES u vlastní grafiky VÝSLOVNĚ NERUČÍ. Foamex je měkké pěněné PVC — velkoformátová fólie po několika dnech pod spoty ulpí a při stahování může vzít vrchní vrstvu, hlavně na hranách. Panely jsou navíc rental (opakovaně použité), poškození se fakturuje.",
+          "Foto skutečného povrchu panelu jsme od GES nedostali (viz confirmed.panel_material.photo_not_supplied), takže adhezi velké plochy nelze předem odhadnout."
+        ],
+        "alternative": "Když je potřeba plná plocha: TIŠTĚNÁ DESKA 3 mm (Foamex/Dibond/Correx) formátu 986 × 2474 zavěšená/uchycená SUCHÝM ZIPEM — cesta, kterou guide oficiálně popisuje a kterou GES sám nabídl v odpovědi 10:42 ('using double-sided Velcro tape'). Nulové riziko poškození panelu, deska je navíc znovupoužitelná. Viz routes.desky.",
+        "if_wrap_really_wanted": "Kdyby klient plnoplošný polep přímo na panel trval, poslat GES jednu doplňující větu: 'To be explicit — does this also cover FULL-COVERAGE vinyl over the entire panel surface, not only cut lettering and logos?' Bez písemné odpovědi na tuhle formulaci wrap nezadávat do výroby."
+      }
+    },
+    "decided": "ŘEZANÁ / KISS-CUT FÓLIE PŘÍMO NA PANEL — povoleno GES 24.7.2026 písemně (confirmed.own_graphics.exchange_verbatim, odpověď 16:47 na jednoznačný dotaz). CELOPLOŠNÝ POLEP přímo na panel NEDĚLAT — viz full_wrap_decision; pro plnou plochu použít tištěnou desku na velcro (routes.desky). Koncept HTDM (e-mail Jana Sopucha GES 22.7.2026): bílé panely ZACHOVAT (jsou součást designu) a lepit jen vybrané řezané/kiss-cut prvky — loga, texty, kostky, postavy. POZOR: čistě řezaná fólie sedí na loga/text; prvky s měkkými přechody do bílé (záře kostek, postavy) tisknout jako kiss-cut samolepky nebo celoplošný polep — bílá tisku se nemusí potkat s bílou Foamexu, ověřit nátiskem na místě. Prvek přes spáru se dělí stejně jako celoplošný výřez.",
+    "decision_blocked_by": ["POUZE prvky procházející PŘES SPÁRU: spára 7 mm je potvrzená (confirmed.amp_file_guide), ale celková stavební délka stěny B kolísá dle zdroje GES 5940–5952 mm → polohy spár ±3 mm. Prvky celé uvnitř jednoho panelu (≤986 mm) lze vyrábět HNED. Celkovou délku potvrdit u GES (open_questions)."]
   },
 
   "open_questions": [
-    { "topic": "Příloha GES s přesnými rozměry panelů (24.7.2026) — dohledat a uložit do data/", "why": "PŮVODNÍ DOTAZ (povrch panelů + povolené aplikace) VYŘEŠEN 24.7.2026: Foamex, hladký, vlastní samolepicí vinyl povolen — viz confirmed.panel_material a confirmed.own_graphics. ZBÝVÁ: GES poslal Janu Sopuchovi přílohu s 'exact panel dimensions' + do's/don'ts pro grafiku. Příloha není v repu — může potvrdit rozpal panelů stěny B (následující bod) a odblokovat dělení grafiky.", "owner": "HTDM (Jan Sopuch — příloha e-mailu GES z 24.7.2026 10:42)", "email": "jan.sopuch@htdm.cz" },
-    { "topic": "Počet a rozpal panelů pro S4244", "why": "spec list (data/Shell Scheme.pdf) je z příkladu 3×3 m; u 6m stěny navíc: textil má max. šířku 2970 mm → 2 kusy = svislý spoj cca uprostřed stěny B — kde přesně? MOŽNÁ UŽ ZODPOVĚZENO přílohou e-mailu GES 24.7.2026 (viz předchozí bod) — nejdřív dohledat přílohu, pak případně doptat GES.", "owner": "GES", "email": "iaapaeu@ges.com" },
+    { "topic": "JEN KDYBY klient chtěl celoplošný polep panelu (jinak neaktivní)", "why": "Řezaná/kiss-cut fólie přímo na panel je POVOLENÁ a vyřešená (confirmed.own_graphics.exchange_verbatim). Celoplošný wrap ale předmětem dotazu nebyl — dotaz ho výslovně stavěl do kontrastu ('instead of using fully printed wall panels'). Rozhodnutí 18.8.2026: wrap přímo na panel NEDĚLAT, pro plnou plochu použít tištěnou desku na velcro. Kdyby na wrapu klient trval, teprve pak poslat GES doplňující větu — text v graphics_production.full_wrap_decision.if_wrap_really_wanted.", "owner": "HTDM (rozhodnutí) → GES (jen pokud wrap)", "email": "iaapaeu@ges.com" },
+    { "topic": "Celková stavební délka stěny B + potvrzení 6 panelů pro S4244", "why": "PŘÍLOHA GES DOHLEDÁNA 18.8.2026 (data/AMP_Dos and donts + dims updated.pdf → confirmed.amp_file_guide): potvrzuje panel 986×2474, půlpanel 489×2474 a SPÁRU 7 mm — tím je vyřešen původní bod 'dohledat přílohu' i většina rozpalu. ZBÝVÁ: zdroje GES si v rozteči mírně odporují (990/992/993 mm → stěna B 5940–5952, stěna A 2970 vs 2972) a guide je generický — pro S4244 nechat potvrdit počet panelů (6?) a přesnou celkovou stavební délku obou stěn. Blokuje POUZE dělení prvků přes spáry; prvky uvnitř jednoho panelu jsou bezpečné. U textilu potvrdit 1 kus (visual 5952) na 6m stěnu.", "owner": "GES", "email": "iaapaeu@ges.com" },
     { "topic": "Nosnost panelu pro TV a monitory", "why": "montáž TV je povolena, nosnost neuvedena; plánujeme 2× 55\" TV (cca 17–25 kg/ks vč. držáku) na stěnu B — viz wall_tvs — a krabici se 3× 27\" monitory (600×1040×80 mm) na stěnu A — viz wall_monitor_box", "owner": "GES", "email": "iaapaeu@ges.com" },
     { "topic": "Přesný rozměr jmenovky", "why": "chybí kóty", "owner": "GES", "email": "iaapaeu@ges.com" },
     { "topic": "Závěsný poutač — rigging", "why": "Vybrán Zip-up Round Ø1520 × v610 mm, 6,7 kg (viz hanging_banner). Výška spodní hrany 4000 mm ZADÁNA KLIENTEM 23.7.2026 (rigging plán) — zbývá potvrdit proveditelnost závěsného bodu; poutač smí věšet jen oficiální rigging kontraktor (uzávěrka 2026-08-09).", "owner": "IAAPA Operations", "email": "OperationsEMEA@IAAPA.org" },

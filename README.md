@@ -43,19 +43,20 @@ python3 model/generator.py model/
 |---|---|
 | Výška panelu | **2500 mm** |
 | Grafická plocha | **2474 mm** |
-| Modul panelu | **986 mm** |
-| Textil přes celou stěnu | **2970 × 2474 mm** |
+| Modul panelu | **986 mm** (půlpanel 489 mm) |
+| Spára mezi panely | **7 mm** (příloha GES „AMP Dos and don'ts") |
+| Textil (visual) | **2976 mm** (3m stěna) / **5952 mm** (6m stěna, 1 kus) × 2474 mm |
 | Kratší stěna (A) | **2970 mm** = 3 panely |
 
 ## ⚠️ Co ještě není potvrzené
 
 Model stojí na **dvou odhadech**:
-- **Délka delší stěny 5940 mm** — odvozeno z půdorysu (~18 m²)
+- **Délka delší stěny 5951 mm** — 6 × 986 + 5 × spára 7 mm; zdroje GES se rozcházejí (5940–5952)
 - **Tloušťka panelu 40 mm** — GES ji neuvádí
 
 A čeká se na odpovědi GES (`iaapaeu@ges.com`):
-1. **Povrch a materiál panelů** ← nejdůležitější, rozhoduje fólie vs. celoplošný wrap
-2. Počet a rozpal panelů přímo pro S4244
+1. Celková stavební délka obou stěn + potvrzení 6 panelů na stěně B (blokuje jen dělení grafiky přes spáry)
+2. U textilu potvrzení 1 kusu na 6m stěnu (visual 5952)
 3. Nosnost panelu pro TV
 4. Přesný rozměr jmenovky
 

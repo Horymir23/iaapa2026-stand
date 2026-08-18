@@ -11,8 +11,10 @@
 
   PROČ MĚŘÍTKO
     Delší stěna měří 5951 mm, ale InDesign nedovolí stránku větší než 5486 mm
-    (216 palců). Návrh proto běží ve zmenšeném měřítku — výchozí 1:5. Finální
-    tisková data pro řezané prvky se kreslí ZVLÁŠŤ, vždy 1:1 (viz README níže).
+    (216 palců). Návrh proto běží ve zmenšeném měřítku — výchozí 1:2, kde stěna
+    vyjde na 2975,5 mm. Měřítko se s rozlišením vykrátí: 1:2 @ 300 dpi = 1:1 @
+    150 dpi, tedy stejných 35 144 × 14 610 px. Finální data pro řezané prvky
+    se kreslí ZVLÁŠŤ, vždy 1:1.
 
   ZDROJ ROZMĚRŮ
     data/stand-spec.json (stav k 18. 8. 2026). Panel 986 × 2474 mm a spára 7 mm
@@ -25,7 +27,11 @@
 #target indesign
 
 // ————————————————————————————— NASTAVENÍ —————————————————————————————
-var SCALE      = 5;      // 1:5 — v dokumentu 1 mm = 5 mm ve skutečnosti
+var SCALE      = 2;      // 1:2 — v dokumentu 1 mm = 2 mm ve skutečnosti.
+                         // Delší stěna pak měří 2975,5 mm (limit InDesignu je 5486).
+                         // Měřítko a DPI se vzájemně vykrátí: 1:2 @ 300 dpi dá stejný
+                         // rastr jako 1:1 @ 150 dpi (35 144 × 14 610 px). Vložené
+                         // bitmapy proto musí mít v panelu Vazby EFEKTIVNÍ 300 ppi.
 var PANEL_W    = 986;    // šířka panelu (mm, potvrzeno GES)
 var GAP        = 7;      // spára mezi panely (mm, potvrzeno GES)
 var GRAPHIC_H  = 2474;   // grafická výška panelu (mm, potvrzeno GES)

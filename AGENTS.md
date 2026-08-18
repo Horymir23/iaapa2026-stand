@@ -99,9 +99,12 @@ model/export_banner.py syntetický kruhový závěsný poutač „Zip-up Round" 
 model/*.stl *.dae      hotové modely pro SketchUp / Blender
 assets/brand/          brandové grafiky (polepy, vizuál LED podlahy)
 assets/indesign/       priprava-dokumentu.jsx — skript pro InDesign (Window → Utilities →
-                       Scripts): založí návrhové dokumenty obou stěn s vodítky panelů a spár.
-                       Pozor: InDesign nedovolí stránku nad 5486 mm → delší stěna (5951)
-                       jde jen ve zmenšeném měřítku, výchozí 1:5. NETESTOVÁNO (bez InDesignu)
+                       Scripts): založí dokument pro TISKOVÁ DATA, kde 1 stránka = 1 panel
+                       986 × 2474 mm v měřítku 1:1 (6 stránek stěna B, 3 stěna A). Panel se
+                       do limitu InDesignu 5486 mm vejde, takže žádné zmenšování — dělení
+                       prvků přes spáru řeší ořez stránkou (7 mm zmizí samo). Umí i vložit
+                       produkční motiv na všechny panely s posunem a zkontrolovat efektivní
+                       ppi (konstanta ARTWORK). NETESTOVÁNO (InDesign není k dispozici)
 assets/export/         rendery a snímky
 ```
 

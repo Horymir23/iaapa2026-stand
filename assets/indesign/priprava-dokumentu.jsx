@@ -1,68 +1,67 @@
 /*
-  PŘÍPRAVA INDESIGN DOKUMENTŮ — grafika stěn stánku S4244 (IAAPA Expo Europe 2026)
+  INDESIGN — ZALOŽENÍ DOKUMENTU PRO TISKOVÁ DATA
+  grafika stěn stánku S4244 (IAAPA Expo Europe 2026)
   ---------------------------------------------------------------------------------
-  Založí dva návrhové dokumenty (delší a kratší stěna) se správnými rozměry,
-  vodítky na hranách panelů a spár, vrstvami a spot barvou pro řezovou konturu.
+  Založí dokument pro každou stěnu, kde JEDNA STRÁNKA = JEDEN PANEL v měřítku 1:1
+  (986 × 2474 mm). Panel je malý, takže se do limitu InDesignu (5486 mm) vejde
+  bez zmenšování — tisková data se tedy kreslí 1:1 při 150 dpi, žádné přepočty.
+
+  PROČ STRÁNKA = PANEL
+    Dělení prvků přes spáru se vyřeší samo. Stránka končí přesně na hraně panelu,
+    takže co přesahuje, se ořízne; na následující stránce začne zbytek prvku
+    posunutý o rozteč 993 mm. Těch 7 mm spáry tím zmizí automaticky — není potřeba
+    nic odečítat Průzkumníkem cest.
 
   JAK SPUSTIT
     1. InDesign → Okno (Window) → Utility → Skripty (Scripts)
     2. pravý klik na „User“ → Reveal in Finder → sem zkopíruj tenhle soubor
     3. dvojklik na „priprava-dokumentu.jsx“ v panelu Skripty
 
-  PROČ MĚŘÍTKO
-    Delší stěna měří 5951 mm, ale InDesign nedovolí stránku větší než 5486 mm
-    (216 palců). Návrh proto běží ve zmenšeném měřítku — výchozí 1:2, kde stěna
-    vyjde na 2975,5 mm. Měřítko se s rozlišením vykrátí: 1:2 @ 300 dpi = 1:1 @
-    150 dpi, tedy stejných 35 144 × 14 610 px. Finální data pro řezané prvky
-    se kreslí ZVLÁŠŤ, vždy 1:1.
+  VOLITELNĚ: vlož cestu k produkčnímu motivu do ARTWORK (níže) a skript ho sám
+  rozmístí na všechny panely se správným posunem a zkontroluje efektivní ppi.
 
   ZDROJ ROZMĚRŮ
     data/stand-spec.json (stav k 18. 8. 2026). Panel 986 × 2474 mm a spára 7 mm
-    jsou potvrzené GES; celková délka delší stěny je zatím odhad (5940–5952) —
-    proto na spáry neumisťuj nic kritického.
+    jsou potvrzené GES; CELKOVÁ délka delší stěny (5951 mm) je zatím odhad
+    (rozptyl 5940–5952) → dělené prvky neřezat, dokud ji GES nepotvrdí.
 
-  Skript nic nemaže a nic nepřepisuje: vytvoří nové neuložené dokumenty.
+  Skript nic nemaže a nepřepisuje: vytvoří nové neuložené dokumenty.
 */
 
 #target indesign
 
 // ————————————————————————————— NASTAVENÍ —————————————————————————————
-var SCALE      = 2;      // 1:2 — v dokumentu 1 mm = 2 mm ve skutečnosti.
-                         // Delší stěna pak měří 2975,5 mm (limit InDesignu je 5486).
-                         // Měřítko a DPI se vzájemně vykrátí: 1:2 @ 300 dpi dá stejný
-                         // rastr jako 1:1 @ 150 dpi (35 144 × 14 610 px). Vložené
-                         // bitmapy proto musí mít v panelu Vazby EFEKTIVNÍ 300 ppi.
-var PANEL_W    = 986;    // šířka panelu (mm, potvrzeno GES)
-var GAP        = 7;      // spára mezi panely (mm, potvrzeno GES)
-var GRAPHIC_H  = 2474;   // grafická výška panelu (mm, potvrzeno GES)
-var GRAPHIC_BASE = 13;   // ODHAD! Panel je vysoký 2500, grafická plocha 2474 —
-                         // jak je těch 26 mm rozdělených mezi spodní a horní hranu,
-                         // GES neuvádí. Předpokládám 13 + 13. Výšková vodítka níž
-                         // z toho vycházejí → na místě přeměřit, kde grafická
-                         // plocha skutečně začíná nad podlahou.
+var PANEL_W   = 986;    // šířka panelu (mm, potvrzeno GES)
+var PANEL_H   = 2474;   // grafická výška panelu (mm, potvrzeno GES)
+var GAP       = 7;      // spára mezi panely (mm, potvrzeno GES) → rozteč 993
+var BLEED     = 3;      // spadávka v mm; u čistě řezaných prvků může být 0
+var MIN_PPI   = 150;    // požadované efektivní rozlišení bitmap ve finální velikosti
+
 var WALLS = [
-    { name: "Stena-B-delsi",  panels: 6, note: "delší stěna, 6 panelů" },
-    { name: "Stena-A-kratsi", panels: 3, note: "kratší stěna, 3 panely" }
+    { name: "Stena-B-delsi",  panels: 6, artwork: "" },
+    { name: "Stena-A-kratsi", panels: 3, artwork: "" }
 ];
+// artwork: absolutní cesta k produkčnímu motivu celé stěny, např.
+//   "/Users/ja/Desktop/stena-b-produkce.tif"
+// Necháš-li prázdné, skript jen připraví stránky a prázdné rámečky.
 // ——————————————————————————————————————————————————————————————————————
 
-function mm(v) { return (v / SCALE) + "mm"; }   // reálné mm → mm v dokumentu
+var PITCH = PANEL_W + GAP;
+var warnings = [];
 
-function makeLayer(doc, name, color, locked) {
-    var lay;
-    try { lay = doc.layers.itemByName(name); lay.name; }        // existuje?
-    catch (e) { lay = null; }
+function makeLayer(doc, name, uiColor, locked) {
+    var lay = null;
+    try { lay = doc.layers.itemByName(name); lay.name; } catch (e) { lay = null; }
     if (!lay || !lay.isValid) { lay = doc.layers.add({ name: name }); }
-    try { lay.layerColor = color; } catch (e) {}
+    try { lay.layerColor = uiColor; } catch (e) {}
     try { lay.locked = locked === true; } catch (e) {}
     return lay;
 }
 
 function cutContourSwatch(doc) {
-    // Spot barva pro řezovou konturu — standard pro řezací plotry.
     try { var s = doc.colors.itemByName("CutContour"); s.name; return s; } catch (e) {}
     return doc.colors.add({
-        name: "CutContour",
+        name: "CutContour",                 // pojmenování, které čekají řezové ploter RIPy
         model: ColorModel.SPOT,
         space: ColorSpace.CMYK,
         colorValue: [0, 100, 0, 0]
@@ -70,127 +69,120 @@ function cutContourSwatch(doc) {
 }
 
 function buildWall(cfg) {
-    var wallW = cfg.panels * PANEL_W + (cfg.panels - 1) * GAP;   // reálná šířka stěny
+    var wallW = cfg.panels * PANEL_W + (cfg.panels - 1) * GAP;
 
     var doc = app.documents.add();
     doc.documentPreferences.properties = {
-        pageWidth:        mm(wallW),
-        pageHeight:       mm(GRAPHIC_H),
-        facingPages:      false,
-        pagesPerDocument: 1
+        pageWidth:               PANEL_W + "mm",
+        pageHeight:              PANEL_H + "mm",
+        facingPages:             false,
+        pagesPerDocument:        cfg.panels,
+        documentBleedUniformSize: true,
+        documentBleedTopOffset:   BLEED + "mm"
     };
     doc.viewPreferences.properties = {
         horizontalMeasurementUnits: MeasurementUnits.MILLIMETERS,
         verticalMeasurementUnits:   MeasurementUnits.MILLIMETERS,
         rulerOrigin:                RulerOrigin.PAGE_ORIGIN
     };
-    doc.documentPreferences.properties = { documentBleedUniformSize: true, documentBleedTopOffset: "0mm" };
     doc.marginPreferences.properties = { top: "0mm", left: "0mm", bottom: "0mm", right: "0mm" };
     try { doc.zeroPoint = [0, 0]; } catch (e) {}
 
-    var page = doc.pages[0];
     cutContourSwatch(doc);
 
-    // vrstvy zdola nahoru: podklad panelů → zákryty → grafika → kóty
-    var lPanely  = makeLayer(doc, "1 · Panely a spáry (netiskne se)", UIColors.GRAY, false);
-                   makeLayer(doc, "2 · Zákryty konstrukcí (netiskne se)", UIColors.RED, false);
-    var lGrafika = makeLayer(doc, "3 · Grafika", UIColors.BLUE, false);
-                   makeLayer(doc, "4 · Kóty pro montáž (netiskne se)", UIColors.GREEN, false);
+    // vrstvy zdola nahoru
+    var lGrafika = makeLayer(doc, "1 · Grafika", UIColors.BLUE, false);
+    var lRez     = makeLayer(doc, "2 · Řezové kontury (CutContour)", UIColors.MAGENTA, false);
+                   makeLayer(doc, "3 · Pomocné popisky (mimo stránku)", UIColors.GRAY, false);
+    var lPom     = doc.layers.itemByName("3 · Pomocné popisky (mimo stránku)");
     try { doc.layers.itemByName("Layer 1").remove(); } catch (e) {}
     try { doc.layers.itemByName("Vrstva 1").remove(); } catch (e) {}
-    try { doc.activeLayer = lGrafika; } catch (e) {}   // ať se kreslí hned na správnou
+    try { doc.activeLayer = lGrafika; } catch (e) {}
 
     var black = doc.swatches.itemByName("Black");
+    var hasArt = cfg.artwork && cfg.artwork.length > 0;
+    var artFile = hasArt ? File(cfg.artwork) : null;
+    if (hasArt && !artFile.exists) {
+        warnings.push("• " + cfg.name + ": soubor „" + cfg.artwork + "“ neexistuje — stránky jsou prázdné.");
+        hasArt = false;
+    }
 
-    // obrysy jednotlivých panelů + vodítka na každé hraně
     for (var i = 0; i < cfg.panels; i++) {
-        var x0 = i * (PANEL_W + GAP);          // levá hrana panelu (reálné mm)
-        var x1 = x0 + PANEL_W;                 // pravá hrana panelu
+        var page   = doc.pages[i];
+        var xFrom  = i * PITCH;                 // odkud na stěně tento panel začíná
+        var xTo    = xFrom + PANEL_W;
 
-        page.rectangles.add({
-            itemLayer:      lPanely,
-            geometricBounds: ["0mm", mm(x0), mm(GRAPHIC_H), mm(x1)],
-            fillColor:      "None",
-            strokeColor:    black,
-            strokeWeight:   "0.25pt",
-            strokeTint:     45
-        });
-
-        page.guides.add(undefined, { orientation: HorizontalOrVertical.VERTICAL, location: mm(x0) });
-        page.guides.add(undefined, { orientation: HorizontalOrVertical.VERTICAL, location: mm(x1) });
-
-        // popisek panelu — pod stránkou, ať neleze do kompozice
+        // popisek MIMO stránku (na pasteboard) — do exportovaného PDF se nedostane
         var lab = page.textFrames.add({
-            itemLayer:       lPanely,
-            geometricBounds: [mm(GRAPHIC_H + 30), mm(x0), mm(GRAPHIC_H + 130), mm(x1)],
-            contents:        "P" + (i + 1) + "\n" + PANEL_W + " × " + GRAPHIC_H + " mm"
+            itemLayer:       lPom,
+            geometricBounds: ["-70mm", "0mm", "-10mm", PANEL_W + "mm"],
+            contents:        "P" + (i + 1) + " / " + cfg.panels + "   ·   výřez " +
+                             xFrom + "–" + xTo + " mm z celkové šířky " + wallW + " mm" +
+                             "   ·   1:1, spadávka " + BLEED + " mm"
         });
-        lab.texts[0].properties = { pointSize: 7, justification: Justification.CENTER_ALIGN, fillColor: black, fillTint: 60 };
+        lab.texts[0].properties = { pointSize: 9, fillColor: black, fillTint: 70 };
+
+        // rámeček přes celou plochu panelu včetně spadávky
+        var frame = page.rectangles.add({
+            itemLayer:       lGrafika,
+            geometricBounds: [(-BLEED) + "mm", (-BLEED) + "mm",
+                              (PANEL_H + BLEED) + "mm", (PANEL_W + BLEED) + "mm"],
+            fillColor:       "None",
+            strokeColor:     "None"
+        });
+
+        if (hasArt) {
+            // Motiv se vloží celý a posune tak, aby na tomto panelu zůstal jeho
+            // správný výřez. Šířka se natáhne na wallW → motiv navržený na starou
+            // délku se tím zároveň dorovná na skutečnou šířku stěny.
+            var placed = frame.place(artFile)[0];
+            placed.geometricBounds = ["0mm", (-xFrom) + "mm", PANEL_H + "mm", (wallW - xFrom) + "mm"];
+
+            try {
+                var ppi = placed.effectivePpi;      // [vodorovně, svisle]
+                if (ppi && ppi.length && ppi[0] < MIN_PPI) {
+                    warnings.push("• " + cfg.name + " P" + (i + 1) + ": efektivní rozlišení jen " +
+                                  Math.round(ppi[0]) + " ppi (potřeba " + MIN_PPI + ") — podklad nemá dost pixelů.");
+                }
+            } catch (e) {}
+        }
+
+        // vodítka na hranách grafické plochy
+        page.guides.add(undefined, { orientation: HorizontalOrVertical.VERTICAL,   location: "0mm" });
+        page.guides.add(undefined, { orientation: HorizontalOrVertical.VERTICAL,   location: PANEL_W + "mm" });
+        page.guides.add(undefined, { orientation: HorizontalOrVertical.HORIZONTAL, location: "0mm" });
+        page.guides.add(undefined, { orientation: HorizontalOrVertical.HORIZONTAL, location: PANEL_H + "mm" });
     }
 
-    // Vodorovná vodítka — výšky nad PODLAHOU haly, přepočtené na pozici v grafické
-    // ploše. Horní hrana grafiky je GRAPHIC_BASE + GRAPHIC_H nad podlahou.
-    var levels = [
-        { y: 760,  what: "deska pultu" },
-        { y: 1200, what: "zábradlí exponátu" },
-        { y: 1495, what: "spodní hrana TV" },
-        { y: 1803, what: "horní hrana věže exponátu" },
-        { y: 2205, what: "horní hrana TV" }
-    ];
-    var topAboveFloor = GRAPHIC_BASE + GRAPHIC_H;
-    for (var j = 0; j < levels.length; j++) {
-        var yDoc = topAboveFloor - levels[j].y;               // od horní hrany stránky
-        if (yDoc < 0 || yDoc > GRAPHIC_H) { continue; }       // mimo grafickou plochu
-
-        page.guides.add(undefined, {
-            orientation: HorizontalOrVertical.HORIZONTAL,
-            location:    mm(yDoc)
-        });
-
-        // popisek vlevo za stránkou, ať je jasné, co ta linka znamená
-        var note = page.textFrames.add({
-            itemLayer:       lPanely,
-            geometricBounds: [mm(yDoc - 45), mm(-660), mm(yDoc + 45), mm(-40)],
-            contents:        levels[j].y + " mm — " + levels[j].what
-        });
-        note.texts[0].properties = { pointSize: 7, justification: Justification.RIGHT_ALIGN, fillColor: black, fillTint: 70 };
-        try { note.textFramePreferences.verticalJustification = VerticalJustification.CENTER_ALIGN; } catch (e) {}
-    }
-
-    // titulek dokumentu nad stránkou
-    var head = page.textFrames.add({
-        itemLayer:       lPanely,
-        geometricBounds: [mm(-260), "0mm", mm(-40), mm(wallW)],
-        contents:        "S4244 · " + cfg.note.toUpperCase() +
-                         "  —  grafická plocha " + wallW + " × " + GRAPHIC_H + " mm" +
-                         "  ·  měřítko 1:" + SCALE +
-                         "  ·  panel " + PANEL_W + " mm, spára " + GAP + " mm"
-    });
-    head.texts[0].properties = { pointSize: 11, fillColor: black };
-
-    return { doc: doc, wallW: wallW };
+    try { doc.layers.itemByName("2 · Řezové kontury (CutContour)").locked = false; } catch (e) {}
+    return { wallW: wallW, pages: cfg.panels };
 }
 
 // ————————————————————————————— SPUŠTĚNÍ —————————————————————————————
 var report = [];
 for (var w = 0; w < WALLS.length; w++) {
     var r = buildWall(WALLS[w]);
-    report.push("• " + WALLS[w].name + ": " + r.wallW + " × " + GRAPHIC_H + " mm  →  stránka " +
-                (r.wallW / SCALE) + " × " + (GRAPHIC_H / SCALE) + " mm");
+    report.push("• " + WALLS[w].name + ": " + r.pages + " stránek " + PANEL_W + " × " + PANEL_H +
+                " mm (stěna " + r.wallW + " mm)");
 }
 
-alert(
-    "Hotovo — dokumenty jsou založené (neuložené).\n\n" +
-    report.join("\n") + "\n\n" +
-    "Měřítko 1:" + SCALE + " → co nakreslíš 10 mm, je ve skutečnosti " + (10 * SCALE) + " mm.\n\n" +
-    "DÁL:\n" +
-    "1. Kompozici rozvrhni tady, na vrstvu „3 · Grafika“.\n" +
-    "2. Zákryty (věž, TV, krabice) si obkresli podle 3D modelu na vrstvu 2 —\n" +
-    "   pod nimi grafika nebude vidět.\n" +
-    "3. Finální data pro řez kresli v NOVÉM dokumentu 1:1, každý prvek zvlášť,\n" +
-    "   obrys řezu v barvě „CutContour“ (spot, 0/100/0/0).\n" +
-    "4. Prvek přes spáru rozděl na dva díly s mezerou " + GAP + " mm.\n\n" +
-    "Pozor: celková délka delší stěny čeká na potvrzení GES (5940–5952 mm),\n" +
-    "na spáry proto neumisťuj drobný text ani detaily loga.",
-    "Příprava dokumentů S4244"
-);
+var msg = "Hotovo — dokumenty pro tisková data jsou založené (neuložené).\n\n" +
+          report.join("\n") + "\n\n" +
+          "1:1, žádné měřítko. Panel se do limitu InDesignu vejde, takže bitmapy\n" +
+          "stačí na " + MIN_PPI + " dpi v této velikosti.\n\n" +
+          "JAK DÁL:\n" +
+          "• Prvky umisťuj na vrstvu „1 · Grafika“. Co přesahuje okraj stránky,\n" +
+          "  patří na následující panel — zkopíruj to tam a posuň o −" + PITCH + " mm\n" +
+          "  (Objekt → Transformace → Přesunout). Tím z prvku zmizí " + GAP + " mm spáry.\n" +
+          "• Řezové kontury kresli na vrstvu 2 v barvě „CutContour“ (spot 0/100/0/0),\n" +
+          "  bez výplně, a nastav jim přetisk tahu.\n" +
+          "• Text před odesláním převeď na křivky (v KOPII dokumentu).\n" +
+          "• Export: PDF/X-4, spadávka " + BLEED + " mm.\n\n" +
+          "POZOR: celková délka delší stěny čeká na potvrzení GES (5940–5952 mm).\n" +
+          "Prvky uvnitř jednoho panelu můžeš řezat hned, DĚLENÉ prvky až po potvrzení.";
+
+if (warnings.length) {
+    msg += "\n\n⚠ UPOZORNĚNÍ:\n" + warnings.join("\n");
+}
+
+alert(msg, "Tisková data S4244");

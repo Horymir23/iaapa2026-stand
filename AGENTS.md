@@ -98,6 +98,10 @@ model/export_kiosk.py  syntetické kiosky „pult + monitor" u uličky (python3,
 model/export_banner.py syntetický kruhový závěsný poutač „Zip-up Round" nad stánkem (python3)
 model/*.stl *.dae      hotové modely pro SketchUp / Blender
 assets/brand/          brandové grafiky (polepy, vizuál LED podlahy)
+assets/indesign/       priprava-dokumentu.jsx — skript pro InDesign (Window → Utilities →
+                       Scripts): založí návrhové dokumenty obou stěn s vodítky panelů a spár.
+                       Pozor: InDesign nedovolí stránku nad 5486 mm → delší stěna (5951)
+                       jde jen ve zmenšeném měřítku, výchozí 1:5. NETESTOVÁNO (bez InDesignu)
 assets/export/         rendery a snímky
 ```
 

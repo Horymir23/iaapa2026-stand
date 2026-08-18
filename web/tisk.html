@@ -282,10 +282,21 @@
     </div>
 
     <div class="callout">
-      <b>Jak dělení funguje:</b> motiv se připraví jako jedna celostěnová grafika (plátno = <span class="mono">n × 986 + (n − 1) × 7 mm</span>) a rozřeže se na pruhy široké 986 mm s roztečí 993 mm. Pruhy motivu, které připadnou na 7mm spáry, <b>ve výsledku zaniknou</b> — proto nesmí přes spáru procházet drobný text nebo detail loga. Rozdělení je vidět na <a href="viewer.html">3D modelu</a> — přesně tohle ukazuje.
+      <b>Jak dělení funguje:</b> motiv se připraví jako jedna celostěnová grafika na <b>plnou šířku včetně spár</b> (plátno = <span class="mono">n × 986 + (n − 1) × 7 mm</span>) a rozřeže se na pruhy široké 986 mm s roztečí 993 mm. Pruhy motivu, které připadnou na 7mm spáry, <b>se z tisku vypustí</b>. Rozdělení je vidět na <a href="viewer.html">3D modelu</a> — přesně tohle ukazuje.
     </div>
+
+    <div class="callout">
+      <b>Prvek přes spáru: nestačí ho rozdělit, musí z něj zmizet 7 mm.</b> Kdybys prvek jen rozřízl na dva díly a oba nalepil, každý sedí na svém panelu — a ty jsou od sebe o 7 mm dál. Prvek by pak byl <b>o 7 mm širší</b> než navržený a v místě spoje by měl duplikovaný pás motivu. Proto se z prvku odebere právě ten pás, který padne do spáry.<br><br>
+      <b>Nejde ale o 3,5 + 3,5 mm z každé půlky.</b> Dělení je nesymetrické podle toho, kde spára prvek trefí: levý díl končí na <b>pravé hraně svého panelu</b>, pravý díl začíná na <b>levé hraně následujícího</b>. Symetricky to vyjde jen tehdy, když spára padne přesně do poloviny prvku.<br><br>
+      <b>V InDesignu:</b> nakresli obdélník široký 7 mm přesně v místě spáry a odečti ho od prvku (<span class="mono">Objekt → Průzkumník cest → Odečíst</span>). Vzniknou dva díly se správnou mezerou. Při montáži se zarovnávají <b>na hrany panelů, ne na oko</b>.
+    </div>
+
+    <div class="callout err">
+      <b>Tím se stavební délka stěny B stává blokující.</b> Rozhodnutí z 18.&nbsp;8.&nbsp;2026: grafika je hotová, prvky se přes spáry <b>dělí a neobcházejí</b> — takže každý dělený prvek závisí na poloze spáry. Podklady GES si v rozteči odporují (guide 993 mm, tabulka textilu 992, dříve potvrzená stěna A 990) a chyba se <b>kumuluje</b>: proti spáře 7 mm leží poslední spára u varianty 6 mm o 4 mm jinde a u 4,8 mm o 8,8 mm jinde. Dělený prvek řezaný podle špatné polohy bude mít v spoji viditelný přesah nebo mezeru téhož řádu. <b>Dělené prvky proto neřezat, dokud GES nepotvrdí celkovou délku</b> (<a href="#dotazy">dotaz č. 1</a>) — za sednutí vlastní grafiky GES neručí. Prvky celé uvnitř jednoho panelu lze vyrábět hned.
+    </div>
+
     <div class="callout warn">
-      <b>Tolerance ±3 mm na spáru:</b> podklady GES si v rozteči mírně odporují — guide uvádí spáru 7 mm (rozteč 993), tabulka textilu v témže PDF odpovídá rozteči 992 a dříve potvrzená délka stěny A (2 970 mm) rozteči 990. Prakticky: <b>prvky celé uvnitř jednoho panelu (≤ 986 mm) jsou bezpečné hned</b>. Prvky procházející přes spáru navrhovat tak, aby posun ±3 mm nevadil (žádné tenké linky navazující přes spáru), a finálně je řezat až po potvrzení stavebních délek od GES (<a href="#dotazy">dotaz č. 1</a>) — GES u vlastní grafiky za sednutí rozměrů neručí.
+      <b>Hotová grafika je navržená na starou délku.</b> Změřeno z podkladů: <span class="mono">Stěna B v3.jpg</span> (3 402 × 1 417 px) odpovídá při výšce 2 474 mm šířce <b>5 940 mm</b>, <span class="mono">Stěna A v1.jpg</span> šířce <b>2 968 mm</b> — tedy hodnotám před přílohou GES. Na novou šířku (5 951 / 2 972 mm) je potřeba motiv <b>roztáhnout o 0,19 %</b>, resp. 0,06 % — na výšce 2 474 mm to je 4,6 mm, vizuálně nepostřehnutelné. Bez roztažení by na konci stěny B zbylo <b>11 mm nepokrytých</b>.
     </div>
   </div>
 </section>

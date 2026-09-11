@@ -14,3 +14,10 @@ data/*.eml
 data/AMP_Dos and donts*.pdf
 /kiosky-u-ulicky-izo.png
 /tisk
+
+# PRODUKCNI TISKOVA DATA (PSD/PSB/TIF) — do gitu NEPATRI:
+#  - slozka ma jednotky GB a jednotlive soubory presahuji limit GitHubu 100 MB/soubor
+#    (PSB sten maji ~1,9 GB) -> push by selhal a historii by slo opravit jen prepsanim
+#  - repozitar je VEREJNY, produkcni grafika klienta na nem byt nema
+# Rozmery a odvozeni jsou v data/stand-spec.json a web/tisk.html, workflow v assets/skripty/.
+assets/grafika/Tiskové/

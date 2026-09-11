@@ -98,13 +98,16 @@ model/export_kiosk.py  syntetické kiosky „pult + monitor" u uličky (python3,
 model/export_banner.py syntetický kruhový závěsný poutač „Zip-up Round" nad stánkem (python3)
 model/*.stl *.dae      hotové modely pro SketchUp / Blender
 assets/brand/          brandové grafiky (polepy, vizuál LED podlahy)
-assets/indesign/       priprava-dokumentu.jsx — skript pro InDesign (Window → Utilities →
-                       Scripts): založí dokument pro TISKOVÁ DATA, kde 1 stránka = 1 panel
-                       986 × 2474 mm v měřítku 1:1 (6 stránek stěna B, 3 stěna A). Panel se
-                       do limitu InDesignu 5486 mm vejde, takže žádné zmenšování — dělení
-                       prvků přes spáru řeší ořez stránkou (7 mm zmizí samo). Umí i vložit
-                       produkční motiv na všechny panely s posunem a zkontrolovat efektivní
-                       ppi (konstanta ARTWORK). NETESTOVÁNO (InDesign není k dispozici)
+assets/skripty/        Skripty pro Adobe (Soubor → Skripty → Načíst). Oba NETESTOVANÉ —
+                       Adobe není v tomhle prostředí k dispozici, ověřena jen syntaxe.
+                       · photoshop-rozrez-na-panely.jsx — POUŽÍVANÁ CESTA: vezme hotový PSB
+                         celé stěny a uloží z něj jeden TIF/JPG na panel (996 × 2484 mm =
+                         čistý formát 986 × 2474 + spadávka 5 mm). Počet panelů si dopočítá
+                         z rozměru dokumentu a nesouhlas ohlásí.
+                       · indesign-priprava-dat.jsx — starší varianta pro případ, že by se
+                         grafika dělala po ŘEZANÝCH PRVCÍCH: 1 stránka = 1 panel, vrstvy,
+                         spot barva CutContour. Od 24. 8. 2026 se nepoužívá (grafika je
+                         celoplošný rastr s bílým podkladem, viz graphics_production)
 assets/export/         rendery a snímky
 ```
 

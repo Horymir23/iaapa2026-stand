@@ -9,7 +9,7 @@
     "termin_show": "2026-09",
     "typ_stanku": "shell scheme (GES AMP), rohový",
     "system": "GES AMP",
-    "stav_k": "2026-08-18"
+    "stav_k": "2026-08-26"
   },
 
   "units": "mm",
@@ -396,6 +396,18 @@
     "walls_built_by": "GES / pořadatel (shell scheme v ceně plochy)",
     "graphics_by": "HTDM — vlastní výroba i aplikace",
     "constraint": "panely GES nijak nepoškodit (bez vrtání, vrutů, reziduí lepidel)",
+    "print_files": {
+      "$comment": "TISKOVÁ DATA CELOPLOŠNÝCH POLEPŮ PO PANELECH — OVĚŘENO 26.8.2026 (sips nad TIF soubory). 9× TIF v assets/grafika/Tiskové/: Delší-zeď-P1…P6-z-6.tif (stěna B, 6 panelů) + Kratší-zeď-P1…P3-z-3.tif (stěna A, 3 panely). Všechny 5882 × 14669 px @ 150 DPI = 995,95 × 2484,0 mm (jen Delší-zeď-P4 má 5881 px, tj. o 0,17 mm užší — zanedbatelné vůči toleranci řezu) = čistý formát panelu 986 × 2474 + SPADÁVKA 5 mm PO VŠECH ČTYŘECH STRANÁCH (soubor je o 10 mm větší v každém rozměru). POZOR na formulaci: 'o 5 mm větší' platí NA STRANU, ne celkem. Příloha GES (confirmed.amp_file_guide) žádnou spadávku NEPŘEDEPISUJE — udává jen čisté formáty panelů; 5 mm je výrobní přídavek na ořez. Na jaký nosič data půjdou (tištěná deska na velcro vs. fólie) řeší routes/full_wrap_decision — spadávka 5 mm pro ořez platí u obojího.",
+      "folder": "assets/grafika/Tiskové/",
+      "wall_b_files": "Delší-zeď-P1-z-6.tif … Delší-zeď-P6-z-6.tif (6 ks)",
+      "wall_a_files": "Kratší-zeď-P1-z-3.tif … Kratší-zeď-P3-z-3.tif (3 ks)",
+      "px": [5882, 14669],
+      "dpi": 150,
+      "file_size_mm": [996, 2484],
+      "trim_size_mm": [986, 2474],
+      "bleed_mm_per_side": 5,
+      "bleed_source": "DOMLUVENO S TISKÁRNOU ústně (uživatel, 26.8.2026) — spád 5 mm na stranu; do PDF pro tiskárnu vyznačit ořez přes TrimBox (Acrobat → Tisková produkce → Nastavit rámečky stránky → Rámeček řezání, okraje 5 mm). TIF sám žádné rámečky nést neumí — u TIF dodávky sdělit tiskárně slovně: čistý formát 986 × 2474 centrovaný, spád 5 mm po obvodu."
+    },
     "routes": [
       { "id": "folie", "priority": 1, "name": "Removable nízkoadhezní ŘEZANÁ / kiss-cut fólie přímo na panel", "spec": "PVC/PET fólie s odstranitelným (low-tack, clean-removal) lepidlem, UV/latex tisk, MATNÝ laminát (tlumené osvětlení + spoty — lesk by odrážel), jednotlivé řezané / kiss-cut prvky (loga, texty, kostky, postavy), aplikace po panelech, spáry zůstávají přiznané (7 mm dle přílohy GES — confirmed.amp_file_guide). CELOPLOŠNÝ výřez 986 × 2474 na panel touto cestou NEDĚLAT — viz full_wrap_decision, pro plnou plochu je route 'desky'.", "quantity": "jen plocha řezaných prvků (výrazně méně než 22 m² celoplošně)", "conditions": ["POVOLENO GES 24.7.2026 písemně (confirmed.own_graphics.exchange_verbatim) — bez poškození, bez reziduí", "test adheze A STAŽENÍ na 1 panelu na místě, než se aplikuje zbytek", "e-maily GES mít na stavbě vytištěné"], "risk": "GES u vlastní grafiky neručí za poškození ani sednutí rozměrů → prvky přes spáru nedělit bez potvrzené celkové délky stěny B (rozptyl zdrojů GES 5940–5952)" },
       { "id": "desky", "priority": 2, "name": "Tištěné rigidní desky 3 mm na suchý zip (oficiální cesta dle AMP guide)", "spec": "AKTUALIZOVÁNO 18.8.2026 dle přílohy GES (confirmed.amp_file_guide): libovolný rigidní materiál 3 mm — Foamex, Correx, Dibond, Forex — přímý UV tisk, formát 986 × 2474 (existuje i půlpanel 489 × 2474), uchycení SUCHÝM ZIPEM: strana LOOP po celém obvodu desky, protikus na panel; povolené jsou i oboustranné podložky (tabs) dodané GES; mezi deskami zůstává 7mm systémová spára", "conditions": ["velcro na panelech min. 24 h před otevřením show (jinak riziko selhání lepidla při změně klimatu v hale)", "žádné hřebíky, vruty/díry, sponky, malování — výslovně zakázáno"], "advantage": "oficiálně zdokumentovaná cesta GES (žádné dohadování na místě), desky jsou opakovaně použitelné na dalších akcích" },
@@ -409,6 +421,19 @@
       "existing_artwork": "ZMĚŘENO 18.8.2026 z assets/grafika/: 'Stěna B v3.jpg' (3402×1417 px, poměr 2,40085) odpovídá při výšce 2474 mm šířce 5939,7 mm → grafika byla navržená na STAROU délku 5940. 'Stěna A v1.jpg' (3543×2953) odpovídá 2968,3 mm → navržená na 2970. Při nové délce (5951 / 2972) je potřeba grafiku roztáhnout o 0,19 % (stěna B) resp. 0,06 % (stěna A) — vizuálně nepostřehnutelné (na výšce 2474 mm to je 4,6 mm). Bez roztažení by na konci stěny B zbylo 11 mm nepokrytých.",
       "why_wall_b_length_now_blocks": "Polohy spár se mezi variantami rozteče GES rozjíždějí kumulativně: proti spáře 7 mm je u spáry 6 mm poslední spára o 4 mm jinde a u spáry 4,8 mm o 8,8 mm jinde. Dělený prvek řezaný podle špatné polohy spáry bude mít v místě spoje viditelný přesah nebo mezeru téhož řádu. Prvky uvnitř jednoho panelu tím dotčené nejsou.",
       "seam_positions_gap7_mm": [986, 1979, 2972, 3965, 4958],
+      "alternative_cut_on_wall": {
+        "$comment": "NÁVRH UŽIVATELE 24.8.2026: prvek vytisknout a vyříznout VCELKU (nedělený), nalepit přes spáru a spáru pak na zdi prořezat nožem uprostřed; okraje dotlačit k hranám panelů. Legitimní technika, používá se u panelových systémů a v car wrappingu. NEROZHODNUTO — patří do dotazu na tiskárnu.",
+        "advantage": "IMUNITA PROTI NEZNÁMÉ POLOZE SPÁRY. Motiv navazuje vždy přesně, protože je nalepený jako jeden kus — chyba v celkové délce stěny (rozptyl GES 5940–5952, tj. až 8,8 mm u poslední spáry) se vůbec neprojeví. Tím by přestala blokovat výroba dělených prvků, což je při termínu (grafika potřeba v první polovině září) hodnotné.",
+        "advantage_2": "Z grafiky se neodebírá 7 mm → data jsou jednodušší, žádné dělení prvků, žádný Průzkumník cest.",
+        "risks": [
+          "ŘEZ NOŽEM NA CIZÍM PANELU: Foamex je měkké pěněné PVC, nůž do něj vjede snadno. Řez vede 7mm mezerou (tolerance ±3,5 mm od každé hrany) po celé výšce 2474 mm — bez vodicí lišty vložené do spáry to je na volnou ruku riskantní. Zaříznutí do hrany panelu = poškození, které nese HTDM.",
+          "ZAVINUTÍ NA HRANU: pokud se okraje fólie zavinou přes hranu panelu dozadu, vzniká nejhůř odlepitelné místo — hrana je řezaná pěna, ne lakovaná plocha, a při demontáži hrozí stržení povrchu. Doporučení: řez vést tak, aby fólie končila V LÍCI hrany, nezavinovat.",
+          "Fólie nad 7mm mezerou nemá při lepení podklad — při přítlaku se tam vytlačí; po prořezání se to napraví, ale je to místo, kde vzniká bublina.",
+          "Vhodnost závisí na materiálu: tenká fólie s laminátem se prořezává dobře, tvrdší materiál na hraně praská."
+        ],
+        "blocking_unknown": "CO JE VE SPÁŘE a v jaké úrovni — příloha GES říká jen 'to allow for the system'. Je-li spára prázdná, řez jde do vzduchu (pro podklad bezpečné). Je-li v ní profil rámu, řeže se na tvrdém a okraje se nemají kam dotlačit. Tato neznámá je pro tuto variantu DŮLEŽITĚJŠÍ než celková délka stěny.",
+        "recommendation": "Rozhodnout PO PRVCÍCH: prvky s ostrou hranou (loga, texty) dělit v datech — je to přesné a bez nože. Prvky, kde by 8mm nenavázání bylo vidět (velké plochy, měkké přechody), lepit vcelku a prořezat. Finální slovo dát tiskárně, která fólii dodá — viz dotaz č. 4 na web/tiskarna.html."
+      },
       "open_question_unknown": "Není známo, CO je ve spáře a v jaké úrovni (příloha GES říká jen 'to allow for the system'). Pro dělenou grafiku to nevadí — fólie do spáry nezasahuje. Vadilo by to jen při přelepování spáry, což se nedělá (viz reason_no_overlap).",
       "reason_no_overlap": "Fólii se přes spáru NEVEDE: (1) slepila by dva samostatné panely, které se při demontáži vyndavají jeden po druhém → prořezávání nebo stržení povrchu na hraně, (2) 7 mm fólie nad mezerou nemá podklad — prohýbá se a pod spoty se zvlní, (3) panely se během akce hýbou, spoj by praskl ve smyku. Podmínku 'nepoškodit' nese HTDM, GES neručí."
     },

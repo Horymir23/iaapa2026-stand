@@ -12,7 +12,8 @@
   půjde z panelů beze zbytku dolů. Zkráceno na žádost uživatele 18. 8. 2026 —
   původní verze obsahovala i potisky vlastních konstrukcí, poutač, přehled položek
   a soupis požadavků; to všechno je vyhozené. Nepřidávat zpět bez zadání.
-  Tři dotazy (fólie / měkké přechody / matný laminát) jsou finální stav zadaný uživatelem.
+  Čtyři dotazy (fólie / měkké přechody / matný laminát / řešení spár) jsou zadané
+  uživatelem — nepřidávat další bez zadání, dokument má zůstat krátký.
 
   Rozměry vycházejí z ../data/stand-spec.json (stav k 18. 8. 2026), ale NEsynchronizují
   se živě — dokument se posílá ven a musí odpovídat tomu, co tiskárna dostala.
@@ -114,6 +115,10 @@
     border-radius:6px; padding:17px 20px; font-size:15px; box-shadow:var(--shadow);
   }
   .note b{font-weight:650;}
+  .note ul{margin:10px 0 0; padding-left:20px;}
+  .note li{margin:6px 0;}
+  .note li + li{margin-top:8px;}
+  .note p{margin:10px 0 0;}
   .stack{display:flex; flex-direction:column; gap:14px;}
 
   .item{background:var(--card); border:1px solid var(--line); border-radius:8px; overflow:hidden; box-shadow:var(--shadow);}
@@ -200,6 +205,25 @@
         <b>Třetí dotaz — matný laminát.</b> Světla míří přímo na panely, lesk by odrážel, takže
         počítáme s <b>matným laminátem</b>. Potvrdíte to? A <b>nezhorší laminace odstranitelnost</b>
         fólie?
+      </div>
+
+      <div class="note">
+        <b>Čtvrtý dotaz — jak řešit spáry mezi panely?</b> Mezi panely je <b>7mm spára</b> a některé
+        prvky na ni padnou. Vidíme dvě cesty a zajímá nás, kterou byste volili vy:
+        <ul>
+          <li><b>Rozdělit prvek už v datech</b> na dva díly a z jeho šířky odebrat těch 7 mm. Přesné,
+            bez nože — ale potřebujeme k tomu přesnou polohu spár, kterou nám dodavatel stánku
+            zatím nepotvrdil (rozptyl až 9 mm na konci stěny).</li>
+          <li><b>Nalepit prvek vcelku přes spáru a tu pak na zdi prořezat</b> a okraje dotlačit
+            k hranám panelů. Motiv by navazoval vždy přesně a nezáleželo by na tom, kde spára
+            doopravdy je. Bojíme se ale řezu nožem na cizím panelu z měkkého Foamexu a toho, že
+            zavinutá hrana půjde při demontáži strhnout s povrchem.</li>
+        </ul>
+        <p>
+          Děláte tohle prořezávání běžně? Pokud ano — jakou fólii na to a je bezpečnější nechat
+          okraj <b>v líci hrany</b>, nebo zavinout? A dá se to zvládnout bez profesionálního
+          aplikátora?
+        </p>
       </div>
     </div>
   </div>

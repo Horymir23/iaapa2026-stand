@@ -9,7 +9,7 @@
     "termin_show": "2026-09",
     "typ_stanku": "shell scheme (GES AMP), rohový",
     "system": "GES AMP",
-    "stav_k": "2026-08-26"
+    "stav_k": "2026-09-11"
   },
 
   "units": "mm",
@@ -264,8 +264,8 @@
         "police": { "angle_deg": 45, "edge_low_mm": 1000, "edge_high_mm": 1196, "thickness": 18, "note": "stoupá od vnitřního líce krycí desky dovnitř stánku; brožury na ní leží lícem šikmo vzhůru do uličky" }
       },
       "graphics": {
-        "$comment": "Jedno VELKÉ logo na krycí desce stolu, lícem do uličky (ZADÁNO 21.7.2026 — nahrazuje loga odstraněná z čel kiosků, která po otočení mířila do kapes). Kreslí JEN web/viewer.html (konstanta TABLE_LOGO, rovina 2 mm před vnějším lícem desky v hraně stánku; do STL/DAE se nepropisuje). ŠÍŘKA 500 mm A VÝŠKA STŘEDU 640 mm = NÁVRH (uživatel zadal jen 'jedno velké'): 500 = délka desky 600 minus 2× okraj 50; logo je téměř čtvercové (SVG 177,4 × 187,9) → výška ≈ 529,7 mm, horní hrana ≈ 905 mm zůstává pod horní hranou krycí desky (1060) i pod spodní hranou police (1000).",
-        "logo": { "file": "Primary Pixel Floors logo.svg", "width_mm": 500, "center_x": "střed délky stolu", "center_y_mm": 640 }
+        "$comment": "Jedno VELKÉ logo na krycí desce stolu, lícem do uličky (ZADÁNO 21.7.2026 — nahrazuje loga odstraněná z čel kiosků, která po otočení mířila do kapes). Kreslí JEN web/viewer.html (konstanta TABLE_LOGO, rovina 2 mm před vnějším lícem desky v hraně stánku; do STL/DAE se nepropisuje). ŠÍŘKA 500 mm A VÝŠKA STŘEDU 640 mm = NÁVRH (uživatel zadal jen 'jedno velké'): 500 = délka desky 600 minus 2× okraj 50; logo je téměř čtvercové (SVG 319,2 × 309,9, od 11.9.2026 'Vertical tagline.svg') → výška ≈ 485,5 mm, horní hrana ≈ 883 mm zůstává pod horní hranou krycí desky (1060) i pod spodní hranou police (1000).",
+        "logo": { "file": "Vertical tagline.svg", "width_mm": 500, "center_x": "střed délky stolu", "center_y_mm": 640, "replaced": "11.9.2026 nahradilo Primary Pixel Floors logo.svg (zadal uživatel) — nové logo TERRAPIX FLOORS s taglinem, SVG viewBox 319,18 × 309,93" }
       }
     },
     "graphics": {

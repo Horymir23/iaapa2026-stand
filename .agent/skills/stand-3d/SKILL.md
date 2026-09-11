@@ -233,7 +233,7 @@ konstanta `DEF_GFX`) — uživatel nic nahrávat nemusí. Přiřazení je i ve s
 | `Poutač360v2.jpg` | poutač (360°) |
 | `Arcade.webp` | tělo totemu arcade — potisk (kostky + slogan) pod obrazovkou; pravá hrana licuje s pravou hranou bedny, horní se spodkem obrazovky |
 | `kostky/Datový zdroj 1–3.svg` | potisk kostek na čelní ploše věže mini pod TV (`DEF_DECALS`, pozice ve spec → `product.tower_decals`) **a** na tělech kiosků (`KIOSK_DICE`) |
-| `Primary Pixel Floors logo.svg` | jedno velké logo na krycí desce stolu lícem do uličky (`TABLE_LOGO`, spec → `product_kiosk.table.graphics`) |
+| `Vertical tagline.svg` | jedno velké logo (TERRAPIX FLOORS s taglinem; od 11. 9. 2026 nahrazuje `Primary Pixel Floors logo.svg`) na krycí desce stolu lícem do uličky (`TABLE_LOGO`, spec → `product_kiosk.table.graphics`) |
 
 Bundler `export_gfx.py` bere i podsložky (klíč = holý název souboru, kolize hlásí) a SVG:
 bez width/height by se SVG rasterizovalo na 300×150, proto doplňuje rozměry z viewBoxu ×2.
